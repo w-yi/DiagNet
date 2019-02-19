@@ -3,21 +3,26 @@ import torch.nn as nn
 from torchvision import datasets, transforms, models
 from torch.utils.data.dataset import Dataset
 from torch.utils.data import DataLoader
+import os
 
 
 class CocoDataset(Dataset):
     def __init__(self, split):
         assert split in ['train', 'val', 'test']
-        path = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Images/" + split + "2014"
-        self.data = datasets.ImageFolder(
-            root=path, transform=transforms.Compose([transforms.Resize(448, 448), transforms.ToTensor()])
-        )
+        self.path = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Images/" + split + "2014"
+        self.files = os.listdir(self.path)
+        self.transform = transforms.Compose([transforms.ToPILImage(), transforms.Resize(448, 448), transforms.ToTensor()])
 
     def __len__(self):
-        return self.data.__len__()
+        return len(self.files)
 
     def __getitem__(self, idx):
-        return self.data[idx]
+        f = self.files[idx][-16:-4]
+        img_name = os.path.join(self.path, f)
+        image = self.transform(io.imread(img_name))
+        print(self.files[idx])
+        print(f)
+        return image, f
 
 
 def get_features(split, m=None):
