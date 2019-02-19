@@ -1,5 +1,5 @@
 *.pyc
-dataset/
+data/
 */__pycache__/
 .idea/
 *.ipynb_checkpoints/

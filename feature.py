@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
-from torchvision import datasets, transform
+from torchvision import datasets, transforms, models
+from torch.utils.data.dataset import Dataset
+from torch.utils.data import DataLoader
 
 
 class CocoDataset(Dataset):
@@ -19,9 +21,9 @@ class CocoDataset(Dataset):
 
 
 def get_features(split, m=None):
-    model = torchvision.models.resnet152(pretrained=False)
+    model = models.resnet152(pretrained=False)
     dataset = CocoDataset(split)
-    data_loader = data.DataLoader(dataset, 256, shuffle=False, num_workers=4, pin_memory=False, drop_last=False)
+    data_loader = DataLoader(dataset, 256, shuffle=False, num_workers=4, pin_memory=False, drop_last=False)
     for i, inputs in enumerate(data_loader):
         print(inputs.shape)
         outputs = model(inputs)
