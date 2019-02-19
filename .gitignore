@@ -1,0 +1,8 @@
+*.pyc
+dataset/
+*/__pycache__/
+.idea/
+*.ipynb_checkpoints/
+.DS_Store
+.python-version
+vision/*.ipynb
