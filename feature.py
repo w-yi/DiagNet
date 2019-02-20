@@ -7,6 +7,7 @@ import os
 import io
 from skimage import io
 import numpy as np
+import argparse
 
 
 SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Features/coco_resnet/" 
@@ -49,4 +50,9 @@ def get_features(split, batch, gpu=True):
         for x, f in zip(outputs, targets):
             np.save(SAVE_PATH + split + '/' + f, x.cpu().data.numpy())
 
-get_features('train2014', 8)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--split', '-s', default='default', help='split')
+    args = parser.parse_args()
+    get_features(args.split, 8)
