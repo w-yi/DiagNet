@@ -4,27 +4,27 @@ VQA_TOOLS_PATH = '/home/yuz/data/VQA/PythonHelperTools'
 VQA_EVAL_TOOLS_PATH = '/home/yuz/data/VQA/PythonEvaluationTools'
 
 # location of the data
-VQA_PREFIX = '/home/yuz/data/VQA'
+VQA_PREFIX = '/data/home/wennyi/vqa-mfb.pytorch/data/VQA'
 
 feat = 'pool5'
 DATA_PATHS = {
     'train': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_train2014_questions.json',
         'ans_file': VQA_PREFIX + '/Annotations/mscoco_train2014_annotations.json',
-        'features_prefix': VQA_PREFIX + '/Features/ms_coco/resnet_%s_bgrms_large/train2014/COCO_train2014_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/train2014/COCO_train2014_'%feat
     },
     'val': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_val2014_questions.json',
         'ans_file': VQA_PREFIX + '/Annotations/mscoco_val2014_annotations.json',
-        'features_prefix': VQA_PREFIX + '/Features/ms_coco/resnet_%s_bgrms_large/val2014/COCO_val2014_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/val2014/COCO_val2014_'%feat
     },
     'test-dev': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_test-dev2015_questions.json',
-        'features_prefix': VQA_PREFIX + '/Features/ms_coco/resnet_%s_bgrms_large/test2015/COCO_test2015_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/test2015/COCO_test2015_'%feat
     },
     'test': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_test2015_questions.json',
-        'features_prefix': VQA_PREFIX + '/Features/ms_coco/resnet_%s_bgrms_large/test2015/COCO_test2015_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/test2015/COCO_test2015_'%feat
     },
     'genome': {
         'genome_file': VQA_PREFIX + '/Questions/OpenEnded_genome_train_questions.json',
