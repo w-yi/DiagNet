@@ -11,7 +11,7 @@ import argparse
 
 
 SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Features/coco_resnet/" 
-IMAGE_PATH = "/data/home/shared/coco/images/"
+IMAGE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Images/"
 
 
 class CocoDataset(Dataset):
@@ -49,7 +49,9 @@ def get_features(split, batch, gpu=True):
         outputs = model(inputs).squeeze(-1).squeeze(-1)
         for x, f in zip(outputs, targets):
             np.save(SAVE_PATH + split + '/' + f, x.cpu().data.numpy())
-
+        del inputs
+        del outputs
+        del targets
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
