@@ -11,20 +11,20 @@ DATA_PATHS = {
     'train': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_train2014_questions.json',
         'ans_file': VQA_PREFIX + '/Annotations/mscoco_train2014_annotations.json',
-        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/train2014/COCO_train2014_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/train2014/COCO_train2014_'
     },
     'val': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_val2014_questions.json',
         'ans_file': VQA_PREFIX + '/Annotations/mscoco_val2014_annotations.json',
-        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/val2014/COCO_val2014_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/val2014/COCO_val2014_'
     },
     'test-dev': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_test-dev2015_questions.json',
-        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/test2015/COCO_test2015_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/test2015/COCO_test2015_'
     },
     'test': {
         'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_test2015_questions.json',
-        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/test2015/COCO_test2015_'%feat
+        'features_prefix': VQA_PREFIX + '/Features/coco_resnet/test2015/COCO_test2015_'
     },
     'genome': {
         'genome_file': VQA_PREFIX + '/Questions/OpenEnded_genome_train_questions.json',
