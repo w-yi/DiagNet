@@ -5,4 +5,4 @@ data/
 *.ipynb_checkpoints/
 .DS_Store
 .python-version
-vision/*.ipynb
+VQA/

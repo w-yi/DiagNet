@@ -35,7 +35,7 @@ class CocoDataset(Dataset):
 
 
 def get_features(split, batch, gpu=True):
-    model = models.resnet152(pretrained=False)
+    model = models.resnet152(pretrained=True)
     model.avgpool = nn.AdaptiveAvgPool2d(1)
     modules = list(model.children())[:-1]
     model = nn.Sequential(*modules)
@@ -49,6 +49,8 @@ def get_features(split, batch, gpu=True):
         outputs = model(inputs).squeeze(-1).squeeze(-1)
         for x, f in zip(outputs, targets):
             np.save(SAVE_PATH + split + '/' + f, x.cpu().data.numpy())
+            del x
+            del f
         del inputs
         del outputs
         del targets
