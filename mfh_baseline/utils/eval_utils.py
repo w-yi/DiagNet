@@ -93,22 +93,22 @@ def visualize_failures(stat_list,mode):
                         img_title = pre + str(' '.join(t_question_list)) + '.  a_' + \
                             str(ans) + ' p_' + str(pred) + '.png'
                         count += 1
-                        print os.path.join(savepath,img_title)
+                        print(os.path.join(savepath,img_title))
                         t_img.save(os.path.join(savepath,img_title))
 
-    print 'saving whatis'
+    print('saving whatis')
     qt_color_list = [['what','color']]
     save_qtype(qt_color_list, 'colors', mode)
 
-    print 'saving whatis'
+    print('saving whatis')
     qt_whatis_list = [['what','is'],['what','kind'],['what','are']]
     save_qtype(qt_whatis_list, 'whatis', mode)
 
-    print 'saving is'
+    print('saving is')
     qt_is_list = [['is','the'], ['is','this'],['is','there']]
     save_qtype(qt_is_list, 'is', mode)
 
-    print 'saving how many'
+    print('saving how many')
     qt_howmany_list =[['how','many']]
     save_qtype(qt_howmany_list, 'howmany', mode)
 
@@ -122,7 +122,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
     stat_list = []
     total_questions = len(dp.getQuesIds())
 
-    print ('Validating...')
+    print('Validating...')
     while epoch == 0:
         t_word, word_length, t_img_feature, t_answer, t_qid_list, t_iid_list, epoch = dp.get_batch_vec() 
         word_length = np.sum(word_length,axis=1)
@@ -163,14 +163,14 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
         sys.stdout.write('\r' + ('%.2f' % percent) + '%')
         sys.stdout.flush()
 
-    print ('Deduping arr of len', len(pred_list))
+    print('Deduping arr of len', len(pred_list))
     deduped = []
     seen = set()
     for ans, qid in pred_list:
         if qid not in seen:
             seen.add(qid)
             deduped.append((ans, qid))
-    print ('New len', len(deduped))
+    print('New len', len(deduped))
     final_list=[]
     for ans,qid in deduped:
         final_list.append({u'answer': ans, u'question_id': qid})
@@ -243,7 +243,7 @@ def drawgraph(results, folder,k,d,prefix='std',save_question_type_graphs=False):
     def draw_qt_acc(target_key_list, figname):
         fig = plt.figure()
         for k in target_key_list:
-            print k,type(k)
+            print(k,type(k))
             t_val = np.array([ qt_dic[k] for qt_dic in qt_dic_list])
             plt.plot(it,t_val,label=str(k))
         plt.legend(fontsize='small')

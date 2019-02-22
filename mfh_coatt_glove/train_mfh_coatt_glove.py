@@ -84,10 +84,10 @@ def make_vocab_files():
     """
     Produce the question and answer vocabulary files.
     """
-    print ('making question vocab...', opt.QUESTION_VOCAB_SPACE)
+    print('making question vocab...', opt.QUESTION_VOCAB_SPACE)
     qdic, _ = VQADataProvider.load_data(opt.QUESTION_VOCAB_SPACE)
     question_vocab = make_question_vocab(qdic)
-    print ('making answer vocab...', opt.ANSWER_VOCAB_SPACE)
+    print('making answer vocab...', opt.ANSWER_VOCAB_SPACE)
     _, adic = VQADataProvider.load_data(opt.ANSWER_VOCAB_SPACE)
     answer_vocab = make_answer_vocab(adic, opt.NUM_OUTPUT_UNITS)
     return question_vocab, answer_vocab
@@ -139,12 +139,12 @@ def train():
             test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx)
             writer.add_scalar('mfh_coatt_glove/val_loss', test_loss, iter_idx)
             writer.add_scalar('mfh_coatt_glove/accuracy', acc_overall, iter_idx)
-            print ('Test loss:', test_loss)
-            print ('Accuracy:', acc_overall)
-            print ('Test per ans', acc_per_ans)
+            print('Test loss:', test_loss)
+            print('Accuracy:', acc_overall)
+            print('Test per ans', acc_per_ans)
             results.append([iter_idx, c_mean_loss, test_loss, acc_overall, acc_per_ques, acc_per_ans])
             best_result_idx = np.array([x[3] for x in results]).argmax()
-            print ('Best accuracy of', results[best_result_idx][3], 'was at iteration', results[best_result_idx][0])
+            print('Best accuracy of', results[best_result_idx][3], 'was at iteration', results[best_result_idx][0])
             drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix='mfh_coatt_glove')
         if iter_idx % opt.TESTDEV_INTERVAL == 0 and iter_idx != 0:
             exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
@@ -158,7 +158,7 @@ if not os.path.exists('./%s'%folder):
     os.makedirs('./%s'%folder)
 question_vocab, answer_vocab = {}, {}
 if os.path.exists('./%s/vdict.json'%folder) and os.path.exists('./%s/adict.json'%folder):
-    print ('restoring vocab')
+    print('restoring vocab')
     with open('./%s/vdict.json'%folder,'r') as f:
         question_vocab = json.load(f)
     with open('./%s/adict.json'%folder,'r') as f:
@@ -169,8 +169,8 @@ else:
         json.dump(question_vocab, f)
     with open('./%s/adict.json'%folder,'w') as f:
         json.dump(answer_vocab, f)
-print ('question vocab size:', len(question_vocab))
-print ('answer vocab size:', len(answer_vocab))
+print('question vocab size:', len(question_vocab))
+print('answer vocab size:', len(answer_vocab))
 opt.quest_vob_size = len(question_vocab)
 opt.ans_vob_size = len(answer_vocab)
 

@@ -51,7 +51,7 @@ class VQADataProvider:
                     adic[data_split + QID_KEY_SEPARATOR + str(a['question_id'])] = \
                         a['answers']
 
-        print 'parsed', len(qdic), 'questions for', data_split
+        print('parsed', len(qdic), 'questions for', data_split)
         return qdic, adic
 
     @staticmethod
@@ -69,7 +69,7 @@ class VQADataProvider:
                 qdic[key] = {'qstr': q['question'], 'iid': q['image']}
                 adic[key] = [{'answer': q['answer']}]
 
-        print 'parsed', len(qdic), 'questions for genome'
+        print('parsed', len(qdic), 'questions for genome')
         return qdic, adic
 
     @staticmethod
@@ -119,7 +119,7 @@ class VQADataProvider:
         """ Return the most popular answer in string."""
         if self.mode == 'test-dev' or self.mode == 'test':
             return -1
-        answer_list = [ answer_obj[i]['answer'] for i in xrange(10)]
+        answer_list = [ answer_obj[i]['answer'] for i in range(10)]
         dic = {}
         for ans in answer_list:
             if dic.has_key(ans):
@@ -172,7 +172,7 @@ class VQADataProvider:
         cvec = np.zeros(max_length)
         glove_matrix = np.zeros((max_length, GLOVE_EMBEDDING_SIZE))
         """  pad on the left   """
-        # for i in xrange(max_length):
+        # for i in range(max_length):
         #     if i < max_length - len(q_list):
         #         cvec[i] = 0
         #     else:
@@ -183,7 +183,7 @@ class VQADataProvider:
         #         qvec[i] = self.vdict[w]
         #         cvec[i] = 0 if i == max_length - len(q_list) else 1
         """  pad on the right   """
-        for i in xrange(max_length):
+        for i in range(max_length):
             if i >= len(q_list):
                 pass
             else:
@@ -254,7 +254,7 @@ class VQADataProvider:
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
             except:
                 t_ivec = 0.
-                print 'data not found for qid : ', q_iid,  self.mode
+                print('data not found for qid : ', q_iid,  self.mode)
              
             # convert answer to vec
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':

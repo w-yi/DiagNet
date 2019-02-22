@@ -1,10 +1,20 @@
 import argparse
+import socket
+import os
+
+# get the project root dir assuming data is located within the same project folder
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if socket.gethostname() == 'DESKTOP-9UNSKEL':
+    DATA_DIR = os.path.join(os.path.dirname(ROOT_DIR), 'VQA')
+else:
+    DATA_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
 # vqa tools - get from https://github.com/VT-vision-lab/VQA
-VQA_TOOLS_PATH = '/data/home/wennyi/vqa-mfb.pytorch/data/VQA/PythonHelperTools'
-VQA_EVAL_TOOLS_PATH = '/data/home/wennyi/vqa-mfb.pytorch/data/VQA/PythonEvaluationTools'
+
+VQA_TOOLS_PATH = os.path.join(DATA_DIR, 'PythonHelperTools')
+VQA_EVAL_TOOLS_PATH = os.path.join(DATA_DIR, 'PythonEvaluationTools')
 
 # location of the data
-VQA_PREFIX = '/data/home/wennyi/vqa-mfb.pytorch/data/VQA'
+VQA_PREFIX = DATA_DIR
 
 feat = 'pool5'
 DATA_PATHS = {
@@ -28,7 +38,7 @@ DATA_PATHS = {
     },
     'genome': {
         'genome_file': VQA_PREFIX + '/Questions/OpenEnded_genome_train_questions.json',
-        'features_prefix': VQA_PREFIX + '/Features/genome/feat_resnet-152/resnet_%s_bgrms_large/'%feat
+        'features_prefix': VQA_PREFIX + '/Features/genome/feat_resnet-152/resnet_%s_bgrms_large/' % feat
     }
 }
 def parse_opt():

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -12,7 +8,7 @@ import os
 import sys
 import config
 from models.mfb_baseline import mfb_baseline
-import utils.data_provider as data_provider
+from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
 import json
@@ -84,10 +80,10 @@ def make_vocab_files():
     """
     Produce the question and answer vocabulary files.
     """
-    print ('making question vocab...', opt.QUESTION_VOCAB_SPACE)
+    print('making question vocab...', opt.QUESTION_VOCAB_SPACE)
     qdic, _ = VQADataProvider.load_data(opt.QUESTION_VOCAB_SPACE)
     question_vocab = make_question_vocab(qdic)
-    print ('making answer vocab...', opt.ANSWER_VOCAB_SPACE)
+    print('making answer vocab...', opt.ANSWER_VOCAB_SPACE)
     _, adic = VQADataProvider.load_data(opt.ANSWER_VOCAB_SPACE)
     answer_vocab = make_answer_vocab(adic, opt.NUM_OUTPUT_UNITS)
     return question_vocab, answer_vocab
@@ -136,58 +132,60 @@ def train():
             test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx)
             writer.add_scalar('mfb_baseline/val_loss', test_loss, iter_idx)
             writer.add_scalar('mfb_baseline/accuracy', acc_overall, iter_idx)
-            print ('Test loss:', test_loss)
-            print ('Accuracy:', acc_overall)
-            print ('Test per ans', acc_per_ans)
+            print('Test loss:', test_loss)
+            print('Accuracy:', acc_overall)
+            print('Test per ans', acc_per_ans)
             results.append([iter_idx, c_mean_loss, test_loss, acc_overall, acc_per_ques, acc_per_ans])
             best_result_idx = np.array([x[3] for x in results]).argmax()
-            print ('Best accuracy of', results[best_result_idx][3], 'was at iteration', results[best_result_idx][0])
+            print('Best accuracy of', results[best_result_idx][3], 'was at iteration', results[best_result_idx][0])
             drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix='mfb_baseline')
         if iter_idx % opt.TESTDEV_INTERVAL == 0 and iter_idx != 0:
             exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
 
-opt = config.parse_opt()
-torch.cuda.set_device(opt.TRAIN_GPU_ID)
-# torch.cuda.manual_seed(opt.SEED)
-writer = SummaryWriter()
-folder = 'mfb_baseline_%s'%opt.TRAIN_DATA_SPLITS
-if not os.path.exists('./%s'%folder):
-    os.makedirs('./%s'%folder)
-question_vocab, answer_vocab = {}, {}
-if os.path.exists('./%s/vdict.json'%folder) and os.path.exists('./%s/adict.json'%folder):
-    print ('restoring vocab')
-    with open('./%s/vdict.json'%folder,'r') as f:
-        question_vocab = json.load(f)
-    with open('./%s/adict.json'%folder,'r') as f:
-        answer_vocab = json.load(f)
-else:
-    question_vocab, answer_vocab = make_vocab_files()
-    with open('./%s/vdict.json'%folder,'w') as f:
-        json.dump(question_vocab, f)
-    with open('./%s/adict.json'%folder,'w') as f:
-        json.dump(answer_vocab, f)
-print ('question vocab size:', len(question_vocab))
-print ('answer vocab size:', len(answer_vocab))
-opt.quest_vob_size = len(question_vocab)
-opt.ans_vob_size = len(answer_vocab)
 
-train_Data = data_provider.VQADataset(opt.TRAIN_DATA_SPLITS, opt.BATCH_SIZE, folder, opt)
-train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=1)
+def main():
+    opt = config.parse_opt()
+    torch.cuda.set_device(opt.TRAIN_GPU_ID)
+    # torch.cuda.manual_seed(opt.SEED)
+    writer = SummaryWriter()
+    folder = 'mfb_baseline_%s'%opt.TRAIN_DATA_SPLITS
+    if not os.path.exists('./%s'%folder):
+        os.makedirs('./%s'%folder)
+    question_vocab, answer_vocab = {}, {}
+    if os.path.exists('./%s/vdict.json'%folder) and os.path.exists('./%s/adict.json'%folder):
+        print('restoring vocab')
+        with open('./%s/vdict.json'%folder,'r') as f:
+            question_vocab = json.load(f)
+        with open('./%s/adict.json'%folder,'r') as f:
+            answer_vocab = json.load(f)
+    else:
+        question_vocab, answer_vocab = make_vocab_files()
+        with open('./%s/vdict.json'%folder,'w') as f:
+            json.dump(question_vocab, f)
+        with open('./%s/adict.json'%folder,'w') as f:
+            json.dump(answer_vocab, f)
+    print('question vocab size:', len(question_vocab))
+    print('answer vocab size:', len(answer_vocab))
+    opt.quest_vob_size = len(question_vocab)
+    opt.ans_vob_size = len(answer_vocab)
 
-model = mfb_baseline(opt)
-if opt.RESUME:
-    print('==> Resuming from checkpoint..')
-    checkpoint = torch.load(opt.RESUME_PATH)
-    model.load_state_dict(checkpoint)
-else:
-    '''init model parameter'''
-    for name, param in model.named_parameters():
-        if 'bias' in name:  # bias can't init by xavier
-            init.constant(param, 0.0)
-        elif 'weight' in name:
-            init.kaiming_uniform(param)
-model.cuda()
-optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
+    train_Data = data_provider.VQADataset(opt.TRAIN_DATA_SPLITS, opt.BATCH_SIZE, folder, opt)
+    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=1)
 
-train()
-writer.close()
+    model = mfb_baseline(opt)
+    if opt.RESUME:
+        print('==> Resuming from checkpoint..')
+        checkpoint = torch.load(opt.RESUME_PATH)
+        model.load_state_dict(checkpoint)
+    else:
+        '''init model parameter'''
+        for name, param in model.named_parameters():
+            if 'bias' in name:  # bias can't init by xavier
+                init.constant(param, 0.0)
+            elif 'weight' in name:
+                init.kaiming_uniform(param)
+    model.cuda()
+    optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
+
+    train()
+    writer.close()
