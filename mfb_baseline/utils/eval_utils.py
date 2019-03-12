@@ -11,7 +11,7 @@ from PIL import ImageFont, ImageDraw
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from data_provider import VQADataProvider
+from utils.data_provider import VQADataProvider
 sys.path.append("..")
 import config
 sys.path.append(config.VQA_TOOLS_PATH)
