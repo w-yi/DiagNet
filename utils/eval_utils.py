@@ -11,7 +11,7 @@ from PIL import ImageFont, ImageDraw
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from data_provider import VQADataProvider
+from utils.data_provider import VQADataProvider
 sys.path.append("..")
 import config
 sys.path.append(config.VQA_TOOLS_PATH)
@@ -56,7 +56,7 @@ def visualize_failures(stat_list,mode):
                         saveflag = True
                     else:
                         saveflag = False
-                               
+
                     if saveflag == True:
                         t_iid = t_question['iid']
                         if mode == 'val':
@@ -112,10 +112,10 @@ def visualize_failures(stat_list,mode):
     qt_howmany_list =[['how','many']]
     save_qtype(qt_howmany_list, 'howmany', mode)
 
-def exec_validation(model, opt, mode, folder, it, visualize=False):
+def exec_validation(model, opt, mode, folder, it, visualize=False, glove=False):
     model.eval()
     criterion = nn.NLLLoss()
-    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode='val', folder=folder)
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, folder=folder, glove=glove)
     epoch = 0
     pred_list = []
     testloss_list = []
@@ -124,14 +124,24 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
 
     print('Validating...')
     while epoch == 0:
-        t_word, word_length, t_img_feature, t_answer, t_glove_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec() 
-        word_length = np.sum(word_length,axis=1)
-        data = Variable(torch.from_numpy(t_word)).cuda().long()
-        word_length = torch.from_numpy(word_length).cuda()
-        img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
-        label = Variable(torch.from_numpy(t_answer)).cuda()
-        glove = Variable(torch.from_numpy(t_glove_matrix)).cuda().float()
-        pred = model(data, word_length, img_feature, glove, 'val')
+        if glove:
+            t_word, word_length, t_img_feature, t_answer, t_glove_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
+            word_length = np.sum(word_length,axis=1)
+            data = Variable(torch.from_numpy(t_word)).cuda().long()
+            word_length = torch.from_numpy(word_length).cuda()
+            img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
+            label = Variable(torch.from_numpy(t_answer)).cuda()
+            glove = Variable(torch.from_numpy(t_glove_matrix)).cuda().float()
+            pred = model(data, word_length, img_feature, glove, mode)
+        else:
+            t_word, word_length, t_img_feature, t_answer, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
+            word_length = np.sum(word_length,axis=1)
+            data = Variable(torch.from_numpy(t_word)).cuda().long()
+            word_length = torch.from_numpy(word_length).cuda()
+            img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
+            label = Variable(torch.from_numpy(t_answer)).cuda()
+            pred = model(data, word_length, img_feature, mode)
+
         pred = (pred.data).cpu().numpy()
         if mode == 'test-dev' or 'test':
             pass
@@ -182,8 +192,13 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
             json.dump(final_list, f)
         if visualize:
             visualize_failures(stat_list,mode)
-        annFile = config.DATA_PATHS['val']['ans_file']
-        quesFile = config.DATA_PATHS['val']['ques_file']
+
+        exp_type = 'baseline'
+        if glove:
+            exp_type = 'glove'
+
+        annFile = config.DATA_PATHS[exp_type]['val']['ans_file']
+        quesFile = config.DATA_PATHS[exp_type]['val']['ques_file']
         vqa = VQA(annFile, quesFile)
         vqaRes = vqa.loadRes(valFile, quesFile)
         vqaEval = VQAEval(vqa, vqaRes, n=2)
@@ -272,5 +287,3 @@ def drawgraph(results, folder,k,d,prefix='std',save_question_type_graphs=False):
         draw_qt_acc(['what is the man','is the man','are they','is he',\
             'is the woman','is this person','what is the woman','is the person',\
             'what is the person'],'./qt_human.png')
-
-

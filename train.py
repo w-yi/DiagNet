@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,8 +7,11 @@ import numpy as np
 import os
 import sys
 import config
+from models.mfb_baseline import mfb_baseline
+from models.mfh_baseline import mfh_baseline
+from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
-import utils.data_provider as data_provider
+from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
 import json
@@ -80,7 +79,7 @@ def make_question_vocab(qdic):
 
     return vdict
 
-def make_vocab_files():
+def make_vocab_files(opt):
     """
     Produce the question and answer vocabulary files.
     """
@@ -96,7 +95,7 @@ def adjust_learning_rate(optimizer, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * decay_rate
 
-def train():
+def train(opt, model, train_Loader, optimizer, writer, use_glove):
     criterion = nn.KLDivLoss(size_average=False)
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
@@ -106,90 +105,117 @@ def train():
         word_length = np.squeeze(word_length, axis=0)
         feature = np.squeeze(feature, axis=0)
         answer = np.squeeze(answer, axis=0)
-        glove = np.squeeze(glove, axis=0)
         epoch = epoch.numpy()
 
         data = Variable(data).cuda().long()
         word_length = word_length.cuda()
         img_feature = Variable(feature).cuda().float()
         label = Variable(answer).cuda().float()
-        glove = Variable(glove).cuda().float()
-
         optimizer.zero_grad()
-        pred = model(data, word_length, img_feature, glove, 'train')
+
+        if use_glove:
+            glove = np.squeeze(glove, axis=0)
+            glove = Variable(glove).cuda().float()
+            pred = model(data, word_length, img_feature, glove, 'train')
+        else:
+            pred = model(data, word_length, img_feature, 'train')
+
         loss = criterion(pred, label)
         loss.backward()
         optimizer.step()
-        train_loss[iter_idx] = loss.data[0]
+        train_loss[iter_idx] = loss.data.float()
         if iter_idx % opt.DECAY_STEPS == 0 and iter_idx != 0:
             adjust_learning_rate(optimizer, opt.DECAY_RATE)
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
             now = str(datetime.datetime.now())
-            c_mean_loss = train_loss[iter_idx-opt.PRINT_INTERVAL:iter_idx].mean()/opt.BATCH_SIZE
-            writer.add_scalar('mfh_coatt_glove/train_loss', c_mean_loss, iter_idx)
-            writer.add_scalar('mfh_coatt_glove/lr', optimizer.param_groups[0]['lr'], iter_idx)
+            c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL:iter_idx].mean()
+            writer.add_scalar(opt.MODEL + '/train_loss', c_mean_loss, iter_idx)
+            writer.add_scalar(opt.MODEL + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
             print('{}\tTrain Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
                         now, epoch, iter_idx, c_mean_loss))
+            sys.stdout.flush()
         if iter_idx % opt.CHECKPOINT_INTERVAL == 0 and iter_idx != 0:
-            if not os.path.exists('./data'):
-                os.makedirs('./data')
-            save_path = './data/mfh_coatt_glove_iter_' + str(iter_idx) + '.pth'
+            if not os.path.exists(config.CACHE_DIR):
+                os.makedirs(config.CACHE_DIR)
+            save_path = os.path.join(config.CACHE_DIR, opt.MODEL + '_iter_' + str(iter_idx) + '.pth')
             torch.save(model.state_dict(), save_path)
         if iter_idx % opt.VAL_INTERVAL == 0 and iter_idx != 0:
             test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx)
-            writer.add_scalar('mfh_coatt_glove/val_loss', test_loss, iter_idx)
-            writer.add_scalar('mfh_coatt_glove/accuracy', acc_overall, iter_idx)
+            writer.add_scalar(opt.MODEL + '/val_loss', test_loss, iter_idx)
+            writer.add_scalar(opt.MODEL + 'accuracy', acc_overall, iter_idx)
             print('Test loss:', test_loss)
             print('Accuracy:', acc_overall)
             print('Test per ans', acc_per_ans)
             results.append([iter_idx, c_mean_loss, test_loss, acc_overall, acc_per_ques, acc_per_ans])
             best_result_idx = np.array([x[3] for x in results]).argmax()
             print('Best accuracy of', results[best_result_idx][3], 'was at iteration', results[best_result_idx][0])
-            drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix='mfh_coatt_glove')
+            sys.stdout.flush()
+            drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix=opt.MODEL)
         if iter_idx % opt.TESTDEV_INTERVAL == 0 and iter_idx != 0:
             exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
 
-opt = config.parse_opt()
-torch.cuda.set_device(opt.TRAIN_GPU_ID)
-# torch.cuda.manual_seed(opt.SEED)
-writer = SummaryWriter()
-folder = 'mfh_coatt_glove_%s'%opt.TRAIN_DATA_SPLITS
-if not os.path.exists('./%s'%folder):
-    os.makedirs('./%s'%folder)
-question_vocab, answer_vocab = {}, {}
-if os.path.exists('./%s/vdict.json'%folder) and os.path.exists('./%s/adict.json'%folder):
-    print('restoring vocab')
-    with open('./%s/vdict.json'%folder,'r') as f:
-        question_vocab = json.load(f)
-    with open('./%s/adict.json'%folder,'r') as f:
-        answer_vocab = json.load(f)
-else:
-    question_vocab, answer_vocab = make_vocab_files()
-    with open('./%s/vdict.json'%folder,'w') as f:
-        json.dump(question_vocab, f)
-    with open('./%s/adict.json'%folder,'w') as f:
-        json.dump(answer_vocab, f)
-print('question vocab size:', len(question_vocab))
-print('answer vocab size:', len(answer_vocab))
-opt.quest_vob_size = len(question_vocab)
-opt.ans_vob_size = len(answer_vocab)
 
-train_Data = data_provider.VQADataset(opt.TRAIN_DATA_SPLITS, opt.BATCH_SIZE, folder, opt)
-train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=False, pin_memory=True, num_workers=1)
+def main():
+    opt = config.parse_opt()
+    glove = False
+    if 'glove' in opt.MODEL:
+        glove = True
+    # torch.cuda.set_device(opt.TRAIN_GPU_ID)
+    # torch.cuda.manual_seed(opt.SEED)
+    print('Using gpu card: ' + torch.cuda.get_device_name(opt.TRAIN_GPU_ID))
+    writer = SummaryWriter()
+    folder = os.path.join(config.TRAIN_DIR, opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    question_vocab, answer_vocab = {}, {}
+    vdict_path = os.path.join(folder, 'vdict.json')
+    adict_path = os.path.join(folder, 'adict.json')
+    if os.path.exists(vdict_path) and os.path.exists(adict_path):
+        print('restoring vocab')
+        with open(vdict_path,'r') as f:
+            question_vocab = json.load(f)
+        with open(adict_path,'r') as f:
+            answer_vocab = json.load(f)
+    else:
+        question_vocab, answer_vocab = make_vocab_files(opt)
+        with open(vdict_path,'w') as f:
+            json.dump(question_vocab, f)
+        with open(adict_path,'w') as f:
+            json.dump(answer_vocab, f)
+    print('question vocab size:', len(question_vocab))
+    print('answer vocab size:', len(answer_vocab))
+    opt.quest_vob_size = len(question_vocab)
+    opt.ans_vob_size = len(answer_vocab)
 
-model = mfh_coatt_glove(opt)
-if opt.RESUME:
-    print('==> Resuming from checkpoint..')
-    checkpoint = torch.load(opt.RESUME_PATH)
-    model.load_state_dict(checkpoint)
-else:
-    '''init model parameter'''
-    for name, param in model.named_parameters():
-        if 'bias' in name:  # bias can't init by xavier
-            init.constant(param, 0.0)
-        elif 'weight' in name:
-            init.kaiming_uniform(param)
-model.cuda()
-optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
-train()
-writer.close()
+    train_Data = data_provider.VQADataset(opt.TRAIN_DATA_SPLITS, opt.BATCH_SIZE, folder, opt, glove)
+    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=1)
+
+    model = None
+    if opt.MODEL == 'mfb_bs':
+        model = mfb_baseline(opt)
+    elif opt.MODEL == 'mfh_bs':
+        model = mfh_baseline(opt)
+    elif opt.MODEL == 'mfb_glove':
+        model = mfb_coatt_glove(opt)
+    elif opt.MODEL == 'mfh_glove':
+        model = mfh_coatt_glove(opt)
+    if opt.RESUME:
+        print('==> Resuming from checkpoint..')
+        checkpoint = torch.load(opt.RESUME_PATH)
+        model.load_state_dict(checkpoint)
+    else:
+        '''init model parameter'''
+        for name, param in model.named_parameters():
+            if 'bias' in name:  # bias can't init by xavier
+                init.constant(param, 0.0)
+            elif 'weight' in name:
+                init.kaiming_uniform(param)
+                # init.xavier_uniform(param)  # for mfb_coatt_glove
+    model.cuda()
+    optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
+
+    train(opt, model, train_Loader, optimizer, writer, glove)
+    writer.close()
+
+if __name__ == '__main__':
+    main()

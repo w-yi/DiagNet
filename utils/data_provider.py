@@ -1,16 +1,16 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import re, json, random
 import config
 import torch.utils.data as data
 import spacy
+import os
 
 QID_KEY_SEPARATOR = '/'
 ZERO_PAD = '_PAD'
 GLOVE_EMBEDDING_SIZE = 300
 class VQADataProvider:
 
-    def __init__(self, opt, folder='./result', batchsize=64, max_length=15, mode='train'):
+    def __init__(self, opt, folder, batchsize=64, max_length=15, mode='train', glove=False):
         self.opt = opt
         self.batchsize = batchsize
         self.d_vocabulary = None
@@ -21,31 +21,38 @@ class VQADataProvider:
         self.mode = mode
         self.qdic, self.adic = VQADataProvider.load_data(mode)
 
-        with open('./%s/vdict.json'%folder,'r') as f:
+        with open(os.path.join(folder, 'vdict.json'), 'r') as f:
             self.vdict = json.load(f)
-        with open('./%s/adict.json'%folder,'r') as f:
+        with open(os.path.join(folder, 'adict.json'), 'r') as f:
             self.adict = json.load(f)
 
-        self.n_ans_vocabulary = len(self.adict)
-        self.nlp = spacy.load('en_vectors_web_lg')
-        self.glove_dict = {} # word -> glove vector
+        self.glove = glove
+        if glove:
+            self.n_ans_vocabulary = len(self.adict)
+            self.nlp = spacy.load('en_vectors_web_lg')
+            self.glove_dict = {} # word -> glove vector
+
 
     @staticmethod
-    def load_vqa_json(data_split):
+    def load_vqa_json(data_split, glove=False):
         """
         Parses the question and answer json files for the given data split.
         Returns the question dictionary and the answer dictionary.
         """
         qdic, adic = {}, {}
 
-        with open(config.DATA_PATHS[data_split]['ques_file'], 'r') as f:
+        exp_type = 'baseline'
+        if glove:
+            exp_type = 'glove'
+
+        with open(config.DATA_PATHS[exp_type][data_split]['ques_file'], 'r') as f:
             qdata = json.load(f)['questions']
             for q in qdata:
                 qdic[data_split + QID_KEY_SEPARATOR + str(q['question_id'])] = \
                     {'qstr': q['question'], 'iid': q['image_id']}
 
         if 'test' not in data_split:
-            with open(config.DATA_PATHS[data_split]['ans_file'], 'r') as f:
+            with open(config.DATA_PATHS[exp_type][data_split]['ans_file'], 'r') as f:
                 adata = json.load(f)['annotations']
                 for a in adata:
                     adic[data_split + QID_KEY_SEPARATOR + str(a['question_id'])] = \
@@ -55,14 +62,18 @@ class VQADataProvider:
         return qdic, adic
 
     @staticmethod
-    def load_genome_json():
+    def load_genome_json(glove=False):
         """
         Parses the genome json file. Returns the question dictionary and the
         answer dictionary.
         """
         qdic, adic = {}, {}
 
-        with open(config.DATA_PATHS['genome']['genome_file'], 'r') as f:
+        exp_type = 'baseline'
+        if glove:
+            exp_type = 'glove'
+
+        with open(config.DATA_PATHS[exp_type]['genome']['genome_file'], 'r') as f:
             qdata = json.load(f)
             for q in qdata:
                 key = 'genome' + QID_KEY_SEPARATOR + str(q['id'])
@@ -73,10 +84,15 @@ class VQADataProvider:
         return qdic, adic
 
     @staticmethod
-    def load_data(data_split_str):
+    def load_data(data_split_str, glove=False):
         all_qdic, all_adic = {}, {}
+
+        exp_type = 'baseline'
+        if glove:
+            exp_type = 'glove'
+
         for data_split in data_split_str.split('+'):
-            assert data_split in config.DATA_PATHS.keys(), 'unknown data split'
+            assert data_split in config.DATA_PATHS[exp_type].keys(), 'unknown data split'
             if data_split == 'genome':
                 qdic, adic = VQADataProvider.load_genome_json()
                 all_qdic.update(qdic)
@@ -88,7 +104,7 @@ class VQADataProvider:
         return all_qdic, all_adic
 
     def getQuesIds(self):
-        return self.qdic.keys()
+        return list(self.qdic.keys())
 
     def getStrippedQuesId(self, qid):
         return qid.split(QID_KEY_SEPARATOR)[1]
@@ -113,7 +129,7 @@ class VQADataProvider:
             t_str = re.sub( i, ' ', t_str)
         q_list = re.sub(r'\?','',t_str.lower()).split(' ')
         q_list = filter(lambda x: len(x) > 0, q_list)
-        return q_list
+        return list(q_list)
 
     def extract_answer(self,answer_obj):
         """ Return the most popular answer in string."""
@@ -170,7 +186,9 @@ class VQADataProvider:
         """
         qvec = np.zeros(max_length)
         cvec = np.zeros(max_length)
-        glove_matrix = np.zeros((max_length, GLOVE_EMBEDDING_SIZE))
+        glove_matrix = None
+        if self.glove:
+            glove_matrix = np.zeros((max_length, GLOVE_EMBEDDING_SIZE))
         """  pad on the left   """
         # for i in range(max_length):
         #     if i < max_length - len(q_list):
@@ -188,9 +206,12 @@ class VQADataProvider:
                 pass
             else:
                 w = q_list[i]
-                if w not in self.glove_dict:
-                    self.glove_dict[w] = self.nlp(u'%s' % w).vector
-                glove_matrix[i] = self.glove_dict[w]
+
+                if self.glove:
+                    if w not in self.glove_dict:
+                        self.glove_dict[w] = self.nlp(u'%s' % w).vector
+                    glove_matrix[i] = self.glove_dict[w]
+
                 if w not in self.vdict:
                     w = ''
                 qvec[i] = self.vdict[w]
@@ -222,12 +243,21 @@ class VQADataProvider:
 
         qvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
         cvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
-        ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
+
+        exp_type = 'baseline'
+        if self.glove:
+            ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
+            exp_type = 'glove'
+        else:
+            ivec = (np.zeros(self.batchsize*2048)).reshape(self.batchsize,2048)
+
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             avec = np.zeros(self.batchsize)
         else:
             avec = np.zeros((self.batchsize, self.opt.NUM_OUTPUT_UNITS))
-        glove_matrix = np.zeros((self.batchsize, self.max_length, GLOVE_EMBEDDING_SIZE))
+
+        if self.glove:
+            glove_matrix = np.zeros((self.batchsize, self.max_length, GLOVE_EMBEDDING_SIZE))
 
         for i,qid in enumerate(qid_list):
 
@@ -244,13 +274,14 @@ class VQADataProvider:
                 qid_split = qid.split(QID_KEY_SEPARATOR)
                 data_split = qid_split[0]
                 if data_split == 'genome':
-                    t_ivec = np.load(config.DATA_PATHS['genome']['features_prefix'] + str(q_iid) + '.jpg.npz')['x']
+                    t_ivec = np.load(config.DATA_PATHS[exp_type]['genome']['features_prefix'] + str(q_iid) + '.jpg.npy')
                 else:
-                    t_ivec = np.load(config.DATA_PATHS[data_split]['features_prefix'] + str(q_iid).zfill(12) + '.jpg.npz')['x']
+                    t_ivec = np.load(config.DATA_PATHS[exp_type][data_split]['features_prefix'] + str(q_iid).zfill(12) + '.jpg.npy')
 
                 # reshape t_ivec to D x FEAT_SIZE
-                if len(t_ivec.shape) > 2:
+                if self.glove and len(t_ivec.shape) > 2:
                     t_ivec = t_ivec.reshape((2048, -1))
+
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
             except:
                 t_ivec = 0.
@@ -265,11 +296,15 @@ class VQADataProvider:
 
             qvec[i,...] = t_qvec
             cvec[i,...] = t_cvec
-            ivec[i,:,0:t_ivec.shape[1]] = t_ivec
             avec[i,...] = t_avec
-            glove_matrix[i,...] = t_glove_matrix
 
-        return qvec, cvec, ivec, avec, glove_matrix
+            if self.glove:
+                ivec[i,:,0:t_ivec.shape[1]] = t_ivec
+                glove_matrix[i,...] = t_glove_matrix
+                return qvec, cvec, ivec, avec, glove_matrix
+            else:
+                ivec[i,...] = t_ivec
+                return qvec, cvec, ivec, avec, 0
 
 
     def get_batch_vec(self):
@@ -321,23 +356,31 @@ class VQADataProvider:
         return t_batch + (t_qid_list, t_iid_list, self.epoch_counter)
 
 class VQADataset(data.Dataset):
+    """
+    in order to use the universal api, always return the glove matrix
+    glove matrix is None if glove=False
+    """
 
-    def __init__(self, mode, batchsize, folder, opt):
+    def __init__(self, mode, batchsize, folder, opt, glove):
         self.batchsize = batchsize
         self.mode = mode
         self.folder = folder
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            self.dp = VQADataProvider(opt, batchsize=self.batchsize, mode=self.mode, folder=self.folder)
+            self.dp = VQADataProvider(opt, batchsize=self.batchsize, mode=self.mode, folder=self.folder, glove=glove)
+        self.glove = glove
 
-    def __getitem__(self, idx):
+    def __getitem__(self, index):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
             word, cont, feature, answer, glove_matrix, _, _, epoch = self.dp.get_batch_vec()
-        word_length = np.sum(cont, axis=1)
-        return word, word_length, feature, answer, glove_matrix, epoch
+            word_length = np.sum(cont, axis=1)
+            return word, word_length, feature, answer, glove_matrix, epoch
 
     def __len__(self):
-        return 150000
+        if self.mode == 'train':
+            return 150000   # this number had better bigger than "maxiterations" which you set in config
+            # mfh_baseline: 200000
+            # mfb_coatt_glove: 100000
