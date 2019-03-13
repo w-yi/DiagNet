@@ -33,10 +33,10 @@ def make_answer_vocab(adic, vocab_size):
     for qid in adic.keys():
         answer_obj = adic[qid]
         answer_list = [ans['answer'] for ans in answer_obj]
-        
+
         for q_ans in answer_list:
             # create dict
-            if adict.has_key(q_ans):
+            if q_ans in adict:
                 nadict[q_ans] += 1
             else:
                 nadict[q_ans] = 1
@@ -48,7 +48,7 @@ def make_answer_vocab(adic, vocab_size):
     for k,v in sorted(nadict.items(), key=lambda x:x[1]):
         nalist.append((k,v))
 
-    # remove words that appear less than once 
+    # remove words that appear less than once
     n_del_ans = 0
     n_valid_ans = 0
     adict_nid = {}
@@ -58,7 +58,7 @@ def make_answer_vocab(adic, vocab_size):
     for i, w in enumerate(nalist[-vocab_size:]):
         n_valid_ans += w[1]
         adict_nid[w[0]] = i
-    
+
     return adict_nid
 
 def make_question_vocab(qdic):
@@ -74,7 +74,7 @@ def make_question_vocab(qdic):
 
         # create dict
         for w in q_list:
-            if not vdict.has_key(w):
+            if w not in vdict:
                 vdict[w] = vid
                 vid +=1
 
@@ -127,7 +127,7 @@ def train():
             now = str(datetime.datetime.now())
             c_mean_loss = train_loss[iter_idx-opt.PRINT_INTERVAL:iter_idx].mean()/opt.BATCH_SIZE
             writer.add_scalar('mfb_coatt_glove/train_loss', c_mean_loss, iter_idx)
-            writer.add_scalar('mfb_coatt_glove/lr', optimizer.param_groups[0]['lr'], iter_idx)            
+            writer.add_scalar('mfb_coatt_glove/lr', optimizer.param_groups[0]['lr'], iter_idx)
             print('{}\tTrain Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
                         now, epoch, iter_idx, c_mean_loss))
         if iter_idx % opt.CHECKPOINT_INTERVAL == 0 and iter_idx != 0:
@@ -148,7 +148,7 @@ def train():
             drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix='mfb_coatt_glove')
         if iter_idx % opt.TESTDEV_INTERVAL == 0 and iter_idx != 0:
             exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
-            
+
 opt = config.parse_opt()
 torch.cuda.set_device(opt.TRAIN_GPU_ID)
 writer = SummaryWriter()
@@ -183,7 +183,7 @@ if opt.RESUME:
     model.load_state_dict(checkpoint)
 else:
     '''init model parameter'''
-    for name, param in model.named_parameters(): 
+    for name, param in model.named_parameters():
         if name.find("bias") == -1:        # bias can't init by xavier
             init.xavier_uniform(param)
 model.cuda()

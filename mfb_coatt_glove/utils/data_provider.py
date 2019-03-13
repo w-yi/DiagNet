@@ -33,7 +33,7 @@ class VQADataProvider:
     @staticmethod
     def load_vqa_json(data_split):
         """
-        Parses the question and answer json files for the given data split. 
+        Parses the question and answer json files for the given data split.
         Returns the question dictionary and the answer dictionary.
         """
         qdic, adic = {}, {}
@@ -122,7 +122,7 @@ class VQADataProvider:
         answer_list = [ answer_obj[i]['answer'] for i in range(10)]
         dic = {}
         for ans in answer_list:
-            if dic.has_key(ans):
+            if ans in dic:
                 dic[ans] +=1
             else:
                 dic[ans] = 1
@@ -137,17 +137,17 @@ class VQADataProvider:
         answer_list = [ ans['answer'] for ans in answer_obj]
         prob_answer_list = []
         for ans in answer_list:
-            if self.adict.has_key(ans):
+            if ans in self.adict:
                 prob_answer_list.append(ans)
     def extract_answer_list(self,answer_obj):
         answer_list = [ ans['answer'] for ans in answer_obj]
         prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS)
         for ans in answer_list:
-            if self.adict.has_key(ans):
+            if ans in self.adict:
                 index = self.adict[ans]
                 prob_answer_vec[index] += 1
         return prob_answer_vec / np.sum(prob_answer_vec)
- 
+
         if len(prob_answer_list) == 0:
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
                 return 'hoge'
@@ -155,7 +155,7 @@ class VQADataProvider:
                 raise Exception("This should not happen.")
         else:
             return random.choice(prob_answer_list)
- 
+
     def qlist_to_vec(self, max_length, q_list):
         """
         Converts a list of words into a format suitable for the embedding layer.
@@ -191,23 +191,23 @@ class VQADataProvider:
                 if w not in self.glove_dict:
                     self.glove_dict[w] = self.nlp(u'%s' % w).vector
                 glove_matrix[i] = self.glove_dict[w]
-                if self.vdict.has_key(w) is False:
+                if w not in self.vdict:
                     w = ''
                 qvec[i] = self.vdict[w]
-                cvec[i] = 1 
+                cvec[i] = 1
         return qvec, cvec, glove_matrix
- 
+
     def answer_to_vec(self, ans_str):
         """ Return answer id if the answer is included in vocabulary otherwise '' """
         if self.mode =='test-dev' or self.mode == 'test':
             return -1
 
-        if self.adict.has_key(ans_str):
+        if ans_str in self.adict:
             ans = self.adict[ans_str]
         else:
             ans = self.adict['']
         return ans
- 
+
     def vec_to_answer(self, ans_symbol):
         """ Return answer id if the answer is included in vocabulary otherwise '' """
         if self.rev_adict is None:
@@ -217,7 +217,7 @@ class VQADataProvider:
             self.rev_adict = rev_adict
 
         return self.rev_adict[ans_symbol]
- 
+
     def create_batch(self,qid_list):
 
         qvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
@@ -247,7 +247,7 @@ class VQADataProvider:
                     t_ivec = np.load(config.DATA_PATHS['genome']['features_prefix'] + str(q_iid) + '.jpg.npz')['x']
                 else:
                     t_ivec = np.load(config.DATA_PATHS[data_split]['features_prefix'] + str(q_iid).zfill(12) + '.jpg.npz')['x']
-                
+
                 # reshape t_ivec to D x FEAT_SIZE
                 if len(t_ivec.shape) > 2:
                     t_ivec = t_ivec.reshape((2048, -1))
@@ -255,14 +255,14 @@ class VQADataProvider:
             except:
                 t_ivec = 0.
                 print('data not found for qid : ', q_iid,  self.mode)
-             
+
             # convert answer to vec
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
                 q_ans_str = self.extract_answer(q_ans)
                 t_avec = self.answer_to_vec(q_ans_str)
             else:
                 t_avec = self.extract_answer_list(q_ans)
- 
+
             qvec[i,...] = t_qvec
             cvec[i,...] = t_cvec
             ivec[i,:,0:t_ivec.shape[1]] = t_ivec
@@ -271,7 +271,7 @@ class VQADataProvider:
 
         return qvec, cvec, ivec, avec, glove_matrix
 
- 
+
     def get_batch_vec(self):
         if self.batch_len is None:
             self.n_skipped = 0
@@ -286,7 +286,7 @@ class VQADataProvider:
             answer_obj = self.getAnsObj(t_qid)
             answer_list = [ans['answer'] for ans in answer_obj]
             for ans in answer_list:
-                if self.adict.has_key(ans):
+                if ans in self.adict:
                     return True
 
         counter = 0
@@ -304,7 +304,7 @@ class VQADataProvider:
                 t_iid_list.append(t_iid)
                 counter += 1
             else:
-                self.n_skipped += 1 
+                self.n_skipped += 1
 
             if self.batch_index < self.batch_len-1:
                 self.batch_index += 1
@@ -323,9 +323,9 @@ class VQADataProvider:
 class VQADataset(data.Dataset):
 
     def __init__(self, mode, batchsize, folder, opt):
-        self.batchsize = batchsize 
-        self.mode = mode 
-        self.folder = folder 
+        self.batchsize = batchsize
+        self.mode = mode
+        self.folder = folder
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:

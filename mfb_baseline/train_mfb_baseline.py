@@ -13,7 +13,7 @@ from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
 import json
 import datetime
-from tensorboardX import SummaryWriter 
+from tensorboardX import SummaryWriter
 sys.path.append(config.VQA_TOOLS_PATH)
 sys.path.append(config.VQA_EVAL_TOOLS_PATH)
 from vqaTools.vqa import VQA
@@ -29,10 +29,10 @@ def make_answer_vocab(adic, vocab_size):
     for qid in adic.keys():
         answer_obj = adic[qid]
         answer_list = [ans['answer'] for ans in answer_obj]
-        
+
         for q_ans in answer_list:
             # create dict
-            if adict.has_key(q_ans):
+            if q_ans in adict:
                 nadict[q_ans] += 1
             else:
                 nadict[q_ans] = 1
@@ -44,7 +44,7 @@ def make_answer_vocab(adic, vocab_size):
     for k,v in sorted(nadict.items(), key=lambda x:x[1]):
         nalist.append((k,v))
 
-    # remove words that appear less than once 
+    # remove words that appear less than once
     n_del_ans = 0
     n_valid_ans = 0
     adict_nid = {}
@@ -54,7 +54,7 @@ def make_answer_vocab(adic, vocab_size):
     for i, w in enumerate(nalist[-vocab_size:]):
         n_valid_ans += w[1]
         adict_nid[w[0]] = i
-    
+
     return adict_nid
 
 def make_question_vocab(qdic):
@@ -70,13 +70,13 @@ def make_question_vocab(qdic):
 
         # create dict
         for w in q_list:
-            if not vdict.has_key(w):
+            if w not in vdict:
                 vdict[w] = vid
                 vid +=1
 
     return vdict
 
-def make_vocab_files():
+def make_vocab_files(opt):
     """
     Produce the question and answer vocabulary files.
     """
@@ -92,7 +92,7 @@ def adjust_learning_rate(optimizer, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * decay_rate
 
-def train():
+def train(opt, model, train_Loader, optimizer, writer):
     criterion = nn.KLDivLoss(size_average=False)
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
@@ -113,7 +113,7 @@ def train():
         loss = criterion(pred, label)
         loss.backward()
         optimizer.step()
-        train_loss[iter_idx] = loss.data[0]
+        train_loss[iter_idx] = loss.data.float()
         if iter_idx % opt.DECAY_STEPS == 0 and iter_idx != 0:
             adjust_learning_rate(optimizer, opt.DECAY_RATE)
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
@@ -123,6 +123,7 @@ def train():
             writer.add_scalar('mfb_baseline/lr', optimizer.param_groups[0]['lr'], iter_idx)
             print('{}\tTrain Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
                         now, epoch, iter_idx, c_mean_loss))
+            sys.stdout.flush()
         if iter_idx % opt.CHECKPOINT_INTERVAL == 0 and iter_idx != 0:
             if not os.path.exists('./data'):
                 os.makedirs('./data')
@@ -146,6 +147,7 @@ def train():
 def main():
     opt = config.parse_opt()
     torch.cuda.set_device(opt.TRAIN_GPU_ID)
+    print(torch.cuda.get_device_name(opt.TRAIN_GPU_ID))
     # torch.cuda.manual_seed(opt.SEED)
     writer = SummaryWriter()
     folder = 'mfb_baseline_%s'%opt.TRAIN_DATA_SPLITS
@@ -159,7 +161,7 @@ def main():
         with open('./%s/adict.json'%folder,'r') as f:
             answer_vocab = json.load(f)
     else:
-        question_vocab, answer_vocab = make_vocab_files()
+        question_vocab, answer_vocab = make_vocab_files(opt)
         with open('./%s/vdict.json'%folder,'w') as f:
             json.dump(question_vocab, f)
         with open('./%s/adict.json'%folder,'w') as f:
@@ -187,5 +189,8 @@ def main():
     model.cuda()
     optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
 
-    train()
+    train(opt, model, train_Loader, optimizer, writer)
     writer.close()
+
+if __name__ == '__main__':
+    main()

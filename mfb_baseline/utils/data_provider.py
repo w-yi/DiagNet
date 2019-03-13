@@ -28,7 +28,7 @@ class VQADataProvider:
     @staticmethod
     def load_vqa_json(data_split):
         """
-        Parses the question and answer json files for the given data split. 
+        Parses the question and answer json files for the given data split.
         Returns the question dictionary and the answer dictionary.
         """
         qdic, adic = {}, {}
@@ -83,7 +83,7 @@ class VQADataProvider:
         return all_qdic, all_adic
 
     def getQuesIds(self):
-        return self.qdic.keys()
+        return list(self.qdic.keys())
 
     def getStrippedQuesId(self, qid):
         return qid.split(QID_KEY_SEPARATOR)[1]
@@ -108,7 +108,7 @@ class VQADataProvider:
             t_str = re.sub( i, ' ', t_str)
         q_list = re.sub(r'\?','',t_str.lower()).split(' ')
         q_list = filter(lambda x: len(x) > 0, q_list)
-        return q_list
+        return list(q_list)
 
     def extract_answer(self,answer_obj):
         """ Return the most popular answer in string."""
@@ -117,7 +117,7 @@ class VQADataProvider:
         answer_list = [ answer_obj[i]['answer'] for i in range(10)]
         dic = {}
         for ans in answer_list:
-            if dic.has_key(ans):
+            if ans in dic:
                 dic[ans] +=1
             else:
                 dic[ans] = 1
@@ -132,17 +132,17 @@ class VQADataProvider:
         answer_list = [ ans['answer'] for ans in answer_obj]
         prob_answer_list = []
         for ans in answer_list:
-            if self.adict.has_key(ans):
+            if ans in self.adict:
                 prob_answer_list.append(ans)
     def extract_answer_list(self,answer_obj):
         answer_list = [ ans['answer'] for ans in answer_obj]
         prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS)
         for ans in answer_list:
-            if self.adict.has_key(ans):
+            if ans in self.adict:
                 index = self.adict[ans]
                 prob_answer_vec[index] += 1
         return prob_answer_vec / np.sum(prob_answer_vec)
- 
+
         if len(prob_answer_list) == 0:
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
                 return 'hoge'
@@ -150,7 +150,7 @@ class VQADataProvider:
                 raise Exception("This should not happen.")
         else:
             return random.choice(prob_answer_list)
- 
+
     def qlist_to_vec(self, max_length, q_list):
         """
         Converts a list of words into a format suitable for the embedding layer.
@@ -182,23 +182,23 @@ class VQADataProvider:
                 pass
             else:
                 w = q_list[i]
-                if self.vdict.has_key(w) is False:
+                if w not in self.vdict:
                     w = ''
                 qvec[i] = self.vdict[w]
-                cvec[i] = 1 
+                cvec[i] = 1
         return qvec, cvec
- 
+
     def answer_to_vec(self, ans_str):
         """ Return answer id if the answer is included in vocabulary otherwise '' """
         if self.mode =='test-dev' or self.mode == 'test':
             return -1
 
-        if self.adict.has_key(ans_str):
+        if ans_str in self.adict:
             ans = self.adict[ans_str]
         else:
             ans = self.adict['']
         return ans
- 
+
     def vec_to_answer(self, ans_symbol):
         """ Return answer id if the answer is included in vocabulary otherwise '' """
         if self.rev_adict is None:
@@ -208,7 +208,7 @@ class VQADataProvider:
             self.rev_adict = rev_adict
 
         return self.rev_adict[ans_symbol]
- 
+
     def create_batch(self,qid_list):
 
         qvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
@@ -234,21 +234,21 @@ class VQADataProvider:
                 qid_split = qid.split(QID_KEY_SEPARATOR)
                 data_split = qid_split[0]
                 if data_split == 'genome':
-                    t_ivec = np.load(config.DATA_PATHS['genome']['features_prefix'] + str(q_iid) + '.jpg.npz')['x']
+                    t_ivec = np.load(config.DATA_PATHS['genome']['features_prefix'] + str(q_iid) + '.jpg.npy')
                 else:
-                    t_ivec = np.load(config.DATA_PATHS[data_split]['features_prefix'] + str(q_iid).zfill(12) + '.jpg.npz')['x']
+                    t_ivec = np.load(config.DATA_PATHS[data_split]['features_prefix'] + str(q_iid).zfill(12) + '.jpg.npy')
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
             except:
                 t_ivec = 0.
                 print('data not found for qid : ', q_iid,  self.mode)
-             
+
             # convert answer to vec
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
                 q_ans_str = self.extract_answer(q_ans)
                 t_avec = self.answer_to_vec(q_ans_str)
             else:
                 t_avec = self.extract_answer_list(q_ans)
- 
+
             qvec[i,...] = t_qvec
             cvec[i,...] = t_cvec
             ivec[i,...] = t_ivec
@@ -256,7 +256,7 @@ class VQADataProvider:
 
         return qvec, cvec, ivec, avec
 
- 
+
     def get_batch_vec(self):
         if self.batch_len is None:
             self.n_skipped = 0
@@ -271,7 +271,7 @@ class VQADataProvider:
             answer_obj = self.getAnsObj(t_qid)
             answer_list = [ans['answer'] for ans in answer_obj]
             for ans in answer_list:
-                if self.adict.has_key(ans):
+                if ans in self.adict:
                     return True
 
         counter = 0
@@ -289,7 +289,7 @@ class VQADataProvider:
                 t_iid_list.append(t_iid)
                 counter += 1
             else:
-                self.n_skipped += 1 
+                self.n_skipped += 1
 
             if self.batch_index < self.batch_len-1:
                 self.batch_index += 1
@@ -308,9 +308,9 @@ class VQADataProvider:
 class VQADataset(data.Dataset):
 
     def __init__(self, mode, batchsize, folder, opt):
-        self.batchsize = batchsize 
-        self.mode = mode 
-        self.folder = folder 
+        self.batchsize = batchsize
+        self.mode = mode
+        self.folder = folder
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:

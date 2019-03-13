@@ -17,7 +17,7 @@ from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
 import json
 import datetime
-from tensorboardX import SummaryWriter 
+from tensorboardX import SummaryWriter
 sys.path.append(config.VQA_TOOLS_PATH)
 sys.path.append(config.VQA_EVAL_TOOLS_PATH)
 from vqaTools.vqa import VQA
@@ -33,10 +33,10 @@ def make_answer_vocab(adic, vocab_size):
     for qid in adic.keys():
         answer_obj = adic[qid]
         answer_list = [ans['answer'] for ans in answer_obj]
-        
+
         for q_ans in answer_list:
             # create dict
-            if adict.has_key(q_ans):
+            if q_ans in adict:
                 nadict[q_ans] += 1
             else:
                 nadict[q_ans] = 1
@@ -48,7 +48,7 @@ def make_answer_vocab(adic, vocab_size):
     for k,v in sorted(nadict.items(), key=lambda x:x[1]):
         nalist.append((k,v))
 
-    # remove words that appear less than once 
+    # remove words that appear less than once
     n_del_ans = 0
     n_valid_ans = 0
     adict_nid = {}
@@ -58,7 +58,7 @@ def make_answer_vocab(adic, vocab_size):
     for i, w in enumerate(nalist[-vocab_size:]):
         n_valid_ans += w[1]
         adict_nid[w[0]] = i
-    
+
     return adict_nid
 
 def make_question_vocab(qdic):
@@ -74,7 +74,7 @@ def make_question_vocab(qdic):
 
         # create dict
         for w in q_list:
-            if not vdict.has_key(w):
+            if w not in vdict:
                 vdict[w] = vid
                 vid +=1
 
@@ -134,7 +134,7 @@ def train():
             if not os.path.exists('./data'):
                 os.makedirs('./data')
             save_path = './data/mfh_coatt_glove_iter_' + str(iter_idx) + '.pth'
-            torch.save(model.state_dict(), save_path)         
+            torch.save(model.state_dict(), save_path)
         if iter_idx % opt.VAL_INTERVAL == 0 and iter_idx != 0:
             test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx)
             writer.add_scalar('mfh_coatt_glove/val_loss', test_loss, iter_idx)
