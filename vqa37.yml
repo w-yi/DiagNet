@@ -84,4 +84,3 @@ dependencies:
     - protobuf==3.6.1
     - tensorboardx==1.6
 prefix: C:\Users\Xiaoyang\Anaconda3\envs\vqa37
-
