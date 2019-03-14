@@ -297,14 +297,16 @@ class VQADataProvider:
             qvec[i,...] = t_qvec
             cvec[i,...] = t_cvec
             avec[i,...] = t_avec
-
             if self.glove:
                 ivec[i,:,0:t_ivec.shape[1]] = t_ivec
                 glove_matrix[i,...] = t_glove_matrix
-                return qvec, cvec, ivec, avec, glove_matrix
             else:
                 ivec[i,...] = t_ivec
-                return qvec, cvec, ivec, avec, 0
+
+        if self.glove:
+            return qvec, cvec, ivec, avec, glove_matrix
+        else:
+            return qvec, cvec, ivec, avec, 0
 
 
     def get_batch_vec(self):

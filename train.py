@@ -96,7 +96,7 @@ def adjust_learning_rate(optimizer, decay_rate):
         param_group['lr'] = param_group['lr'] * decay_rate
 
 def train(opt, model, train_Loader, optimizer, writer, use_glove):
-    criterion = nn.KLDivLoss(size_average=False)
+    criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
     for iter_idx, (data, word_length, feature, answer, glove, epoch) in enumerate(train_Loader):
