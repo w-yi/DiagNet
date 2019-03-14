@@ -14,7 +14,7 @@ VQA_TOOLS_PATH = os.path.join(DATA_DIR, 'PythonHelperTools')
 VQA_EVAL_TOOLS_PATH = os.path.join(DATA_DIR, 'PythonEvaluationTools')
 
 TRAIN_DIR = os.path.join(ROOT_DIR, 'training')
-CACHE_DIR = os.path.join(ROOT_DIR, 'data')
+CACHE_DIR = os.path.join(ROOT_DIR, 'checkpoint')
 # location of the data
 VQA_PREFIX = DATA_DIR
 

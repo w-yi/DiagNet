@@ -95,7 +95,7 @@ def adjust_learning_rate(optimizer, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * decay_rate
 
-def train(opt, model, train_Loader, optimizer, writer, use_glove):
+def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
     criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
@@ -207,14 +207,14 @@ def main():
         '''init model parameter'''
         for name, param in model.named_parameters():
             if 'bias' in name:  # bias can't init by xavier
-                init.constant(param, 0.0)
+                init.constant_(param, 0.0)
             elif 'weight' in name:
-                init.kaiming_uniform(param)
+                init.kaiming_uniform_(param)
                 # init.xavier_uniform(param)  # for mfb_coatt_glove
     model.cuda()
     optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
 
-    train(opt, model, train_Loader, optimizer, writer, glove)
+    train(opt, model, train_Loader, optimizer, writer, folder, glove)
     writer.close()
 
 if __name__ == '__main__':

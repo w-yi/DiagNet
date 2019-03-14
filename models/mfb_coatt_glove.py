@@ -38,7 +38,7 @@ class mfb_coatt_glove(nn.Module):
 
         data = torch.transpose(data, 1, 0)                          # type Longtensor,  T x N 
         glove = glove.permute(1, 0, 2)                              # type float, T x N x 300
-        embed_tanh= F.tanh(self.Embedding(data))                    # T x N x 300
+        embed_tanh= torch.tanh(self.Embedding(data))                    # T x N x 300
         concat_word_embed = torch.cat((embed_tanh, glove), 2)       # T x N x 600
         lstm1, _ = self.LSTM(concat_word_embed)                     # T x N x 1024
         lstm1_droped = self.Dropout_L(lstm1)

@@ -23,9 +23,9 @@ class mfb_baseline(nn.Module):
         else:
             self.batch_size = self.opt.BATCH_SIZE
         data_out = Variable(torch.zeros(self.batch_size, self.opt.LSTM_UNIT_NUM)).cuda()
-        data = torch.transpose(data, 1, 0).long() 
-        data = F.tanh(self.Embedding(data)) 
-        data, _ = self.LSTM(data) 
+        data = torch.transpose(data, 1, 0).long()
+        data = torch.tanh(self.Embedding(data))
+        data, _ = self.LSTM(data)
         for i in range(self.batch_size):
             data_out[i] = data[int(word_length[i]) - 1][i]
         data_out = F.dropout(data_out, self.opt.LSTM_DROPOUT_RATIO, training=self.training)
@@ -39,5 +39,5 @@ class mfb_baseline(nn.Module):
         iq = F.normalize(iq)
         iq = self.Linear_predict(iq)                                # (64,3000)
         iq = F.log_softmax(iq)
-        
+
         return iq

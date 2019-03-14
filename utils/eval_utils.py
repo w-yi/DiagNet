@@ -124,22 +124,16 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, glove=False):
 
     print('Validating...')
     while epoch == 0:
+        t_word, word_length, t_img_feature, t_answer, t_glove_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
+        word_length = np.sum(word_length,axis=1)
+        data = Variable(torch.from_numpy(t_word)).cuda().long()
+        word_length = torch.from_numpy(word_length).cuda()
+        img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
+        label = Variable(torch.from_numpy(t_answer)).cuda()
         if glove:
-            t_word, word_length, t_img_feature, t_answer, t_glove_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
-            word_length = np.sum(word_length,axis=1)
-            data = Variable(torch.from_numpy(t_word)).cuda().long()
-            word_length = torch.from_numpy(word_length).cuda()
-            img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
-            label = Variable(torch.from_numpy(t_answer)).cuda()
             glove = Variable(torch.from_numpy(t_glove_matrix)).cuda().float()
             pred = model(data, word_length, img_feature, glove, mode)
         else:
-            t_word, word_length, t_img_feature, t_answer, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
-            word_length = np.sum(word_length,axis=1)
-            data = Variable(torch.from_numpy(t_word)).cuda().long()
-            word_length = torch.from_numpy(word_length).cuda()
-            img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
-            label = Variable(torch.from_numpy(t_answer)).cuda()
             pred = model(data, word_length, img_feature, mode)
 
         pred = (pred.data).cpu().numpy()
@@ -187,7 +181,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, glove=False):
 
     if mode == 'val':
         mean_testloss = np.array(testloss_list).mean()
-        valFile = './%s/val2015_resfile'%folder
+        valFile = os.path.join(folder, 'val2015_resfile')
         with open(valFile, 'w') as f:
             json.dump(final_list, f)
         if visualize:
@@ -208,18 +202,18 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, glove=False):
         acc_perAnswerType = vqaEval.accuracy['perAnswerType']
         return mean_testloss, acc_overall, acc_perQuestionType, acc_perAnswerType
     elif mode == 'test-dev':
-        filename = './%s/vqa_OpenEnded_mscoco_test-dev2015_%s-'%(folder,folder)+str(it).zfill(8)+'_results'
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         if visualize:
             visualize_failures(stat_list,mode)
     elif mode == 'test':
-        filename = './%s/vqa_OpenEnded_mscoco_test2015_%s-'%(folder,folder)+str(it).zfill(8)+'_results'
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         if visualize:
             visualize_failures(stat_list,mode)
-def drawgraph(results, folder,k,d,prefix='std',save_question_type_graphs=False):
+def drawgraph(results, folder, k, d, prefix='std', save_question_type_graphs=False):
     # 0:it
     # 1:trainloss
     # 2:testloss
@@ -246,7 +240,7 @@ def drawgraph(results, folder,k,d,prefix='std',save_question_type_graphs=False):
     ax1.set_ylabel('Loss Value')
     ax2.set_ylabel('Accuracy on Val [%]')
 
-    plt.savefig('./%s/result_it_%d_acc_%2.2f_k_%d_d_%d_%s.png'%(folder,it[-1],valacc[-1],k,d,prefix))
+    plt.savefig(os.path.join(folder, 'result_it_%d_acc_%2.2f_k_%d_d_%d_%s.png'%(it[-1], valacc[-1], k, d, prefix)))
     plt.clf()
     plt.close("all")
 
