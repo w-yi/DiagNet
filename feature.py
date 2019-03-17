@@ -10,7 +10,7 @@ import numpy as np
 import argparse
 
 
-SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Features/coco_resnet/" 
+SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Features/coco_resnet/"
 IMAGE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Images/"
 
 
@@ -48,7 +48,8 @@ def get_features(split, batch, gpu=True):
             inputs = inputs.cuda()
         outputs = model(inputs).squeeze(-1).squeeze(-1)
         for x, f in zip(outputs, targets):
-            np.save(SAVE_PATH + split + '/' + f, x.cpu().data.numpy())
+            np.save(SAVE_PATH + split + '/' + f, x.
+            ().data.numpy())
             del x
             del f
         del inputs

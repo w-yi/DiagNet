@@ -14,6 +14,7 @@ from models.mfh_coatt_glove import mfh_coatt_glove
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
+from utils.cuda import cuda_wrapper
 import json
 import datetime
 from tensorboardX import SummaryWriter
@@ -107,15 +108,15 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
         answer = np.squeeze(answer, axis=0)
         epoch = epoch.numpy()
 
-        data = Variable(data).cuda().long()
-        word_length = word_length.cuda()
-        img_feature = Variable(feature).cuda().float()
-        label = Variable(answer).cuda().float()
+        data = cuda_wrapper(Variable(data)).long()
+        word_length = cuda_wrapper(word_length)
+        img_feature = cuda_wrapper(Variable(feature)).float()
+        label = cuda_wrapper(Variable(answer)).float()
         optimizer.zero_grad()
 
         if use_glove:
             glove = np.squeeze(glove, axis=0)
-            glove = Variable(glove).cuda().float()
+            glove = cuda_wrapper(Variable(glove)).float()
             pred = model(data, word_length, img_feature, glove, 'train')
         else:
             pred = model(data, word_length, img_feature, 'train')
@@ -211,7 +212,7 @@ def main():
             elif 'weight' in name:
                 init.kaiming_uniform_(param)
                 # init.xavier_uniform(param)  # for mfb_coatt_glove
-    model.cuda()
+    model = cuda_wrapper(model)
     optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
 
     train(opt, model, train_Loader, optimizer, writer, folder, glove)
