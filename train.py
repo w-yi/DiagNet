@@ -14,6 +14,7 @@ from models.mfh_coatt_glove import mfh_coatt_glove
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
+from utils.cuda import cuda_wrapper
 import json
 import datetime
 from tensorboardX import SummaryWriter
