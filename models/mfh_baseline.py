@@ -28,7 +28,7 @@ class mfh_baseline(nn.Module):
             self.batch_size = self.opt.VAL_BATCH_SIZE
         else:
             self.batch_size = self.opt.BATCH_SIZE
-        data_out = cuda_wrqpper(Variable(torch.zeros(self.batch_size, self.opt.LSTM_UNIT_NUM)))
+        data_out = cuda_wrapper(Variable(torch.zeros(self.batch_size, self.opt.LSTM_UNIT_NUM)))
         data = torch.transpose(data, 1, 0).long() 
         data = torch.tanh(self.Embedding(data)) 
         data, _ = self.LSTM1(data) 
