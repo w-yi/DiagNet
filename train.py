@@ -163,7 +163,7 @@ def main():
         glove = True
     # torch.cuda.set_device(opt.TRAIN_GPU_ID)
     # torch.cuda.manual_seed(opt.SEED)
-    print('Using gpu card: ' + torch.cuda.get_device_name(opt.TRAIN_GPU_ID))
+    # print('Using gpu card: ' + torch.cuda.get_device_name(opt.TRAIN_GPU_ID))
     writer = SummaryWriter()
     folder = os.path.join(config.TRAIN_DIR, opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS)
     if not os.path.exists(folder):
