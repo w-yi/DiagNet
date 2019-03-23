@@ -189,7 +189,7 @@ def main():
     opt.ans_vob_size = len(answer_vocab)
 
     train_Data = data_provider.VQADataset(opt.TRAIN_DATA_SPLITS, opt.BATCH_SIZE, folder, opt, glove)
-    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=1)
+    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=2)
 
     model = None
     if opt.MODEL == 'mfb_bs':
