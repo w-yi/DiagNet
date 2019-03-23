@@ -102,10 +102,10 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
     results = []
     for iter_idx, (data, word_length, feature, answer, glove, epoch) in enumerate(train_Loader):
         model.train()
-        data = np.squeeze(data, axis=0)
-        word_length = np.squeeze(word_length, axis=0)
-        feature = np.squeeze(feature, axis=0)
-        answer = np.squeeze(answer, axis=0)
+        data = torch.squeeze(data, 0)
+        word_length = torch.squeeze(word_length, 0)
+        feature = torch.squeeze(feature, 0)
+        answer = torch.squeeze(answer, 0)
         epoch = epoch.numpy()
 
         data = cuda_wrapper(Variable(data)).long()
@@ -115,7 +115,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
         optimizer.zero_grad()
 
         if use_glove:
-            glove = np.squeeze(glove, axis=0)
+            glove = torch.squeeze(glove, 0)
             glove = cuda_wrapper(Variable(glove)).float()
             pred = model(data, word_length, img_feature, glove, 'train')
         else:
@@ -141,7 +141,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
             save_path = os.path.join(config.CACHE_DIR, opt.MODEL + '_iter_' + str(iter_idx) + '.pth')
             torch.save(model.state_dict(), save_path)
         if iter_idx % opt.VAL_INTERVAL == 0 and iter_idx != 0:
-            test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx)
+            test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx, use_glove=use_glove)
             writer.add_scalar(opt.MODEL + '/val_loss', test_loss, iter_idx)
             writer.add_scalar(opt.MODEL + 'accuracy', acc_overall, iter_idx)
             print('Test loss:', test_loss)
@@ -153,7 +153,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
             sys.stdout.flush()
             drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix=opt.MODEL)
         if iter_idx % opt.TESTDEV_INTERVAL == 0 and iter_idx != 0:
-            exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
+            exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx, use_glove=use_glove)
 
 
 def main():
