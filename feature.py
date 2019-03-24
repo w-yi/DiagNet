@@ -10,8 +10,8 @@ import numpy as np
 import argparse
 
 
-SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Features/coco_resnet/"
-IMAGE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/VQA/Images/"
+SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/shared_textvqa/features/baseline/"
+IMAGE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/textvqa/"
 
 
 class CocoDataset(Dataset):
@@ -41,20 +41,21 @@ def get_features(split, batch, gpu=True):
     model = nn.Sequential(*modules)
     if gpu:
         model = model.cuda()
-    dataset = CocoDataset(split)
-    data_loader = DataLoader(dataset, batch, shuffle=False, num_workers=4, pin_memory=gpu, drop_last=False)
-    for inputs, targets in data_loader:
-        if gpu:
-            inputs = inputs.cuda()
-        outputs = model(inputs).squeeze(-1).squeeze(-1)
-        for x, f in zip(outputs, targets):
-            np.save(SAVE_PATH + split + '/' + f, x.
-            ().data.numpy())
-            del x
-            del f
-        del inputs
-        del outputs
-        del targets
+    for split in ['test', 'train', 'val'']:
+        dataset = CocoDataset(split)
+        data_loader = DataLoader(dataset, batch, shuffle=False, num_workers=4, pin_memory=gpu, drop_last=False)
+        for inputs, targets in data_loader:
+            if gpu:
+                inputs = inputs.cuda()
+            outputs = model(inputs).squeeze(-1).squeeze(-1)
+            for x, f in zip(outputs, targets):
+                np.save(SAVE_PATH + split + '/' + f, x.data.numpy())
+                del x
+                del f
+            del inputs
+            del outputs
+            del targets
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

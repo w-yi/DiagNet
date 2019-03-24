@@ -68,7 +68,23 @@ DATA_PATHS = {
             'genome_file': VQA_PREFIX + '/Questions/OpenEnded_genome_train_questions.json',
             'features_prefix': VQA_PREFIX + '/Features/genome/BUTD_features/resnet_bgrms_large/'
         }
-    }
+    },
+    'textvqa': {
+        'train': {
+            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_train.json'),
+            'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_train.json'),
+            'features_prefix': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'features', 'baseline', 'train')
+        },
+        'val': {
+            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_val.json'),
+            'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_val.json'),
+            'features_prefix': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'features', 'baseline', 'val')
+        },
+        'test': {
+            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_test.json'),
+            'features_prefix': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'features', 'baseline', 'test')
+        }
+    },
 }
 
 
@@ -76,13 +92,14 @@ def baseline_fn(q_iid):
     return str(q_iid).zfill(12) + '.jpg.npy'
 
 
-def glove_fn(q_iid):
+def direct_fn(q_iid):
     return str(q_iid) + '.npy'
 
 
 FEATURE_FILENAME = {
     'baseline': baseline_fn,
-    'glove': glove_fn
+    'glove': direct_fn,
+    'textvqa': direct_fn,
 }
 
 
