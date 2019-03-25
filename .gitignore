@@ -7,6 +7,8 @@ data/VQA/Annotations/
 data/VQA/Features/
 data/VQA/Questions/
 data/VQA/QuestionTypes/
+data/textvqa_features/
+*.sh
 
 */__pycache__/
 .idea/
