@@ -11,8 +11,9 @@ else:
     DATA_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
 # vqa tools - get from https://github.com/VT-vision-lab/VQA
 
-VQA_TOOLS_PATH = os.path.join(DATA_DIR, 'PythonHelperTools')
-VQA_EVAL_TOOLS_PATH = os.path.join(DATA_DIR, 'PythonEvaluationTools')
+VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
+VQA_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonHelperTools')
+VQA_EVAL_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonEvaluationTools')
 
 TRAIN_DIR = os.path.join(ROOT_DIR, 'training')
 CACHE_DIR = os.path.join(ROOT_DIR, 'checkpoint')

@@ -19,7 +19,7 @@ class VQADataProvider:
         self.rev_adict = None
         self.max_length = max_length
         self.mode = mode
-        self.qdic, self.adic = VQADataProvider.load_data(mode)
+        self.qdic, self.adic = VQADataProvider.load_data(mode, glove)
 
         with open(os.path.join(folder, 'vdict.json'), 'r') as f:
             self.vdict = json.load(f)
@@ -90,11 +90,11 @@ class VQADataProvider:
         for data_split in data_split_str.split('+'):
             assert data_split in config.DATA_PATHS[exp_type].keys(), 'unknown data split'
             if data_split == 'genome':
-                qdic, adic = VQADataProvider.load_genome_json()
+                qdic, adic = VQADataProvider.load_genome_json(glove)
                 all_qdic.update(qdic)
                 all_adic.update(adic)
             else:
-                qdic, adic = VQADataProvider.load_vqa_json(data_split)
+                qdic, adic = VQADataProvider.load_vqa_json(data_split, glove)
                 all_qdic.update(qdic)
                 all_adic.update(adic)
         return all_qdic, all_adic
