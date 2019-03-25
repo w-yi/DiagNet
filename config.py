@@ -15,8 +15,19 @@ VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
 VQA_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonHelperTools')
 VQA_EVAL_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonEvaluationTools')
 
+# root directory for training generated data
 TRAIN_DIR = os.path.join(ROOT_DIR, 'training')
-CACHE_DIR = os.path.join(ROOT_DIR, 'checkpoint')
+# plots and valuation files
+OUTPUT_DIR = os.path.join(TRAIN_DIR, 'output')
+# vocab cache for different datasets
+VOCABCACHE_DIR = os.path.join(TRAIN_DIR, 'vocab_cache')
+# model checkpoints
+CACHE_DIR = os.path.join(TRAIN_DIR, 'checkpoint')
+
+for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR]:
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
 # location of the data
 VQA_PREFIX = DATA_DIR
 

@@ -112,10 +112,10 @@ def visualize_failures(stat_list,mode):
     qt_howmany_list =[['how','many']]
     save_qtype(qt_howmany_list, 'howmany', mode)
 
-def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=False):
+def exec_validation(model, opt, mode, folder, it, visualize=False):
     model.eval()
     criterion = nn.NLLLoss()
-    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, folder=folder, glove=use_glove)
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode)
     epoch = 0
     pred_list = []
     testloss_list = []
@@ -124,15 +124,15 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=Fal
 
     print('Validating...')
     while epoch == 0:
-        t_word, word_length, t_img_feature, t_answer, t_glove_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
+        t_word, word_length, t_img_feature, t_answer, t_embed_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
         word_length = np.sum(word_length,axis=1)
         data = Variable(torch.from_numpy(t_word)).cuda().long()
         word_length = torch.from_numpy(word_length).cuda()
         img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
         label = Variable(torch.from_numpy(t_answer)).cuda()
-        if use_glove:
-            glove = Variable(torch.from_numpy(t_glove_matrix)).cuda().float()
-            pred = model(data, word_length, img_feature, glove, mode)
+        if dp.use_embed():
+            embed_matrix = Variable(torch.from_numpy(t_embed_matrix)).cuda().float()
+            pred = model(data, word_length, img_feature, embed_matrix, mode)
         else:
             pred = model(data, word_length, img_feature, mode)
 
@@ -187,9 +187,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=Fal
         if visualize:
             visualize_failures(stat_list,mode)
 
-        exp_type = 'baseline'
-        if use_glove:
-            exp_type = 'glove'
+        exp_type = opt.EXP_TYPE
 
         annFile = config.DATA_PATHS[exp_type]['val']['ans_file']
         quesFile = config.DATA_PATHS[exp_type]['val']['ques_file']
@@ -213,6 +211,8 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=Fal
             json.dump(final_list, f)
         if visualize:
             visualize_failures(stat_list,mode)
+
+
 def drawgraph(results, folder, k, d, prefix='std', save_question_type_graphs=False):
     # 0:it
     # 1:trainloss

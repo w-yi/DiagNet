@@ -10,36 +10,121 @@ ZERO_PAD = '_PAD'
 EMBEDDING_SIZE = 300
 class VQADataProvider:
 
-    def __init__(self, opt, folder, batchsize=64, max_length=15, mode='train', exp_type='baseline'):
+    def __init__(self, opt, batchsize, mode, cache_dir=config.VOCABCACHE_DIR, max_length=15):
         self.opt = opt
+        self.mode = mode
         self.batchsize = batchsize
         self.d_vocabulary = None
         self.batch_index = None
         self.batch_len = None
         self.rev_adict = None
         self.max_length = max_length
-        self.mode = mode
-        self.qdic, self.adic = VQADataProvider.load_data(mode, exp_type)
+        self.cache_dir = cache_dir
+        self.exp_type = opt.EXP_TYPE
 
-        with open(os.path.join(folder, 'vdict.json'), 'r') as f:
-            self.vdict = json.load(f)
-        with open(os.path.join(folder, 'adict.json'), 'r') as f:
-            self.adict = json.load(f)
+        self.qdic, self.adic = VQADataProvider.load_data(self.mode, self.exp_type)
 
-        self.exp_type = exp_type
+        self._get_vocab_files()
+
         if self.use_embed():
             self.n_ans_vocabulary = len(self.adict)
             self.nlp = spacy.load('en_vectors_web_lg')
             self.embed_dict = {} # word -> embed vector
 
-    def _embed(self):
+    def _get_vocab_files(self):
         """
-        check usage of pretrained word embedding
+        get vocab files
+        load cached files if exist
         """
-        if self.exp_type == 'glove':
-            return True
+        question_vocab, answer_vocab = {}, {}
+        qdict_path = os.path.join(self.cache_dir, self.exp_type + '_qdict.json')
+        adict_path = os.path.join(self.cache_dir, self.exp_type + '_adict.json')
+        if os.path.exists(qdict_path) and os.path.exists(adict_path):
+            print('restoring vocab')
+            with open(qdict_path,'r') as f:
+                q_dict = json.load(f)
+            with open(adict_path,'r') as f:
+                a_dict = json.load(f)
         else:
-            return False
+            q_dict, a_dict = self._make_vocab_files()
+            with open(qdict_path,'w') as f:
+                json.dump(q_dict, f)
+            with open(adict_path,'w') as f:
+                json.dump(a_dict, f)
+        print('question vocab size:', len(q_dict))
+        print('answer vocab size:', len(a_dict), flush=True)
+        self.qdict = q_dict
+        self.adict = a_dict
+
+    def _make_vocab_files(self):
+        """
+        Produce the question and answer vocabulary files.
+        """
+        print('making question vocab...', self.opt.QUESTION_VOCAB_SPACE)
+        qdic, _ = VQADataProvider.load_data(self.opt.QUESTION_VOCAB_SPACE, self.exp_type)
+        question_vocab = VQADataProvider.make_question_vocab(qdic)
+        print('making answer vocab...', self.opt.ANSWER_VOCAB_SPACE)
+        _, adic = VQADataProvider.load_data(self.opt.ANSWER_VOCAB_SPACE, self.exp_type)
+        answer_vocab = VQADataProvider.make_answer_vocab(adic, self.opt.NUM_OUTPUT_UNITS)
+        return question_vocab, answer_vocab
+
+    @staticmethod
+    def make_question_vocab(qdic):
+        """
+        Returns a dictionary that maps words to indices.
+        """
+        qdict = {'':0}
+        vid = 1
+        for qid in qdic.keys():
+            # sequence to list
+            q_str = qdic[qid]['qstr']
+            q_list = VQADataProvider.seq_to_list(q_str)
+
+            # create dict
+            for w in q_list:
+                if w not in qdict:
+                    qdict[w] = vid
+                    vid +=1
+
+        return qdict
+
+    @staticmethod
+    def make_answer_vocab(adic, vocab_size):
+        """
+        Returns a dictionary that maps words to indices.
+        """
+        adict = {'':0}
+        nadict = {'':1000000}
+        vid = 1
+        for qid in adic.keys():
+            answer_obj = adic[qid]
+            answer_list = [ans['answer'] for ans in answer_obj]
+
+            for q_ans in answer_list:
+                # create dict
+                if q_ans in adict:
+                    nadict[q_ans] += 1
+                else:
+                    nadict[q_ans] = 1
+                    adict[q_ans] = vid
+                    vid +=1
+        # debug
+        nalist = []
+        for k,v in sorted(nadict.items(), key=lambda x:x[1]):
+            nalist.append((k,v))
+
+        # remove words that appear less than once
+        n_del_ans = 0
+        n_valid_ans = 0
+        adict_nid = {}
+        for i, w in enumerate(nalist[:-vocab_size]):
+            del adict[w[0]]
+            n_del_ans += w[1]
+        for i, w in enumerate(nalist[-vocab_size:]):
+            n_valid_ans += w[1]
+            adict_nid[w[0]] = i
+
+        return adict_nid
 
     @staticmethod
     def load_vqa_json(data_split, exp_type='baseline'):
@@ -98,6 +183,15 @@ class VQADataProvider:
                 all_qdic.update(qdic)
                 all_adic.update(adic)
         return all_qdic, all_adic
+
+    def use_embed(self):
+        """
+        check usage of pretrained word embedding
+        """
+        if self.exp_type == 'glove':
+            return True
+        else:
+            return False
 
     def getQuesIds(self):
         return list(self.qdic.keys())
@@ -194,9 +288,9 @@ class VQADataProvider:
         #     else:
         #         w = q_list[i-(max_length-len(q_list))]
         #         # is the word in the vocabulary?
-        #         if self.vdict.has_key(w) is False:
+        #         if self.qdict.has_key(w) is False:
         #             w = ''
-        #         qvec[i] = self.vdict[w]
+        #         qvec[i] = self.qdict[w]
         #         cvec[i] = 0 if i == max_length - len(q_list) else 1
         """  pad on the right   """
         for i in range(max_length):
@@ -210,9 +304,9 @@ class VQADataProvider:
                         self.embed_dict[w] = self.nlp(u'%s' % w).vector
                     embed_matrix[i] = self.embed_dict[w]
 
-                if w not in self.vdict:
+                if w not in self.qdict:
                     w = ''
-                qvec[i] = self.vdict[w]
+                qvec[i] = self.qdict[w]
                 cvec[i] = 1
         return qvec, cvec, embed_matrix
 
@@ -270,9 +364,9 @@ class VQADataProvider:
                 qid_split = qid.split(QID_KEY_SEPARATOR)
                 data_split = qid_split[0]
                 if data_split == 'genome':
-                    t_ivec = np.load(config.DATA_PATHS[exp_type]['genome']['features_prefix'] + str(q_iid) + '.jpg.npy')
+                    t_ivec = np.load(config.DATA_PATHS[self.exp_type]['genome']['features_prefix'] + str(q_iid) + '.jpg.npy')
                 else:
-                    t_ivec = np.load(config.DATA_PATHS[exp_type][data_split]['features_prefix'] + config.FEATURE_FILENAME[exp_type](q_iid))
+                    t_ivec = np.load(config.DATA_PATHS[self.exp_type][data_split]['features_prefix'] + config.FEATURE_FILENAME[self.exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
                 if self.use_embed() and len(t_ivec.shape) > 2:
@@ -359,15 +453,12 @@ class VQADataset(data.Dataset):
     embed matrix is None if self.use_embed() evals to False
     """
 
-    def __init__(self, mode, batchsize, folder, opt, exp_type):
-        self.batchsize = batchsize
-        self.mode = mode
-        self.folder = folder
+    def __init__(self, opt, cache_dir):
+        self.mode = opt.TRAIN_DATA_SPLITS
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            self.dp = VQADataProvider(opt, batchsize=self.batchsize, mode=self.mode, folder=self.folder, exp_type=exp_type)
-        self.exp_type = exp_type
+            self.dp = VQADataProvider(opt, opt.BATCH_SIZE, self.mode, cache_dir)
 
     def __getitem__(self, index):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
@@ -382,3 +473,9 @@ class VQADataset(data.Dataset):
             return 150000   # this number had better bigger than "maxiterations" which you set in config
             # mfh_baseline: 200000
             # mfb_coatt_glove: 100000
+
+    def get_vocab_size(self):
+        return len(self.dp.qdict), len(self.dp.adict)
+
+    def use_embed(self):
+        return self.dp.use_embed()
