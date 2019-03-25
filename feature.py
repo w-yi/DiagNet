@@ -41,7 +41,7 @@ def get_features(split, batch, gpu=True):
     model = nn.Sequential(*modules)
     if gpu:
         model = model.cuda()
-    for split in ['test', 'train', 'val'']:
+    for split in ['test', 'train', 'val']:
         dataset = CocoDataset(split)
         data_loader = DataLoader(dataset, batch, shuffle=False, num_workers=4, pin_memory=gpu, drop_last=False)
         for inputs, targets in data_loader:
