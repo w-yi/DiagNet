@@ -202,13 +202,13 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=Fal
         acc_perAnswerType = vqaEval.accuracy['perAnswerType']
         return mean_testloss, acc_overall, acc_perQuestionType, acc_perAnswerType
     elif mode == 'test-dev':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         if visualize:
             visualize_failures(stat_list,mode)
     elif mode == 'test':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         if visualize:

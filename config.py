@@ -1,5 +1,6 @@
 import argparse
 import socket
+import datetime
 import os
 
 # get the project root dir assuming data is located within the same project folder
@@ -100,6 +101,9 @@ def textvqa_fn(q_iid):
     return str(q_iid) + '.jpg.npy'
 
 
+def get_time():
+    return datetime.datetime.now().strftime("%Y-%m-%dT%H%M%S")
+
 FEATURE_FILENAME = {
     'baseline': baseline_fn,
     'glove': glove_fn,
@@ -110,7 +114,8 @@ FEATURE_FILENAME = {
 def parse_opt():
     parser = argparse.ArgumentParser()
     # Data input settings
-    parser.add_argument('MODEL', type=str, choices=['mfb_bs', 'mfh_bs', 'mfb_glove', 'mfh_glove'])
+    parser.add_argument('MODEL', type=str, choices=['mfb', 'mfh'])
+    parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa'])
 
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
@@ -145,4 +150,7 @@ def parse_opt():
     parser.add_argument('--IMG_FEAT_SIZE', type=int, default=100)
 
     args = parser.parse_args()
+
+    args.ID = '_'.join([get_time(), args.MODEL, args.EXP_TYPE])
+
     return args

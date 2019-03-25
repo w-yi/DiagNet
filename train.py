@@ -96,11 +96,11 @@ def adjust_learning_rate(optimizer, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * decay_rate
 
-def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
+def train(opt, model, train_Loader, optimizer, writer, folder, exp_type):
     criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
-    for iter_idx, (data, word_length, feature, answer, glove, epoch) in enumerate(train_Loader):
+    for iter_idx, (data, word_length, feature, answer, embed_matrix, epoch) in enumerate(train_Loader):
         model.train()
         data = torch.squeeze(data, 0)
         word_length = torch.squeeze(word_length, 0)
@@ -114,10 +114,10 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
         label = cuda_wrapper(Variable(answer)).float()
         optimizer.zero_grad()
 
-        if use_glove:
-            glove = torch.squeeze(glove, 0)
-            glove = cuda_wrapper(Variable(glove)).float()
-            pred = model(data, word_length, img_feature, glove, 'train')
+        if train_Loader.use_embed():
+            embed_matrix = torch.squeeze(embed_matrix, 0)
+            embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
+            pred = model(data, word_length, img_feature, embed_matrix, 'train')
         else:
             pred = model(data, word_length, img_feature, 'train')
 
@@ -130,20 +130,20 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
             now = str(datetime.datetime.now())
             c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL:iter_idx].mean()
-            writer.add_scalar(opt.MODEL + '/train_loss', c_mean_loss, iter_idx)
-            writer.add_scalar(opt.MODEL + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
+            writer.add_scalar(opt.ID + '/train_loss', c_mean_loss, iter_idx)
+            writer.add_scalar(opt.ID + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
             print('{}\tTrain Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
                         now, epoch, iter_idx, c_mean_loss))
             sys.stdout.flush()
         if iter_idx % opt.CHECKPOINT_INTERVAL == 0 and iter_idx != 0:
             if not os.path.exists(config.CACHE_DIR):
                 os.makedirs(config.CACHE_DIR)
-            save_path = os.path.join(config.CACHE_DIR, opt.MODEL + '_iter_' + str(iter_idx) + '.pth')
+            save_path = os.path.join(config.CACHE_DIR, opt.ID + '_iter_' + str(iter_idx) + '.pth')
             torch.save(model.state_dict(), save_path)
         if iter_idx % opt.VAL_INTERVAL == 0 and iter_idx != 0:
             test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx, use_glove=use_glove)
-            writer.add_scalar(opt.MODEL + '/val_loss', test_loss, iter_idx)
-            writer.add_scalar(opt.MODEL + 'accuracy', acc_overall, iter_idx)
+            writer.add_scalar(opt.ID + '/val_loss', test_loss, iter_idx)
+            writer.add_scalar(opt.ID + 'accuracy', acc_overall, iter_idx)
             print('Test loss:', test_loss)
             print('Accuracy:', acc_overall)
             print('Test per ans', acc_per_ans)
@@ -151,21 +151,19 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_glove):
             best_result_idx = np.array([x[3] for x in results]).argmax()
             print('Best accuracy of', results[best_result_idx][3], 'was at iteration', results[best_result_idx][0])
             sys.stdout.flush()
-            drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix=opt.MODEL)
+            drawgraph(results, folder, opt.MFB_FACTOR_NUM, opt.MFB_OUT_DIM, prefix=opt.ID)
         if iter_idx % opt.TESTDEV_INTERVAL == 0 and iter_idx != 0:
-            exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx, use_glove=use_glove)
+            exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx, exp_type=exp_type)
 
 
 def main():
     opt = config.parse_opt()
-    glove = False
-    if 'glove' in opt.MODEL:
-        glove = True
+
     # torch.cuda.set_device(opt.TRAIN_GPU_ID)
     # torch.cuda.manual_seed(opt.SEED)
     # print('Using gpu card: ' + torch.cuda.get_device_name(opt.TRAIN_GPU_ID))
     writer = SummaryWriter()
-    folder = os.path.join(config.TRAIN_DIR, opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS)
+    folder = os.path.join(config.TRAIN_DIR, opt.EXP_TYPE + '_' + opt.TRAIN_DATA_SPLITS)
     if not os.path.exists(folder):
         os.makedirs(folder)
     question_vocab, answer_vocab = {}, {}

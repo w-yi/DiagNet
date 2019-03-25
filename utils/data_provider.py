@@ -7,10 +7,10 @@ import os
 
 QID_KEY_SEPARATOR = '/'
 ZERO_PAD = '_PAD'
-GLOVE_EMBEDDING_SIZE = 300
+EMBEDDING_SIZE = 300
 class VQADataProvider:
 
-    def __init__(self, opt, folder, batchsize=64, max_length=15, mode='train', glove=False):
+    def __init__(self, opt, folder, batchsize=64, max_length=15, mode='train', exp_type='baseline'):
         self.opt = opt
         self.batchsize = batchsize
         self.d_vocabulary = None
@@ -26,24 +26,28 @@ class VQADataProvider:
         with open(os.path.join(folder, 'adict.json'), 'r') as f:
             self.adict = json.load(f)
 
-        self.glove = glove
-        if glove:
+        self.exp_type = exp_type
+        if self.use_embed():
             self.n_ans_vocabulary = len(self.adict)
             self.nlp = spacy.load('en_vectors_web_lg')
-            self.glove_dict = {} # word -> glove vector
+            self.embed_dict = {} # word -> embed vector
 
+    def _embed(self):
+        """
+        check usage of pretrained word embedding
+        """
+        if self.exp_type == 'glove':
+            return True
+        else:
+            return False
 
     @staticmethod
-    def load_vqa_json(data_split, glove=False):
+    def load_vqa_json(data_split, exp_type='baseline'):
         """
         Parses the question and answer json files for the given data split.
         Returns the question dictionary and the answer dictionary.
         """
         qdic, adic = {}, {}
-
-        exp_type = 'baseline'
-        if glove:
-            exp_type = 'glove'
 
         with open(config.DATA_PATHS[exp_type][data_split]['ques_file'], 'r') as f:
             qdata = json.load(f)['questions']
@@ -62,16 +66,12 @@ class VQADataProvider:
         return qdic, adic
 
     @staticmethod
-    def load_genome_json(glove=False):
+    def load_genome_json(exp_type='baseline'):
         """
         Parses the genome json file. Returns the question dictionary and the
         answer dictionary.
         """
         qdic, adic = {}, {}
-
-        exp_type = 'baseline'
-        if glove:
-            exp_type = 'glove'
 
         with open(config.DATA_PATHS[exp_type]['genome']['genome_file'], 'r') as f:
             qdata = json.load(f)
@@ -84,12 +84,8 @@ class VQADataProvider:
         return qdic, adic
 
     @staticmethod
-    def load_data(data_split_str, glove=False):
+    def load_data(data_split_str, exp_type='baseline'):
         all_qdic, all_adic = {}, {}
-
-        exp_type = 'baseline'
-        if glove:
-            exp_type = 'glove'
 
         for data_split in data_split_str.split('+'):
             assert data_split in config.DATA_PATHS[exp_type].keys(), 'unknown data split'
@@ -155,6 +151,7 @@ class VQADataProvider:
         for ans in answer_list:
             if ans in self.adict:
                 prob_answer_list.append(ans)
+
     def extract_answer_list(self,answer_obj):
         answer_list = [ ans['answer'] for ans in answer_obj]
         prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS)
@@ -186,9 +183,10 @@ class VQADataProvider:
         """
         qvec = np.zeros(max_length)
         cvec = np.zeros(max_length)
-        glove_matrix = None
-        if self.glove:
-            glove_matrix = np.zeros((max_length, GLOVE_EMBEDDING_SIZE))
+        embed_matrix = None
+        if self.use_embed():
+            # TODO: change this config
+            embed_matrix = np.zeros((max_length, EMBEDDING_SIZE))
         """  pad on the left   """
         # for i in range(max_length):
         #     if i < max_length - len(q_list):
@@ -207,16 +205,16 @@ class VQADataProvider:
             else:
                 w = q_list[i]
 
-                if self.glove:
-                    if w not in self.glove_dict:
-                        self.glove_dict[w] = self.nlp(u'%s' % w).vector
-                    glove_matrix[i] = self.glove_dict[w]
+                if self.use_embed():
+                    if w not in self.embed_dict:
+                        self.embed_dict[w] = self.nlp(u'%s' % w).vector
+                    embed_matrix[i] = self.embed_dict[w]
 
                 if w not in self.vdict:
                     w = ''
                 qvec[i] = self.vdict[w]
                 cvec[i] = 1
-        return qvec, cvec, glove_matrix
+        return qvec, cvec, embed_matrix
 
     def answer_to_vec(self, ans_str):
         """ Return answer id if the answer is included in vocabulary otherwise '' """
@@ -244,10 +242,8 @@ class VQADataProvider:
         qvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
         cvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
 
-        exp_type = 'baseline'
-        if self.glove:
+        if self.use_embed():
             ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
-            exp_type = 'glove'
         else:
             ivec = (np.zeros(self.batchsize*2048)).reshape(self.batchsize,2048)
 
@@ -256,8 +252,8 @@ class VQADataProvider:
         else:
             avec = np.zeros((self.batchsize, self.opt.NUM_OUTPUT_UNITS))
 
-        if self.glove:
-            glove_matrix = np.zeros((self.batchsize, self.max_length, GLOVE_EMBEDDING_SIZE))
+        if self.use_embed():
+            embed_matrix = np.zeros((self.batchsize, self.max_length, EMBEDDING_SIZE))
 
         for i,qid in enumerate(qid_list):
 
@@ -268,7 +264,7 @@ class VQADataProvider:
 
             # convert question to vec
             q_list = VQADataProvider.seq_to_list(q_str)
-            t_qvec, t_cvec, t_glove_matrix = self.qlist_to_vec(self.max_length, q_list)
+            t_qvec, t_cvec, t_embed_matrix = self.qlist_to_vec(self.max_length, q_list)
 
             try:
                 qid_split = qid.split(QID_KEY_SEPARATOR)
@@ -279,7 +275,7 @@ class VQADataProvider:
                     t_ivec = np.load(config.DATA_PATHS[exp_type][data_split]['features_prefix'] + config.FEATURE_FILENAME[exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
-                if self.glove and len(t_ivec.shape) > 2:
+                if self.use_embed() and len(t_ivec.shape) > 2:
                     t_ivec = t_ivec.reshape((2048, -1))
 
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
@@ -297,14 +293,14 @@ class VQADataProvider:
             qvec[i,...] = t_qvec
             cvec[i,...] = t_cvec
             avec[i,...] = t_avec
-            if self.glove:
+            if self.use_embed():
                 ivec[i,:,0:t_ivec.shape[0]] = t_ivec.T
-                glove_matrix[i,...] = t_glove_matrix
+                embed_matrix[i,...] = t_embed_matrix
             else:
                 ivec[i,...] = t_ivec
 
-        if self.glove:
-            return qvec, cvec, ivec, avec, glove_matrix
+        if self.use_embed():
+            return qvec, cvec, ivec, avec, embed_matrix
         else:
             return qvec, cvec, ivec, avec, 0
 
@@ -359,27 +355,27 @@ class VQADataProvider:
 
 class VQADataset(data.Dataset):
     """
-    in order to use the universal api, always return the glove matrix
-    glove matrix is None if glove=False
+    in order to use the universal api, always return the embed matrix
+    embed matrix is None if self.use_embed() evals to False
     """
 
-    def __init__(self, mode, batchsize, folder, opt, glove):
+    def __init__(self, mode, batchsize, folder, opt, exp_type):
         self.batchsize = batchsize
         self.mode = mode
         self.folder = folder
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            self.dp = VQADataProvider(opt, batchsize=self.batchsize, mode=self.mode, folder=self.folder, glove=glove)
-        self.glove = glove
+            self.dp = VQADataProvider(opt, batchsize=self.batchsize, mode=self.mode, folder=self.folder, exp_type=exp_type)
+        self.exp_type = exp_type
 
     def __getitem__(self, index):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            word, cont, feature, answer, glove_matrix, _, _, epoch = self.dp.get_batch_vec()
+            word, cont, feature, answer, embed_matrix, _, _, epoch = self.dp.get_batch_vec()
             word_length = np.sum(cont, axis=1)
-            return word, word_length, feature, answer, glove_matrix, epoch
+            return word, word_length, feature, answer, embed_matrix, epoch
 
     def __len__(self):
         if self.mode == 'train':
