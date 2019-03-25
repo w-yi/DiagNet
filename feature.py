@@ -10,7 +10,7 @@ import numpy as np
 import argparse
 
 
-SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/shared_textvqa/features/baseline/"
+SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/textvqa_features/baseline/"
 IMAGE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/textvqa/"
 
 
@@ -28,6 +28,8 @@ class CocoDataset(Dataset):
         f = self.files[idx]
         img_name = os.path.join(self.path, f)
         img = io.imread(img_name)
+        if len(img.shape) == 1:
+            img = img[0]
         if not len(img.shape) == 3:
             img = np.stack([img, img, img], -1)
         image = self.transform(img)
@@ -45,11 +47,12 @@ def get_features(split, batch, gpu=True):
         dataset = CocoDataset(split)
         data_loader = DataLoader(dataset, batch, shuffle=False, num_workers=4, pin_memory=gpu, drop_last=False)
         for inputs, targets in data_loader:
+            #pass
             if gpu:
                 inputs = inputs.cuda()
             outputs = model(inputs).squeeze(-1).squeeze(-1)
             for x, f in zip(outputs, targets):
-                np.save(SAVE_PATH + split + '/' + f, x.data.numpy())
+                np.save(SAVE_PATH + split + '/' + f, x.cpu().data.numpy())
                 del x
                 del f
             del inputs
