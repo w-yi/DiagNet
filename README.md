@@ -11,9 +11,11 @@ Papers related to our implementation
 
 Baseline implementations
 
-- <https://github.com/asdf0982/vqa-mfb.pytorch>
-- <https://github.com/yuzcccc/vqa-mfb>
-- <https://github.com/facebookresearch/pythia>
+- PyTorch implementation: <https://github.com/asdf0982/vqa-mfb.pytorch>
+- Caffe implementation: <https://github.com/yuzcccc/vqa-mfb>
+- pythia: <https://github.com/facebookresearch/pythia>
+- BUTD: <https://github.com/peteanderson80/bottom-up-attention>
+- Fork of BUTD: <https://github.com/yuzcccc/bottom-up-attention>
 
 ## Requirements
 
@@ -37,10 +39,6 @@ python -m spacy download en_vectors_web_lg
 ```bash
 python feature.py [--split]
 ```
-
-Helpful links:
-
-- The caffe implementation uses <https://github.com/yuzcccc/bottom-up-attention>
 
 ## Training
 
