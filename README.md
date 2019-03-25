@@ -19,6 +19,19 @@ Baseline implementations
 
 python 3.7, pytorch 1.0
 
+```bash
+# tensorboardX
+pip install tensorboardX
+
+# pytorch
+conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
+
+# spacy
+conda install -c conda-forge spacy
+python -m spacy download en
+python -m spacy download en_vectors_web_lg
+```
+
 ## Extract features
 
 ```bash

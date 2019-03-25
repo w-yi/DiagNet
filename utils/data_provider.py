@@ -276,7 +276,7 @@ class VQADataProvider:
                 if data_split == 'genome':
                     t_ivec = np.load(config.DATA_PATHS[exp_type]['genome']['features_prefix'] + str(q_iid) + '.jpg.npy')
                 else:
-                    t_ivec = np.load(config.DATA_PATHS[exp_type][data_split]['features_prefix'] + str(q_iid).zfill(12) + '.jpg.npy')
+                    t_ivec = np.load(config.DATA_PATHS[exp_type][data_split]['features_prefix'] + config.FEATURE_FILENAME[exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
                 if self.glove and len(t_ivec.shape) > 2:
@@ -298,7 +298,7 @@ class VQADataProvider:
             cvec[i,...] = t_cvec
             avec[i,...] = t_avec
             if self.glove:
-                ivec[i,:,0:t_ivec.shape[1]] = t_ivec
+                ivec[i,:,0:t_ivec.shape[0]] = t_ivec.T
                 glove_matrix[i,...] = t_glove_matrix
             else:
                 ivec[i,...] = t_ivec

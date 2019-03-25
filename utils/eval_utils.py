@@ -112,10 +112,10 @@ def visualize_failures(stat_list,mode):
     qt_howmany_list =[['how','many']]
     save_qtype(qt_howmany_list, 'howmany', mode)
 
-def exec_validation(model, opt, mode, folder, it, visualize=False, glove=False):
+def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=False):
     model.eval()
     criterion = nn.NLLLoss()
-    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, folder=folder, glove=glove)
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, folder=folder, glove=use_glove)
     epoch = 0
     pred_list = []
     testloss_list = []
@@ -130,7 +130,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, glove=False):
         word_length = torch.from_numpy(word_length).cuda()
         img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
         label = Variable(torch.from_numpy(t_answer)).cuda()
-        if glove:
+        if use_glove:
             glove = Variable(torch.from_numpy(t_glove_matrix)).cuda().float()
             pred = model(data, word_length, img_feature, glove, mode)
         else:
@@ -188,7 +188,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, glove=False):
             visualize_failures(stat_list,mode)
 
         exp_type = 'baseline'
-        if glove:
+        if use_glove:
             exp_type = 'glove'
 
         annFile = config.DATA_PATHS[exp_type]['val']['ans_file']

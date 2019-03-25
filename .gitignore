@@ -1,5 +1,13 @@
 *.pyc
-data/
+
+*.pth
+data/textvqa/
+data/shared_textvqa/
+data/VQA/Annotations/
+data/VQA/Features/
+data/VQA/Questions/
+data/VQA/QuestionTypes/
+
 */__pycache__/
 .idea/
 *.ipynb_checkpoints/

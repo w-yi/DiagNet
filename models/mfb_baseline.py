@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import sys
 sys.path.append("..")
 
+from utils.cuda import cuda_wrapper
 
 class mfb_baseline(nn.Module):
     def __init__(self, opt):
@@ -22,7 +23,7 @@ class mfb_baseline(nn.Module):
             self.batch_size = self.opt.VAL_BATCH_SIZE
         else:
             self.batch_size = self.opt.BATCH_SIZE
-        data_out = Variable(torch.zeros(self.batch_size, self.opt.LSTM_UNIT_NUM)).cuda()
+        data_out = cuda_wrapper(Variable(torch.zeros(self.batch_size, self.opt.LSTM_UNIT_NUM)))
         data = torch.transpose(data, 1, 0).long()
         data = torch.tanh(self.Embedding(data))
         data, _ = self.LSTM(data)
