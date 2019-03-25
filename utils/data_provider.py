@@ -366,6 +366,7 @@ class VQADataProvider:
                 if data_split == 'genome':
                     t_ivec = np.load(config.DATA_PATHS[self.exp_type]['genome']['features_prefix'] + str(q_iid) + '.jpg.npy')
                 else:
+                    # print(config.DATA_PATH[self.exp_type][data_split]['features_prefix']+config.FEATURE_FILENAE[self.exp_type](q_iid))
                     t_ivec = np.load(config.DATA_PATHS[self.exp_type][data_split]['features_prefix'] + config.FEATURE_FILENAME[self.exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
@@ -375,7 +376,7 @@ class VQADataProvider:
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
             except:
                 t_ivec = 0.
-                print('data not found for qid : ', q_iid,  self.mode)
+                print('data not found for qid : ', q_iid,  self.mode, config.DATA_PATHS[self.exp_type][data_split]['features_prefix']+config.FEATURE_FILENAME[self.exp_type](q_iid))
 
             # convert answer to vec
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':

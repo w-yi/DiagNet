@@ -86,16 +86,16 @@ DATA_PATHS = {
         'train': {
             'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_train.json'),
             'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_train.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'train')
+            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'train')+'/'
         },
         'val': {
             'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_val.json'),
             'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_val.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'val')
+            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'val')+'/'
         },
         'test': {
             'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_test.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'test')
+            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'test')+'/'
         }
     },
 }
