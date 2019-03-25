@@ -80,15 +80,15 @@ def make_question_vocab(qdic):
 
     return vdict
 
-def make_vocab_files(opt):
+def make_vocab_files(opt, glove):
     """
     Produce the question and answer vocabulary files.
     """
     print('making question vocab...', opt.QUESTION_VOCAB_SPACE)
-    qdic, _ = VQADataProvider.load_data(opt.QUESTION_VOCAB_SPACE)
+    qdic, _ = VQADataProvider.load_data(opt.QUESTION_VOCAB_SPACE, glove)
     question_vocab = make_question_vocab(qdic)
     print('making answer vocab...', opt.ANSWER_VOCAB_SPACE)
-    _, adic = VQADataProvider.load_data(opt.ANSWER_VOCAB_SPACE)
+    _, adic = VQADataProvider.load_data(opt.ANSWER_VOCAB_SPACE, glove)
     answer_vocab = make_answer_vocab(adic, opt.NUM_OUTPUT_UNITS)
     return question_vocab, answer_vocab
 
@@ -178,7 +178,7 @@ def main():
         with open(adict_path,'r') as f:
             answer_vocab = json.load(f)
     else:
-        question_vocab, answer_vocab = make_vocab_files(opt)
+        question_vocab, answer_vocab = make_vocab_files(opt, glove)
         with open(vdict_path,'w') as f:
             json.dump(question_vocab, f)
         with open(adict_path,'w') as f:
