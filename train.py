@@ -80,15 +80,15 @@ def make_question_vocab(qdic):
 
     return vdict
 
-def make_vocab_files(opt, glove):
+def make_vocab_files(opt, exp_type):
     """
     Produce the question and answer vocabulary files.
     """
     print('making question vocab...', opt.QUESTION_VOCAB_SPACE)
-    qdic, _ = VQADataProvider.load_data(opt.QUESTION_VOCAB_SPACE, glove)
+    qdic, _ = VQADataProvider.load_data(opt.QUESTION_VOCAB_SPACE, exp_type)
     question_vocab = make_question_vocab(qdic)
     print('making answer vocab...', opt.ANSWER_VOCAB_SPACE)
-    _, adic = VQADataProvider.load_data(opt.ANSWER_VOCAB_SPACE, glove)
+    _, adic = VQADataProvider.load_data(opt.ANSWER_VOCAB_SPACE, exp_type)
     answer_vocab = make_answer_vocab(adic, opt.NUM_OUTPUT_UNITS)
     return question_vocab, answer_vocab
 
@@ -163,7 +163,7 @@ def main():
     # torch.cuda.manual_seed(opt.SEED)
     # print('Using gpu card: ' + torch.cuda.get_device_name(opt.TRAIN_GPU_ID))
     writer = SummaryWriter()
-    folder = os.path.join(config.TRAIN_DIR, opt.EXP_TYPE + '_' + opt.TRAIN_DATA_SPLITS)
+    folder = os.path.join(config.TRAIN_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
     if not os.path.exists(folder):
         os.makedirs(folder)
     question_vocab, answer_vocab = {}, {}
