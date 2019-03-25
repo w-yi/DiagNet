@@ -5,10 +5,7 @@ import os
 
 # get the project root dir assuming data is located within the same project folder
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-if socket.gethostname() == 'DESKTOP-9UNSKEL':
-    DATA_DIR = os.path.join(ROOT_DIR, 'VQA')
-else:
-    DATA_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
+
 # vqa tools - get from https://github.com/VT-vision-lab/VQA
 
 VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
@@ -29,7 +26,12 @@ for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR]:
         os.makedirs(dir)
 
 # location of the data
-VQA_PREFIX = DATA_DIR
+if socket.gethostname() == 'DESKTOP-9UNSKEL':
+    VQA_PREFIX = os.path.join(ROOT_DIR, 'VQA')
+else:
+    VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
+
+TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa_features')
 
 # baseline_dir = '' # current dataset only includes baseline features
 # glove_dir = '/faster_rcnn_resnet_pool5' # features used for glove models; should be added
@@ -84,18 +86,18 @@ DATA_PATHS = {
     },
     'textvqa': {
         'train': {
-            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_train.json'),
-            'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_train.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'train')+'/'
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train.json',
+            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_train.json',
+            'features_prefix': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_val.json'),
-            'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_val.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'val')+'/'
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val.json',
+            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_val.json',
+            'features_prefix': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test': {
-            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_test.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'test')+'/'
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test.json',
+            'features_prefix': TEXTVQA_PREFIX + '/baseline/test/'
         }
     },
 }
