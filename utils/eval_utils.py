@@ -12,12 +12,15 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from utils.data_provider import VQADataProvider
+from utils.cuda import cuda_wrapper
 sys.path.append("..")
 import config
 sys.path.append(config.VQA_TOOLS_PATH)
 sys.path.append(config.VQA_EVAL_TOOLS_PATH)
 from vqaTools.vqa import VQA
 from vqaEvaluation.vqaEval import VQAEval
+
+
 
 def visualize_failures(stat_list,mode):
 
@@ -126,12 +129,12 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
     while epoch == 0:
         t_word, word_length, t_img_feature, t_answer, t_embed_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
         word_length = np.sum(word_length,axis=1)
-        data = Variable(torch.from_numpy(t_word)).cuda().long()
-        word_length = torch.from_numpy(word_length).cuda()
-        img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
-        label = Variable(torch.from_numpy(t_answer)).cuda()
+        data = cuda_wrapper(Variable(torch.from_numpy(t_word))).long()
+        word_length = cuda_wrapper(torch.from_numpy(word_length))
+        img_feature = cuda_wrapper(Variable(torch.from_numpy(t_img_feature))).float()
+        label = cuda_wrapper(Variable(torch.from_numpy(t_answer)))
         if dp.use_embed():
-            embed_matrix = Variable(torch.from_numpy(t_embed_matrix)).cuda().float()
+            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(t_embed_matrix))).float()
             pred = model(data, word_length, img_feature, embed_matrix, mode)
         else:
             pred = model(data, word_length, img_feature, mode)

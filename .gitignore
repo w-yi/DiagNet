@@ -8,6 +8,7 @@ data/VQA/Features/
 data/VQA/Questions/
 data/VQA/QuestionTypes/
 data/textvqa_features/
+data/backup_textvqa
 *.sh
 backup/
 

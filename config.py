@@ -31,7 +31,7 @@ if socket.gethostname() == 'DESKTOP-9UNSKEL':
 else:
     VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
 
-TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa_features')
+TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa')
 
 # baseline_dir = '' # current dataset only includes baseline features
 # glove_dir = '/faster_rcnn_resnet_pool5' # features used for glove models; should be added
