@@ -19,103 +19,77 @@ sys.path.append(config.VQA_EVAL_TOOLS_PATH)
 from vqaTools.vqa import VQA
 from vqaEvaluation.vqaEval import VQAEval
 
+VISUALIZE_LIMIT = 200
 
+class QTypeGetter:
+    def __init__(self, qtype_dict, limit, folder):
+        self.qtype_dict = qtype_dict
+        self.counter = {}
+        self.limit = limit
+        self.savepath = {}
+        for cand in (list(qtype_dict.keys()) + ['other']):
+            self.savepath[cand] = os.path.join(folder, cand)
+            if not os.path.exists(self.savepath[cand]):
+                os.makedirs(self.savepath[cand])
 
-def visualize_failures(stat_list,mode):
-
-    def save_qtype(qtype_list, save_filename, mode):
-
-        if mode == 'val':
-            savepath = os.path.join('./eval', save_filename)
-            # TODO
-            img_pre = '/home/dhpseth/vqa/02_tools/VQA/Images/val2014'
-        elif mode == 'test-dev':
-            savepath = os.path.join('./test-dev', save_filename)
-            # TODO
-            img_pre = '/home/dhpseth/vqa/02_tools/VQA/Images/test2015'
-        elif mode == 'test':
-            savepath = os.path.join('./test', save_filename)
-            # TODO
-            img_pre = '/home/dhpseth/vqa/02_tools/VQA/Images/test2015'
+    def get(self, q_list):
+        pattern = '^'.join(q_list[:2])
+        qtype = 'other'
+        for cand in self.qtype_dict.keys():
+            if pattern in self.qtype_dict[cand]:
+                qtype = cand
+                break
+        self.counter[qtype] = self.counter.get(qtype, 0) + 1
+        if count > self.limit:
+            return False
         else:
-            raise Exception('Unsupported mode')
-        # if os.path.exists(savepath): shutil.rmtree(savepath)
-        if not os.path.exists(savepath): os.makedirs(savepath)
+            return self.savepath[qtype]
 
-        for qt in qtype_list:
-            count = 0
-            for t_question in stat_list:
-                #print count, t_question
-                if count < 40/len(qtype_list):
-                    t_question_list = t_question['q_list']
-                    saveflag = False
-                    #print 'debug****************************'
-                    #print qt
-                    #print t_question_list
-                    #print t_question_list[0] == qt[0]
-                    #print t_question_list[1] == qt[1]
-                    if t_question_list[0] == qt[0] and t_question_list[1] == qt[1]:
-                        saveflag = True
-                    else:
-                        saveflag = False
 
-                    if saveflag == True:
-                        t_iid = t_question['iid']
-                        if mode == 'val':
-                            t_img = Image.open(os.path.join(img_pre, \
-                                'COCO_val2014_' + str(t_iid).zfill(12) + '.jpg'))
-                        elif mode == 'test-dev' or mode == 'test':
-                            t_img = Image.open(os.path.join(img_pre, \
-                                'COCO_test2015_' + str(t_iid).zfill(12) + '.jpg'))
+def visualize_pred(opt, stat_list, folder, mode):
 
-                        # for caption
-                        #print t_iid
-                        #annIds = caps.getAnnIds(t_iid)
-                        #anns = caps.loadAnns(annIds)
-                        #cap_list = [ann['caption'] for ann in anns]
-                        ans_list = t_question['ans_list']
-                        draw = ImageDraw.Draw(t_img)
-                        for i in range(len(ans_list)):
-                            try:
-                                draw.text((10,10*i), str(ans_list[i]))
-                            except:
-                                pass
+    img_prefix = config.DATA_PATHS[opt.EXP_TYPE][mode]['image_prefix']
+    qtype_getter = QTypeGetter(config.QTYPES, VISUALIZE_LIMIT, folder)
 
-                        ans = t_question['answer']
-                        pred = t_question['pred']
-                        if ans == -1:
-                            pre = ''
-                        elif ans == pred:
-                            pre = 'correct  '
-                        else:
-                            pre = 'failure  '
-                        #print ' aaa ', ans, pred
-                        ans = re.sub( '/', ' ', str(ans))
-                        pred = re.sub( '/', ' ', str(pred))
-                        img_title = pre + str(' '.join(t_question_list)) + '.  a_' + \
-                            str(ans) + ' p_' + str(pred) + '.png'
-                        count += 1
-                        print(os.path.join(savepath,img_title))
-                        t_img.save(os.path.join(savepath,img_title))
+    for t_question in stat_list:
+        q_list = t_question['q_list']
+        savepath = qtype_getter.get(q_list)
+        if savepath:
+            iid = t_question['iid']
+            question = ' '.join(q_list) + ' ?'
+            ans_list = str(t_question['ans_list'])
+            ans = t_question['answer']
+            pred = t_question['pred']
 
-    return
-    print('saving whatis')
-    qt_color_list = [['what','color']]
-    save_qtype(qt_color_list, 'colors', mode)
+            if ans == -1:
+                prefix = 'NA'
+            elif ans == pred:
+                prefix = 'correct'
+            else:
+                prefix = 'wrong'
+            img_title = prefix + str(iid) + '.png'
 
-    print('saving whatis')
-    qt_whatis_list = [['what','is'],['what','kind'],['what','are']]
-    save_qtype(qt_whatis_list, 'whatis', mode)
+            t_img = Image.open(img_prefix + config.IMAGE_FILENAME[opt.EXP_TYPE](iid))
+            fig = plt.figure()
+            a = fig.add_subplot(1, 2, 1)
+            imgplot = plt.imshow(t_img)
+            a.axis('off')
+            b = fig.add_subplot(1, 2, 2)
+            b.text(1, 5, 'Q: ' + question)
+            b.text(1, 4, 'A:' + ans_list)
+            b.text(1, 3, 'ground truth: ' + ans)
+            b.text(1, 2, 'prediction: ' + pred)
 
-    print('saving is')
-    qt_is_list = [['is','the'], ['is','this'],['is','there']]
-    save_qtype(qt_is_list, 'is', mode)
+            b.axis([1, 7, 0, 7])
+            b.axis('off')
+            plt.savefig(os.path.join(savepath, img_title), bbox_inches='tight')
+            plt.close()
 
-    print('saving how many')
-    qt_howmany_list =[['how','many']]
-    save_qtype(qt_howmany_list, 'howmany', mode)
 
 def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
+
+    if not os.path.exists(folder):
+        os.makedirs(folder)
     model.eval()
     criterion = nn.NLLLoss()
     if not dp:
@@ -172,8 +146,9 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
         sys.stdout.write('\r' + ('%.2f' % percent) + '%')
         sys.stdout.flush()
 
-    with open('debug.json', 'w') as f:
-        json.dump(stat_list, f, indent=4, sort_keys=True)
+    if visualize:
+        with open(os.path.join(folder, 'visualize.json'), 'w') as f:
+            json.dump(stat_list, f, indent=4, sort_keys=True)
 
     print('Deduping arr of len', len(pred_list))
     deduped = []
@@ -192,8 +167,8 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
         valFile = os.path.join(folder, 'val2015_resfile')
         with open(valFile, 'w') as f:
             json.dump(final_list, f)
-        if visualize:
-            visualize_failures(stat_list,mode)
+        # if visualize:
+        #     visualize_pred(stat_list,mode)
 
         exp_type = opt.EXP_TYPE
 
@@ -211,14 +186,14 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
         filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
-        if visualize:
-            visualize_failures(stat_list,mode)
+        # if visualize:
+        #     visualize_pred(stat_list,mode)
     elif mode == 'test':
         filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
-        if visualize:
-            visualize_failures(stat_list,mode)
+        # if visualize:
+        #     visualize_pred(stat_list,mode)
 
 
 def drawgraph(results, folder, k, d, prefix='std', save_question_type_graphs=False):

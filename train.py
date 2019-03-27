@@ -90,8 +90,7 @@ def main():
     writer = SummaryWriter()
 
     folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+
 
     train_Data = data_provider.VQADataset(opt, config.VOCABCACHE_DIR)
     train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=2)

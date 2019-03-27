@@ -5,7 +5,6 @@ import torch.nn.init as init
 from torch.autograd import Variable
 import numpy as np
 import os
-import sys
 import config
 from models.mfb_baseline import mfb_baseline
 from models.mfh_baseline import mfh_baseline
@@ -13,11 +12,12 @@ from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
 from utils import data_provider
 from utils.data_provider import VQADataProvider
-from utils.eval_utils import exec_validation, drawgraph
+from utils.eval_utils import exec_validation, drawgraph, visualize_pred
 from utils.cuda import cuda_wrapper
 import json
 import datetime
 from tensorboardX import SummaryWriter
+
 
 
 def pred(opt, folder):
@@ -57,13 +57,17 @@ def pred(opt, folder):
 def main():
     opt = config.parse_opt()
 
-    # folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
+    folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_pred')
 
-    folder = os.path.join(config.OUTPUT_DIR, 'debug')
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-    pred(opt, folder)
+    # pred(opt, folder)
+
+    with open('debug.json') as f:
+        stat_list = json.load(f)
+
+    visualize_pred(opt, stat_list, folder, 'val')
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ data/VQA/Annotations/
 data/VQA/Features/
 data/VQA/Questions/
 data/VQA/QuestionTypes/
+data/VQA/Images/
 data/textvqa_features/
 data/backup_textvqa
 *.sh
@@ -18,10 +19,6 @@ backup/
 .DS_Store
 .python-version
 *.zip
-VQA/Annotations
-VQA/Features
-VQA/Questions
-VQA/QuestionTypes
 runs/
 training/
 job/
