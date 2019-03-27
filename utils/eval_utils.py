@@ -40,7 +40,7 @@ class QTypeGetter:
                 qtype = cand
                 break
         self.counter[qtype] = self.counter.get(qtype, 0) + 1
-        if count > self.limit:
+        if self.counter[qtype] > self.limit:
             return False
         else:
             return self.savepath[qtype]
@@ -61,7 +61,7 @@ def visualize_pred(opt, stat_list, folder, mode):
             ans = t_question['answer']
             pred = t_question['pred']
 
-            if ans == -1:
+            if ans == '':
                 prefix = 'NA'
             elif ans == pred:
                 prefix = 'correct'
@@ -76,7 +76,7 @@ def visualize_pred(opt, stat_list, folder, mode):
             a.axis('off')
             b = fig.add_subplot(1, 2, 2)
             b.text(1, 5, 'Q: ' + question)
-            b.text(1, 4, 'A:' + ans_list)
+            b.text(1, 4, 'A: ' + ans_list)
             b.text(1, 3, 'ground truth: ' + ans)
             b.text(1, 2, 'prediction: ' + pred)
 
