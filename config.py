@@ -1,23 +1,37 @@
 import argparse
 import socket
+import datetime
 import os
 
 # get the project root dir assuming data is located within the same project folder
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-if socket.gethostname() == 'DESKTOP-9UNSKEL':
-    DATA_DIR = os.path.join(ROOT_DIR, 'VQA')
-else:
-    DATA_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
+
 # vqa tools - get from https://github.com/VT-vision-lab/VQA
 
 VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
 VQA_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonHelperTools')
 VQA_EVAL_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonEvaluationTools')
 
+# root directory for training generated data
 TRAIN_DIR = os.path.join(ROOT_DIR, 'training')
-CACHE_DIR = os.path.join(ROOT_DIR, 'checkpoint')
+# plots and valuation files
+OUTPUT_DIR = os.path.join(TRAIN_DIR, 'output')
+# vocab cache for different datasets
+VOCABCACHE_DIR = os.path.join(TRAIN_DIR, 'vocab_cache')
+# model checkpoints
+CACHE_DIR = os.path.join(TRAIN_DIR, 'checkpoint')
+
+for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR]:
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
 # location of the data
-VQA_PREFIX = DATA_DIR
+if socket.gethostname() == 'DESKTOP-9UNSKEL':
+    VQA_PREFIX = os.path.join(ROOT_DIR, 'VQA')
+else:
+    VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
+
+TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa')
 
 # baseline_dir = '' # current dataset only includes baseline features
 # glove_dir = '/faster_rcnn_resnet_pool5' # features used for glove models; should be added
@@ -72,18 +86,18 @@ DATA_PATHS = {
     },
     'textvqa': {
         'train': {
-            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_train.json'),
-            'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_train.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'train')
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train.json',
+            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_train.json',
+            'features_prefix': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_val.json'),
-            'ans_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_annotations_val.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'val')
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val.json',
+            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_val.json',
+            'features_prefix': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test': {
-            'ques_file': os.path.join(ROOT_DIR, 'data', 'shared_textvqa', 'textvqa_questions_test.json'),
-            'features_prefix': os.path.join(ROOT_DIR, 'data', 'textvqa_features', 'baseline', 'test')
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test.json',
+            'features_prefix': TEXTVQA_PREFIX + '/baseline/test/'
         }
     },
 }
@@ -101,6 +115,9 @@ def textvqa_fn(q_iid):
     return str(q_iid) + '.jpg.npy'
 
 
+def get_time():
+    return datetime.datetime.now().strftime("%Y-%m-%dT%H%M%S")
+
 FEATURE_FILENAME = {
     'baseline': baseline_fn,
     'glove': glove_fn,
@@ -111,7 +128,8 @@ FEATURE_FILENAME = {
 def parse_opt():
     parser = argparse.ArgumentParser()
     # Data input settings
-    parser.add_argument('MODEL', type=str, choices=['mfb_bs', 'mfh_bs', 'mfb_glove', 'mfh_glove'])
+    parser.add_argument('MODEL', type=str, choices=['mfb', 'mfh'])
+    parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa'])
 
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
@@ -146,4 +164,7 @@ def parse_opt():
     parser.add_argument('--IMG_FEAT_SIZE', type=int, default=100)
 
     args = parser.parse_args()
+
+    args.ID = '_'.join([get_time(), args.MODEL, args.EXP_TYPE])
+
     return args

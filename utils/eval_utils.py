@@ -12,12 +12,15 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from utils.data_provider import VQADataProvider
+from utils.cuda import cuda_wrapper
 sys.path.append("..")
 import config
 sys.path.append(config.VQA_TOOLS_PATH)
 sys.path.append(config.VQA_EVAL_TOOLS_PATH)
 from vqaTools.vqa import VQA
 from vqaEvaluation.vqaEval import VQAEval
+
+
 
 def visualize_failures(stat_list,mode):
 
@@ -112,10 +115,10 @@ def visualize_failures(stat_list,mode):
     qt_howmany_list =[['how','many']]
     save_qtype(qt_howmany_list, 'howmany', mode)
 
-def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=False):
+def exec_validation(model, opt, mode, folder, it, visualize=False):
     model.eval()
     criterion = nn.NLLLoss()
-    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, folder=folder, glove=use_glove)
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode)
     epoch = 0
     pred_list = []
     testloss_list = []
@@ -124,15 +127,15 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=Fal
 
     print('Validating...')
     while epoch == 0:
-        t_word, word_length, t_img_feature, t_answer, t_glove_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
+        t_word, word_length, t_img_feature, t_answer, t_embed_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
         word_length = np.sum(word_length,axis=1)
-        data = Variable(torch.from_numpy(t_word)).cuda().long()
-        word_length = torch.from_numpy(word_length).cuda()
-        img_feature = Variable(torch.from_numpy(t_img_feature)).cuda().float()
-        label = Variable(torch.from_numpy(t_answer)).cuda()
-        if use_glove:
-            glove = Variable(torch.from_numpy(t_glove_matrix)).cuda().float()
-            pred = model(data, word_length, img_feature, glove, mode)
+        data = cuda_wrapper(Variable(torch.from_numpy(t_word))).long()
+        word_length = cuda_wrapper(torch.from_numpy(word_length))
+        img_feature = cuda_wrapper(Variable(torch.from_numpy(t_img_feature))).float()
+        label = cuda_wrapper(Variable(torch.from_numpy(t_answer)))
+        if dp.use_embed():
+            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(t_embed_matrix))).float()
+            pred = model(data, word_length, img_feature, embed_matrix, mode)
         else:
             pred = model(data, word_length, img_feature, mode)
 
@@ -187,9 +190,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=Fal
         if visualize:
             visualize_failures(stat_list,mode)
 
-        exp_type = 'baseline'
-        if use_glove:
-            exp_type = 'glove'
+        exp_type = opt.EXP_TYPE
 
         annFile = config.DATA_PATHS[exp_type]['val']['ans_file']
         quesFile = config.DATA_PATHS[exp_type]['val']['ques_file']
@@ -202,17 +203,19 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, use_glove=Fal
         acc_perAnswerType = vqaEval.accuracy['perAnswerType']
         return mean_testloss, acc_overall, acc_perQuestionType, acc_perAnswerType
     elif mode == 'test-dev':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         if visualize:
             visualize_failures(stat_list,mode)
     elif mode == 'test':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.MODEL + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         if visualize:
             visualize_failures(stat_list,mode)
+
+
 def drawgraph(results, folder, k, d, prefix='std', save_question_type_graphs=False):
     # 0:it
     # 1:trainloss
