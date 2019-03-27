@@ -2,8 +2,6 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
-import sys
-sys.path.append("..")
 
 
 class mfh_coatt_glove(nn.Module):
@@ -37,7 +35,7 @@ class mfh_coatt_glove(nn.Module):
             self.batch_size = self.opt.VAL_BATCH_SIZE
         else:
             self.batch_size = self.opt.BATCH_SIZE
-        data = torch.transpose(data, 1, 0)                          # type Longtensor,  T x N 
+        data = torch.transpose(data, 1, 0)                          # type Longtensor,  T x N
         glove = glove.permute(1, 0, 2)                              # type float, T x N x 300
         embed_tanh= torch.tanh(self.Embedding(data))                    # T x N x 300
         concat_word_embed = torch.cat((embed_tanh, glove), 2)       # T x N x 600
@@ -47,7 +45,7 @@ class mfh_coatt_glove(nn.Module):
         lstm1_resh2 = torch.unsqueeze(lstm1_resh, 3)              # N x 1024 x T x 1
         '''
         Question Attention
-        '''        
+        '''
         qatt_conv1 = self.Conv1_Qatt(lstm1_resh2)                   # N x 512 x T x 1
         qatt_relu = F.relu(qatt_conv1)
         qatt_conv2 = self.Conv2_Qatt(qatt_relu)                     # N x 2 x T x 1
@@ -73,7 +71,7 @@ class mfh_coatt_glove(nn.Module):
         iatt_iq_droped = self.Dropout_M(iatt_iq_eltwise)                                # N x 5000 x 100 x 1
         iatt_iq_permute1 = iatt_iq_droped.permute(0,2,1,3).contiguous()                 # N x 100 x 5000 x 1
         iatt_iq_resh = iatt_iq_permute1.view(self.batch_size, self.opt.IMG_FEAT_SIZE, self.opt.MFB_OUT_DIM, self.opt.MFB_FACTOR_NUM)
-        iatt_iq_sumpool = torch.sum(iatt_iq_resh, 3, keepdim=True)                      # N x 100 x 1000 x 1 
+        iatt_iq_sumpool = torch.sum(iatt_iq_resh, 3, keepdim=True)                      # N x 100 x 1000 x 1
         iatt_iq_permute2 = iatt_iq_sumpool.permute(0,2,1,3)                             # N x 1000 x 100 x 1
         iatt_iq_sqrt = torch.sqrt(F.relu(iatt_iq_permute2)) - torch.sqrt(F.relu(-iatt_iq_permute2))
         iatt_iq_sqrt = iatt_iq_sqrt.view(self.batch_size, -1)                           # N x 100000

@@ -142,8 +142,7 @@ def parse_opt():
     parser.add_argument('--PRINT_INTERVAL', type=int, default=100)
     parser.add_argument('--CHECKPOINT_INTERVAL', type=int, default=5000)
     parser.add_argument('--TESTDEV_INTERVAL', type=int, default=45000) # mfh_glove: 100000
-    parser.add_argument('--RESUME', type=bool, default=False)
-    parser.add_argument('--RESUME_PATH', type=str, default='./data/***.pth')
+    parser.add_argument('--RESUME_PATH', type=str, default='')
     parser.add_argument('--VAL_INTERVAL', type=int, default=5000)
     parser.add_argument('--IMAGE_CHANNEL', type=int, default=2048)
     parser.add_argument('--INIT_LERARNING_RATE', type=float, default=0.0007)

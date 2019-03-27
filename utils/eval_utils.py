@@ -13,7 +13,6 @@ import torch.nn as nn
 from torch.autograd import Variable
 from utils.data_provider import VQADataProvider
 from utils.cuda import cuda_wrapper
-sys.path.append("..")
 import config
 sys.path.append(config.VQA_TOOLS_PATH)
 sys.path.append(config.VQA_EVAL_TOOLS_PATH)
@@ -40,7 +39,7 @@ def visualize_failures(stat_list,mode):
             img_pre = '/home/dhpseth/vqa/02_tools/VQA/Images/test2015'
         else:
             raise Exception('Unsupported mode')
-        if os.path.exists(savepath): shutil.rmtree(savepath)
+        # if os.path.exists(savepath): shutil.rmtree(savepath)
         if not os.path.exists(savepath): os.makedirs(savepath)
 
         for qt in qtype_list:
@@ -65,7 +64,7 @@ def visualize_failures(stat_list,mode):
                         if mode == 'val':
                             t_img = Image.open(os.path.join(img_pre, \
                                 'COCO_val2014_' + str(t_iid).zfill(12) + '.jpg'))
-                        elif mode == 'test-dev' or 'test':
+                        elif mode == 'test-dev' or mode == 'test':
                             t_img = Image.open(os.path.join(img_pre, \
                                 'COCO_test2015_' + str(t_iid).zfill(12) + '.jpg'))
 
@@ -99,6 +98,7 @@ def visualize_failures(stat_list,mode):
                         print(os.path.join(savepath,img_title))
                         t_img.save(os.path.join(savepath,img_title))
 
+    return
     print('saving whatis')
     qt_color_list = [['what','color']]
     save_qtype(qt_color_list, 'colors', mode)
@@ -115,10 +115,11 @@ def visualize_failures(stat_list,mode):
     qt_howmany_list =[['how','many']]
     save_qtype(qt_howmany_list, 'howmany', mode)
 
-def exec_validation(model, opt, mode, folder, it, visualize=False):
+def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
     model.eval()
     criterion = nn.NLLLoss()
-    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode)
+    if not dp:
+        dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode)
     epoch = 0
     pred_list = []
     testloss_list = []
@@ -139,13 +140,14 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
         else:
             pred = model(data, word_length, img_feature, mode)
 
-        pred = (pred.data).cpu().numpy()
-        if mode == 'test-dev' or 'test':
+
+        if mode == 'test-dev' or mode == 'test':
             pass
         else:
             loss = criterion(pred, label.long())
             loss = (loss.data).cpu().numpy()
             testloss_list.append(loss)
+        pred = (pred.data).cpu().numpy()
         t_pred_list = np.argmax(pred, axis=1)
         t_pred_str = [dp.vec_to_answer(pred_symbol) for pred_symbol in t_pred_list]
 
@@ -153,7 +155,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
             pred_list.append((pred,int(dp.getStrippedQuesId(qid))))
             if visualize:
                 q_list = dp.seq_to_list(dp.getQuesStr(qid))
-                if mode == 'test-dev' or 'test':
+                if mode == 'test-dev' or mode == 'test':
                     ans_str = ''
                     ans_list = ['']*10
                 else:
@@ -169,6 +171,9 @@ def exec_validation(model, opt, mode, folder, it, visualize=False):
         percent = 100 * float(len(pred_list)) / total_questions
         sys.stdout.write('\r' + ('%.2f' % percent) + '%')
         sys.stdout.flush()
+
+    with open('debug.json', 'w') as f:
+        json.dump(stat_list, f, indent=4, sort_keys=True)
 
     print('Deduping arr of len', len(pred_list))
     deduped = []

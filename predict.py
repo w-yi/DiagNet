@@ -18,22 +18,12 @@ from utils.cuda import cuda_wrapper
 import json
 import datetime
 from tensorboardX import SummaryWriter
-sys.path.append(config.VQA_TOOLS_PATH)
-sys.path.append(config.VQA_EVAL_TOOLS_PATH)
-from vqaTools.vqa import VQA
-from vqaEvaluation.vqaEval import VQAEval
 
 
-def pred(opt, model, folder):
-    exec_validation(model, opt, mode='test', folder=folder, it=0)
+def pred(opt, folder):
 
-
-def main():
-    opt = config.parse_opt()
-
-    folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode='val')
+    opt.quest_vob_size, opt.ans_vob_size = dp.get_vocab_size()
 
     model = None
     if opt.MODEL == 'mfb':
@@ -47,7 +37,7 @@ def main():
         else:
             model = mfh_baseline(opt)
 
-    if opt.RESUME:
+    if opt.RESUME_PATH:
         print('==> Resuming from checkpoint..')
         checkpoint = torch.load(opt.RESUME_PATH)
         model.load_state_dict(checkpoint)
@@ -59,10 +49,21 @@ def main():
             elif 'weight' in name:
                 init.kaiming_uniform_(param)
                 # init.xavier_uniform(param)  # for mfb_coatt_glove
-    model = cuda_wrapper(model)
-    model.eval()
 
-    pred(opt, model, folder)
+    model = cuda_wrapper(model)
+    exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp)
+
+
+def main():
+    opt = config.parse_opt()
+
+    # folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
+
+    folder = os.path.join(config.OUTPUT_DIR, 'debug')
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    pred(opt, folder)
 
 
 if __name__ == '__main__':

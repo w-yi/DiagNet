@@ -210,6 +210,9 @@ class VQADataProvider:
             return -1
         return self.adic[qid]
 
+    def get_vocab_size(self):
+        return len(self.qdict), len(self.adict)
+
     @staticmethod
     def seq_to_list(s):
         t_str = s.lower()
@@ -448,6 +451,7 @@ class VQADataProvider:
         t_batch = self.create_batch(t_qid_list)
         return t_batch + (t_qid_list, t_iid_list, self.epoch_counter)
 
+
 class VQADataset(data.Dataset):
     """
     in order to use the universal api, always return the embed matrix
@@ -476,7 +480,7 @@ class VQADataset(data.Dataset):
             # mfb_coatt_glove: 100000
 
     def get_vocab_size(self):
-        return len(self.dp.qdict), len(self.dp.adict)
+        return self.dp.get_vocab_size()
 
     def use_embed(self):
         return self.dp.use_embed()
