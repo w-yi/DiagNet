@@ -1,0 +1,1046 @@
+parsed 34602 questions for train
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+2019-03-25 21:20:24	Train Epoch: [0]	Iter: 100	Loss: 7.1432
+2019-03-25 21:20:48	Train Epoch: [0]	Iter: 200	Loss: 6.5217
+2019-03-25 21:21:12	Train Epoch: [1]	Iter: 300	Loss: 6.2898
+2019-03-25 21:21:36	Train Epoch: [1]	Iter: 400	Loss: 6.1389
+2019-03-25 21:22:00	Train Epoch: [2]	Iter: 500	Loss: 5.9816
+2019-03-25 21:22:24	Train Epoch: [2]	Iter: 600	Loss: 5.8125
+2019-03-25 21:22:48	Train Epoch: [2]	Iter: 700	Loss: 5.7052
+2019-03-25 21:23:12	Train Epoch: [3]	Iter: 800	Loss: 5.5485
+2019-03-25 21:23:36	Train Epoch: [3]	Iter: 900	Loss: 5.4431
+2019-03-25 21:24:00	Train Epoch: [4]	Iter: 1000	Loss: 5.3095
+2019-03-25 21:24:23	Train Epoch: [4]	Iter: 1100	Loss: 5.2087
+2019-03-25 21:24:47	Train Epoch: [5]	Iter: 1200	Loss: 5.1005
+2019-03-25 21:25:11	Train Epoch: [5]	Iter: 1300	Loss: 4.9619
+2019-03-25 21:25:35	Train Epoch: [5]	Iter: 1400	Loss: 4.8889
+2019-03-25 21:25:59	Train Epoch: [6]	Iter: 1500	Loss: 4.7856
+2019-03-25 21:26:23	Train Epoch: [6]	Iter: 1600	Loss: 4.7033
+2019-03-25 21:26:47	Train Epoch: [7]	Iter: 1700	Loss: 4.6081
+2019-03-25 21:27:11	Train Epoch: [7]	Iter: 1800	Loss: 4.5090
+2019-03-25 21:27:35	Train Epoch: [7]	Iter: 1900	Loss: 4.4597
+2019-03-25 21:27:59	Train Epoch: [8]	Iter: 2000	Loss: 4.3329
+2019-03-25 21:28:22	Train Epoch: [8]	Iter: 2100	Loss: 4.2837
+2019-03-25 21:28:46	Train Epoch: [9]	Iter: 2200	Loss: 4.1924
+2019-03-25 21:29:10	Train Epoch: [9]	Iter: 2300	Loss: 4.0814
+2019-03-25 21:29:34	Train Epoch: [9]	Iter: 2400	Loss: 4.0711
+2019-03-25 21:29:58	Train Epoch: [10]	Iter: 2500	Loss: 3.9249
+2019-03-25 21:30:22	Train Epoch: [10]	Iter: 2600	Loss: 3.8920
+2019-03-25 21:30:46	Train Epoch: [11]	Iter: 2700	Loss: 3.7995
+2019-03-25 21:31:09	Train Epoch: [11]	Iter: 2800	Loss: 3.7078
+2019-03-25 21:31:33	Train Epoch: [12]	Iter: 2900	Loss: 3.6747
+2019-03-25 21:31:57	Train Epoch: [12]	Iter: 3000	Loss: 3.5596
+2019-03-25 21:32:21	Train Epoch: [12]	Iter: 3100	Loss: 3.5108
+2019-03-25 21:32:45	Train Epoch: [13]	Iter: 3200	Loss: 3.4234
+2019-03-25 21:33:09	Train Epoch: [13]	Iter: 3300	Loss: 3.3614
+2019-03-25 21:33:33	Train Epoch: [14]	Iter: 3400	Loss: 3.2951
+2019-03-25 21:33:57	Train Epoch: [14]	Iter: 3500	Loss: 3.1926
+2019-03-25 21:34:21	Train Epoch: [14]	Iter: 3600	Loss: 3.1538
+2019-03-25 21:34:44	Train Epoch: [15]	Iter: 3700	Loss: 3.0205
+2019-03-25 21:35:08	Train Epoch: [15]	Iter: 3800	Loss: 3.0195
+2019-03-25 21:35:32	Train Epoch: [16]	Iter: 3900	Loss: 2.9083
+2019-03-25 21:35:56	Train Epoch: [16]	Iter: 4000	Loss: 2.8466
+2019-03-25 21:36:20	Train Epoch: [17]	Iter: 4100	Loss: 2.8192
+2019-03-25 21:36:44	Train Epoch: [17]	Iter: 4200	Loss: 2.6884
+2019-03-25 21:37:07	Train Epoch: [17]	Iter: 4300	Loss: 2.6418
+2019-03-25 21:37:32	Train Epoch: [18]	Iter: 4400	Loss: 2.5550
+2019-03-25 21:37:55	Train Epoch: [18]	Iter: 4500	Loss: 2.4989
+2019-03-25 21:38:19	Train Epoch: [19]	Iter: 4600	Loss: 2.4190
+2019-03-25 21:38:43	Train Epoch: [19]	Iter: 4700	Loss: 2.3314
+2019-03-25 21:39:06	Train Epoch: [19]	Iter: 4800	Loss: 2.3234
+2019-03-25 21:39:31	Train Epoch: [20]	Iter: 4900	Loss: 2.1980
+2019-03-25 21:39:55	Train Epoch: [20]	Iter: 5000	Loss: 2.1596
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.124495
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 10.77
+Test per ans {'other': 10.77}
+Best accuracy of 10.77 was at iteration 5000
+2019-03-25 21:40:27	Train Epoch: [21]	Iter: 5100	Loss: 2.0700
+2019-03-25 21:40:51	Train Epoch: [21]	Iter: 5200	Loss: 2.0241
+2019-03-25 21:41:15	Train Epoch: [22]	Iter: 5300	Loss: 1.9856
+2019-03-25 21:41:39	Train Epoch: [22]	Iter: 5400	Loss: 1.8622
+2019-03-25 21:42:04	Train Epoch: [22]	Iter: 5500	Loss: 1.8680
+2019-03-25 21:42:27	Train Epoch: [23]	Iter: 5600	Loss: 1.7529
+2019-03-25 21:42:51	Train Epoch: [23]	Iter: 5700	Loss: 1.7166
+2019-03-25 21:43:15	Train Epoch: [24]	Iter: 5800	Loss: 1.6676
+2019-03-25 21:43:38	Train Epoch: [24]	Iter: 5900	Loss: 1.5854
+2019-03-25 21:44:02	Train Epoch: [24]	Iter: 6000	Loss: 1.5598
+2019-03-25 21:44:26	Train Epoch: [25]	Iter: 6100	Loss: 1.4779
+2019-03-25 21:44:50	Train Epoch: [25]	Iter: 6200	Loss: 1.4287
+2019-03-25 21:45:14	Train Epoch: [26]	Iter: 6300	Loss: 1.3744
+2019-03-25 21:45:38	Train Epoch: [26]	Iter: 6400	Loss: 1.3245
+2019-03-25 21:46:02	Train Epoch: [27]	Iter: 6500	Loss: 1.3096
+2019-03-25 21:46:26	Train Epoch: [27]	Iter: 6600	Loss: 1.2140
+2019-03-25 21:46:50	Train Epoch: [27]	Iter: 6700	Loss: 1.1947
+2019-03-25 21:47:14	Train Epoch: [28]	Iter: 6800	Loss: 1.1295
+2019-03-25 21:47:38	Train Epoch: [28]	Iter: 6900	Loss: 1.0998
+2019-03-25 21:48:02	Train Epoch: [29]	Iter: 7000	Loss: 1.0654
+2019-03-25 21:48:27	Train Epoch: [29]	Iter: 7100	Loss: 1.0127
+2019-03-25 21:48:51	Train Epoch: [29]	Iter: 7200	Loss: 0.9984
+2019-03-25 21:49:16	Train Epoch: [30]	Iter: 7300	Loss: 0.9300
+2019-03-25 21:49:39	Train Epoch: [30]	Iter: 7400	Loss: 0.9070
+2019-03-25 21:50:03	Train Epoch: [31]	Iter: 7500	Loss: 0.8616
+2019-03-25 21:50:27	Train Epoch: [31]	Iter: 7600	Loss: 0.8381
+2019-03-25 21:50:51	Train Epoch: [32]	Iter: 7700	Loss: 0.8025
+2019-03-25 21:51:15	Train Epoch: [32]	Iter: 7800	Loss: 0.7584
+2019-03-25 21:51:39	Train Epoch: [32]	Iter: 7900	Loss: 0.7537
+2019-03-25 21:52:03	Train Epoch: [33]	Iter: 8000	Loss: 0.6956
+2019-03-25 21:52:28	Train Epoch: [33]	Iter: 8100	Loss: 0.6738
+2019-03-25 21:52:51	Train Epoch: [34]	Iter: 8200	Loss: 0.6533
+2019-03-25 21:53:15	Train Epoch: [34]	Iter: 8300	Loss: 0.6125
+2019-03-25 21:53:39	Train Epoch: [34]	Iter: 8400	Loss: 0.6200
+2019-03-25 21:54:03	Train Epoch: [35]	Iter: 8500	Loss: 0.5692
+2019-03-25 21:54:27	Train Epoch: [35]	Iter: 8600	Loss: 0.5621
+2019-03-25 21:54:51	Train Epoch: [36]	Iter: 8700	Loss: 0.5331
+2019-03-25 21:55:15	Train Epoch: [36]	Iter: 8800	Loss: 0.5120
+2019-03-25 21:55:39	Train Epoch: [37]	Iter: 8900	Loss: 0.4986
+2019-03-25 21:56:02	Train Epoch: [37]	Iter: 9000	Loss: 0.4689
+2019-03-25 21:56:27	Train Epoch: [37]	Iter: 9100	Loss: 0.4603
+2019-03-25 21:56:51	Train Epoch: [38]	Iter: 9200	Loss: 0.4306
+2019-03-25 21:57:14	Train Epoch: [38]	Iter: 9300	Loss: 0.4227
+2019-03-25 21:57:39	Train Epoch: [39]	Iter: 9400	Loss: 0.4262
+2019-03-25 21:58:03	Train Epoch: [39]	Iter: 9500	Loss: 0.3955
+2019-03-25 21:58:26	Train Epoch: [39]	Iter: 9600	Loss: 0.3798
+2019-03-25 21:58:50	Train Epoch: [40]	Iter: 9700	Loss: 0.3674
+2019-03-25 21:59:14	Train Epoch: [40]	Iter: 9800	Loss: 0.3505
+2019-03-25 21:59:38	Train Epoch: [41]	Iter: 9900	Loss: 0.3343
+2019-03-25 22:00:02	Train Epoch: [41]	Iter: 10000	Loss: 0.3248
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.065985
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 10.64
+Test per ans {'other': 10.64}
+Best accuracy of 10.77 was at iteration 5000
+2019-03-25 22:00:35	Train Epoch: [42]	Iter: 10100	Loss: 0.3240
+2019-03-25 22:00:59	Train Epoch: [42]	Iter: 10200	Loss: 0.3033
+2019-03-25 22:01:24	Train Epoch: [42]	Iter: 10300	Loss: 0.2977
+2019-03-25 22:01:48	Train Epoch: [43]	Iter: 10400	Loss: 0.2852
+2019-03-25 22:02:12	Train Epoch: [43]	Iter: 10500	Loss: 0.2760
+2019-03-25 22:02:36	Train Epoch: [44]	Iter: 10600	Loss: 0.2717
+2019-03-25 22:03:01	Train Epoch: [44]	Iter: 10700	Loss: 0.2563
+2019-03-25 22:03:25	Train Epoch: [44]	Iter: 10800	Loss: 0.2578
+2019-03-25 22:03:49	Train Epoch: [45]	Iter: 10900	Loss: 0.2445
+2019-03-25 22:04:14	Train Epoch: [45]	Iter: 11000	Loss: 0.2405
+2019-03-25 22:04:38	Train Epoch: [46]	Iter: 11100	Loss: 0.2342
+2019-03-25 22:05:02	Train Epoch: [46]	Iter: 11200	Loss: 0.2240
+2019-03-25 22:05:26	Train Epoch: [47]	Iter: 11300	Loss: 0.2268
+2019-03-25 22:05:50	Train Epoch: [47]	Iter: 11400	Loss: 0.2102
+2019-03-25 22:06:14	Train Epoch: [47]	Iter: 11500	Loss: 0.2107
+2019-03-25 22:06:38	Train Epoch: [48]	Iter: 11600	Loss: 0.2033
+2019-03-25 22:07:02	Train Epoch: [48]	Iter: 11700	Loss: 0.1983
+2019-03-25 22:07:26	Train Epoch: [49]	Iter: 11800	Loss: 0.1944
+2019-03-25 22:07:50	Train Epoch: [49]	Iter: 11900	Loss: 0.1837
+2019-03-25 22:08:14	Train Epoch: [49]	Iter: 12000	Loss: 0.1888
+2019-03-25 22:08:38	Train Epoch: [50]	Iter: 12100	Loss: 0.1763
+2019-03-25 22:09:02	Train Epoch: [50]	Iter: 12200	Loss: 0.1753
+2019-03-25 22:09:26	Train Epoch: [51]	Iter: 12300	Loss: 0.1713
+2019-03-25 22:09:51	Train Epoch: [51]	Iter: 12400	Loss: 0.1663
+2019-03-25 22:10:15	Train Epoch: [52]	Iter: 12500	Loss: 0.1689
+2019-03-25 22:10:39	Train Epoch: [52]	Iter: 12600	Loss: 0.1612
+2019-03-25 22:11:03	Train Epoch: [52]	Iter: 12700	Loss: 0.1546
+2019-03-25 22:11:27	Train Epoch: [53]	Iter: 12800	Loss: 0.1525
+2019-03-25 22:11:51	Train Epoch: [53]	Iter: 12900	Loss: 0.1502
+2019-03-25 22:12:15	Train Epoch: [54]	Iter: 13000	Loss: 0.1494
+2019-03-25 22:12:39	Train Epoch: [54]	Iter: 13100	Loss: 0.1481
+2019-03-25 22:13:04	Train Epoch: [54]	Iter: 13200	Loss: 0.1432
+2019-03-25 22:13:28	Train Epoch: [55]	Iter: 13300	Loss: 0.1395
+2019-03-25 22:13:52	Train Epoch: [55]	Iter: 13400	Loss: 0.1332
+2019-03-25 22:14:17	Train Epoch: [56]	Iter: 13500	Loss: 0.1320
+2019-03-25 22:14:41	Train Epoch: [56]	Iter: 13600	Loss: 0.1322
+2019-03-25 22:15:04	Train Epoch: [57]	Iter: 13700	Loss: 0.1313
+2019-03-25 22:15:28	Train Epoch: [57]	Iter: 13800	Loss: 0.1261
+2019-03-25 22:15:52	Train Epoch: [57]	Iter: 13900	Loss: 0.1237
+2019-03-25 22:16:17	Train Epoch: [58]	Iter: 14000	Loss: 0.1228
+2019-03-25 22:16:41	Train Epoch: [58]	Iter: 14100	Loss: 0.1207
+2019-03-25 22:17:05	Train Epoch: [59]	Iter: 14200	Loss: 0.1174
+2019-03-25 22:17:29	Train Epoch: [59]	Iter: 14300	Loss: 0.1163
+2019-03-25 22:17:54	Train Epoch: [59]	Iter: 14400	Loss: 0.1162
+2019-03-25 22:18:18	Train Epoch: [60]	Iter: 14500	Loss: 0.1153
+2019-03-25 22:18:42	Train Epoch: [60]	Iter: 14600	Loss: 0.1127
+2019-03-25 22:19:06	Train Epoch: [61]	Iter: 14700	Loss: 0.1100
+2019-03-25 22:19:30	Train Epoch: [61]	Iter: 14800	Loss: 0.1073
+2019-03-25 22:19:55	Train Epoch: [61]	Iter: 14900	Loss: 0.1104
+2019-03-25 22:20:18	Train Epoch: [62]	Iter: 15000	Loss: 0.1039
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.067569
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 10.91
+Test per ans {'other': 10.91}
+Best accuracy of 10.91 was at iteration 15000
+2019-03-25 22:20:51	Train Epoch: [62]	Iter: 15100	Loss: 0.1037
+2019-03-25 22:21:15	Train Epoch: [63]	Iter: 15200	Loss: 0.1005
+2019-03-25 22:21:39	Train Epoch: [63]	Iter: 15300	Loss: 0.0999
+2019-03-25 22:22:04	Train Epoch: [64]	Iter: 15400	Loss: 0.1020
+2019-03-25 22:22:28	Train Epoch: [64]	Iter: 15500	Loss: 0.0972
+2019-03-25 22:22:52	Train Epoch: [64]	Iter: 15600	Loss: 0.0974
+2019-03-25 22:23:16	Train Epoch: [65]	Iter: 15700	Loss: 0.0947
+2019-03-25 22:23:40	Train Epoch: [65]	Iter: 15800	Loss: 0.0964
+2019-03-25 22:24:04	Train Epoch: [66]	Iter: 15900	Loss: 0.0935
+2019-03-25 22:24:28	Train Epoch: [66]	Iter: 16000	Loss: 0.0909
+2019-03-25 22:24:51	Train Epoch: [66]	Iter: 16100	Loss: 0.0908
+2019-03-25 22:25:15	Train Epoch: [67]	Iter: 16200	Loss: 0.0906
+2019-03-25 22:25:40	Train Epoch: [67]	Iter: 16300	Loss: 0.0904
+2019-03-25 22:26:04	Train Epoch: [68]	Iter: 16400	Loss: 0.0910
+2019-03-25 22:26:29	Train Epoch: [68]	Iter: 16500	Loss: 0.0865
+2019-03-25 22:26:53	Train Epoch: [69]	Iter: 16600	Loss: 0.0875
+2019-03-25 22:27:17	Train Epoch: [69]	Iter: 16700	Loss: 0.0895
+2019-03-25 22:27:42	Train Epoch: [69]	Iter: 16800	Loss: 0.0860
+2019-03-25 22:28:06	Train Epoch: [70]	Iter: 16900	Loss: 0.0846
+2019-03-25 22:28:30	Train Epoch: [70]	Iter: 17000	Loss: 0.0863
+2019-03-25 22:28:53	Train Epoch: [71]	Iter: 17100	Loss: 0.0834
+2019-03-25 22:29:18	Train Epoch: [71]	Iter: 17200	Loss: 0.0839
+2019-03-25 22:29:42	Train Epoch: [71]	Iter: 17300	Loss: 0.0867
+2019-03-25 22:30:06	Train Epoch: [72]	Iter: 17400	Loss: 0.0841
+2019-03-25 22:30:30	Train Epoch: [72]	Iter: 17500	Loss: 0.0807
+2019-03-25 22:30:54	Train Epoch: [73]	Iter: 17600	Loss: 0.0804
+2019-03-25 22:31:18	Train Epoch: [73]	Iter: 17700	Loss: 0.0785
+2019-03-25 22:31:42	Train Epoch: [74]	Iter: 17800	Loss: 0.0796
+2019-03-25 22:32:07	Train Epoch: [74]	Iter: 17900	Loss: 0.0775
+2019-03-25 22:32:31	Train Epoch: [74]	Iter: 18000	Loss: 0.0777
+2019-03-25 22:32:55	Train Epoch: [75]	Iter: 18100	Loss: 0.0758
+2019-03-25 22:33:19	Train Epoch: [75]	Iter: 18200	Loss: 0.0808
+2019-03-25 22:33:43	Train Epoch: [76]	Iter: 18300	Loss: 0.0789
+2019-03-25 22:34:08	Train Epoch: [76]	Iter: 18400	Loss: 0.0745
+2019-03-25 22:34:32	Train Epoch: [76]	Iter: 18500	Loss: 0.0767
+2019-03-25 22:34:56	Train Epoch: [77]	Iter: 18600	Loss: 0.0730
+2019-03-25 22:35:21	Train Epoch: [77]	Iter: 18700	Loss: 0.0744
+2019-03-25 22:35:45	Train Epoch: [78]	Iter: 18800	Loss: 0.0716
+2019-03-25 22:36:09	Train Epoch: [78]	Iter: 18900	Loss: 0.0724
+2019-03-25 22:36:34	Train Epoch: [79]	Iter: 19000	Loss: 0.0709
+2019-03-25 22:36:58	Train Epoch: [79]	Iter: 19100	Loss: 0.0720
+2019-03-25 22:37:22	Train Epoch: [79]	Iter: 19200	Loss: 0.0726
+2019-03-25 22:37:47	Train Epoch: [80]	Iter: 19300	Loss: 0.0721
+2019-03-25 22:38:11	Train Epoch: [80]	Iter: 19400	Loss: 0.0698
+2019-03-25 22:38:35	Train Epoch: [81]	Iter: 19500	Loss: 0.0702
+2019-03-25 22:38:58	Train Epoch: [81]	Iter: 19600	Loss: 0.0690
+2019-03-25 22:39:22	Train Epoch: [81]	Iter: 19700	Loss: 0.0674
+2019-03-25 22:39:46	Train Epoch: [82]	Iter: 19800	Loss: 0.0681
+2019-03-25 22:40:11	Train Epoch: [82]	Iter: 19900	Loss: 0.0669
+2019-03-25 22:40:35	Train Epoch: [83]	Iter: 20000	Loss: 0.0676
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.068954
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 10.89
+Test per ans {'other': 10.89}
+Best accuracy of 10.91 was at iteration 15000
+2019-03-25 22:41:08	Train Epoch: [83]	Iter: 20100	Loss: 0.0605
+2019-03-25 22:41:32	Train Epoch: [84]	Iter: 20200	Loss: 0.0525
+2019-03-25 22:41:55	Train Epoch: [84]	Iter: 20300	Loss: 0.0480
+2019-03-25 22:42:19	Train Epoch: [84]	Iter: 20400	Loss: 0.0480
+2019-03-25 22:42:44	Train Epoch: [85]	Iter: 20500	Loss: 0.0448
+2019-03-25 22:43:07	Train Epoch: [85]	Iter: 20600	Loss: 0.0446
+2019-03-25 22:43:32	Train Epoch: [86]	Iter: 20700	Loss: 0.0441
+2019-03-25 22:43:56	Train Epoch: [86]	Iter: 20800	Loss: 0.0441
+2019-03-25 22:44:20	Train Epoch: [86]	Iter: 20900	Loss: 0.0440
+2019-03-25 22:44:45	Train Epoch: [87]	Iter: 21000	Loss: 0.0433
+2019-03-25 22:45:08	Train Epoch: [87]	Iter: 21100	Loss: 0.0444
+2019-03-25 22:45:33	Train Epoch: [88]	Iter: 21200	Loss: 0.0436
+2019-03-25 22:45:58	Train Epoch: [88]	Iter: 21300	Loss: 0.0441
+2019-03-25 22:46:22	Train Epoch: [89]	Iter: 21400	Loss: 0.0439
+2019-03-25 22:46:46	Train Epoch: [89]	Iter: 21500	Loss: 0.0429
+2019-03-25 22:47:10	Train Epoch: [89]	Iter: 21600	Loss: 0.0434
+2019-03-25 22:47:34	Train Epoch: [90]	Iter: 21700	Loss: 0.0427
+2019-03-25 22:47:58	Train Epoch: [90]	Iter: 21800	Loss: 0.0429
+2019-03-25 22:48:22	Train Epoch: [91]	Iter: 21900	Loss: 0.0430
+2019-03-25 22:48:46	Train Epoch: [91]	Iter: 22000	Loss: 0.0438
+2019-03-25 22:49:10	Train Epoch: [91]	Iter: 22100	Loss: 0.0438
+2019-03-25 22:49:34	Train Epoch: [92]	Iter: 22200	Loss: 0.0426
+2019-03-25 22:49:59	Train Epoch: [92]	Iter: 22300	Loss: 0.0425
+2019-03-25 22:50:23	Train Epoch: [93]	Iter: 22400	Loss: 0.0428
+2019-03-25 22:50:47	Train Epoch: [93]	Iter: 22500	Loss: 0.0429
+2019-03-25 22:51:11	Train Epoch: [94]	Iter: 22600	Loss: 0.0420
+2019-03-25 22:51:36	Train Epoch: [94]	Iter: 22700	Loss: 0.0424
+2019-03-25 22:52:00	Train Epoch: [94]	Iter: 22800	Loss: 0.0423
+2019-03-25 22:52:24	Train Epoch: [95]	Iter: 22900	Loss: 0.0413
+2019-03-25 22:52:49	Train Epoch: [95]	Iter: 23000	Loss: 0.0423
+2019-03-25 22:53:13	Train Epoch: [96]	Iter: 23100	Loss: 0.0414
+2019-03-25 22:53:37	Train Epoch: [96]	Iter: 23200	Loss: 0.0410
+2019-03-25 22:54:01	Train Epoch: [96]	Iter: 23300	Loss: 0.0414
+2019-03-25 22:54:25	Train Epoch: [97]	Iter: 23400	Loss: 0.0418
+2019-03-25 22:54:50	Train Epoch: [97]	Iter: 23500	Loss: 0.0418
+2019-03-25 22:55:14	Train Epoch: [98]	Iter: 23600	Loss: 0.0410
+2019-03-25 22:55:38	Train Epoch: [98]	Iter: 23700	Loss: 0.0419
+2019-03-25 22:56:02	Train Epoch: [99]	Iter: 23800	Loss: 0.0408
+2019-03-25 22:56:26	Train Epoch: [99]	Iter: 23900	Loss: 0.0410
+2019-03-25 22:56:50	Train Epoch: [99]	Iter: 24000	Loss: 0.0411
+2019-03-25 22:57:14	Train Epoch: [100]	Iter: 24100	Loss: 0.0416
+2019-03-25 22:57:39	Train Epoch: [100]	Iter: 24200	Loss: 0.0405
+2019-03-25 22:58:03	Train Epoch: [101]	Iter: 24300	Loss: 0.0398
+2019-03-25 22:58:27	Train Epoch: [101]	Iter: 24400	Loss: 0.0396
+2019-03-25 22:58:51	Train Epoch: [101]	Iter: 24500	Loss: 0.0404
+2019-03-25 22:59:15	Train Epoch: [102]	Iter: 24600	Loss: 0.0398
+2019-03-25 22:59:39	Train Epoch: [102]	Iter: 24700	Loss: 0.0398
+2019-03-25 23:00:03	Train Epoch: [103]	Iter: 24800	Loss: 0.0402
+2019-03-25 23:00:28	Train Epoch: [103]	Iter: 24900	Loss: 0.0402
+2019-03-25 23:00:52	Train Epoch: [104]	Iter: 25000	Loss: 0.0394
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.068854
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 10.97
+Test per ans {'other': 10.97}
+Best accuracy of 10.97 was at iteration 25000
+2019-03-25 23:01:24	Train Epoch: [104]	Iter: 25100	Loss: 0.0394
+2019-03-25 23:01:48	Train Epoch: [104]	Iter: 25200	Loss: 0.0387
+2019-03-25 23:02:12	Train Epoch: [105]	Iter: 25300	Loss: 0.0400
+2019-03-25 23:02:36	Train Epoch: [105]	Iter: 25400	Loss: 0.0390
+2019-03-25 23:03:00	Train Epoch: [106]	Iter: 25500	Loss: 0.0394
+2019-03-25 23:03:23	Train Epoch: [106]	Iter: 25600	Loss: 0.0389
+2019-03-25 23:03:48	Train Epoch: [106]	Iter: 25700	Loss: 0.0383
+2019-03-25 23:04:12	Train Epoch: [107]	Iter: 25800	Loss: 0.0392
+2019-03-25 23:04:36	Train Epoch: [107]	Iter: 25900	Loss: 0.0381
+2019-03-25 23:05:00	Train Epoch: [108]	Iter: 26000	Loss: 0.0394
+2019-03-25 23:05:24	Train Epoch: [108]	Iter: 26100	Loss: 0.0388
+2019-03-25 23:05:48	Train Epoch: [109]	Iter: 26200	Loss: 0.0378
+2019-03-25 23:06:12	Train Epoch: [109]	Iter: 26300	Loss: 0.0389
+2019-03-25 23:06:36	Train Epoch: [109]	Iter: 26400	Loss: 0.0386
+2019-03-25 23:07:01	Train Epoch: [110]	Iter: 26500	Loss: 0.0381
+2019-03-25 23:07:25	Train Epoch: [110]	Iter: 26600	Loss: 0.0390
+2019-03-25 23:07:49	Train Epoch: [111]	Iter: 26700	Loss: 0.0389
+2019-03-25 23:08:13	Train Epoch: [111]	Iter: 26800	Loss: 0.0382
+2019-03-25 23:08:37	Train Epoch: [111]	Iter: 26900	Loss: 0.0388
+2019-03-25 23:09:01	Train Epoch: [112]	Iter: 27000	Loss: 0.0380
+2019-03-25 23:09:25	Train Epoch: [112]	Iter: 27100	Loss: 0.0372
+2019-03-25 23:09:50	Train Epoch: [113]	Iter: 27200	Loss: 0.0386
+2019-03-25 23:10:14	Train Epoch: [113]	Iter: 27300	Loss: 0.0376
+2019-03-25 23:10:37	Train Epoch: [113]	Iter: 27400	Loss: 0.0376
+2019-03-25 23:11:01	Train Epoch: [114]	Iter: 27500	Loss: 0.0374
+2019-03-25 23:11:25	Train Epoch: [114]	Iter: 27600	Loss: 0.0364
+2019-03-25 23:11:49	Train Epoch: [115]	Iter: 27700	Loss: 0.0373
+2019-03-25 23:12:13	Train Epoch: [115]	Iter: 27800	Loss: 0.0380
+2019-03-25 23:12:37	Train Epoch: [116]	Iter: 27900	Loss: 0.0373
+2019-03-25 23:13:02	Train Epoch: [116]	Iter: 28000	Loss: 0.0373
+2019-03-25 23:13:26	Train Epoch: [116]	Iter: 28100	Loss: 0.0372
+2019-03-25 23:13:51	Train Epoch: [117]	Iter: 28200	Loss: 0.0363
+2019-03-25 23:14:15	Train Epoch: [117]	Iter: 28300	Loss: 0.0372
+2019-03-25 23:14:39	Train Epoch: [118]	Iter: 28400	Loss: 0.0367
+2019-03-25 23:15:03	Train Epoch: [118]	Iter: 28500	Loss: 0.0369
+2019-03-25 23:15:27	Train Epoch: [118]	Iter: 28600	Loss: 0.0359
+2019-03-25 23:15:51	Train Epoch: [119]	Iter: 28700	Loss: 0.0366
+2019-03-25 23:16:16	Train Epoch: [119]	Iter: 28800	Loss: 0.0360
+2019-03-25 23:16:40	Train Epoch: [120]	Iter: 28900	Loss: 0.0368
+2019-03-25 23:17:05	Train Epoch: [120]	Iter: 29000	Loss: 0.0368
+2019-03-25 23:17:29	Train Epoch: [121]	Iter: 29100	Loss: 0.0368
+2019-03-25 23:17:54	Train Epoch: [121]	Iter: 29200	Loss: 0.0360
+2019-03-25 23:18:18	Train Epoch: [121]	Iter: 29300	Loss: 0.0351
+2019-03-25 23:18:42	Train Epoch: [122]	Iter: 29400	Loss: 0.0359
+2019-03-25 23:19:06	Train Epoch: [122]	Iter: 29500	Loss: 0.0356
+2019-03-25 23:19:30	Train Epoch: [123]	Iter: 29600	Loss: 0.0360
+2019-03-25 23:19:53	Train Epoch: [123]	Iter: 29700	Loss: 0.0359
+2019-03-25 23:20:17	Train Epoch: [123]	Iter: 29800	Loss: 0.0350
+2019-03-25 23:20:41	Train Epoch: [124]	Iter: 29900	Loss: 0.0362
+2019-03-25 23:21:05	Train Epoch: [124]	Iter: 30000	Loss: 0.0358
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.068402
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 11.01
+Test per ans {'other': 11.01}
+Best accuracy of 11.01 was at iteration 30000
+2019-03-25 23:21:41	Train Epoch: [125]	Iter: 30100	Loss: 0.0349
+2019-03-25 23:22:06	Train Epoch: [125]	Iter: 30200	Loss: 0.0361
+2019-03-25 23:22:30	Train Epoch: [126]	Iter: 30300	Loss: 0.0358
+2019-03-25 23:22:54	Train Epoch: [126]	Iter: 30400	Loss: 0.0357
+2019-03-25 23:23:18	Train Epoch: [126]	Iter: 30500	Loss: 0.0358
+2019-03-25 23:23:42	Train Epoch: [127]	Iter: 30600	Loss: 0.0359
+2019-03-25 23:24:06	Train Epoch: [127]	Iter: 30700	Loss: 0.0353
+2019-03-25 23:24:30	Train Epoch: [128]	Iter: 30800	Loss: 0.0354
+2019-03-25 23:24:55	Train Epoch: [128]	Iter: 30900	Loss: 0.0356
+2019-03-25 23:25:19	Train Epoch: [128]	Iter: 31000	Loss: 0.0343
+2019-03-25 23:25:43	Train Epoch: [129]	Iter: 31100	Loss: 0.0352
+2019-03-25 23:26:07	Train Epoch: [129]	Iter: 31200	Loss: 0.0353
+2019-03-25 23:26:31	Train Epoch: [130]	Iter: 31300	Loss: 0.0347
+2019-03-25 23:26:55	Train Epoch: [130]	Iter: 31400	Loss: 0.0355
+2019-03-25 23:27:19	Train Epoch: [131]	Iter: 31500	Loss: 0.0345
+2019-03-25 23:27:43	Train Epoch: [131]	Iter: 31600	Loss: 0.0354
+2019-03-25 23:28:07	Train Epoch: [131]	Iter: 31700	Loss: 0.0345
+2019-03-25 23:28:31	Train Epoch: [132]	Iter: 31800	Loss: 0.0349
+2019-03-25 23:28:56	Train Epoch: [132]	Iter: 31900	Loss: 0.0351
+2019-03-25 23:29:20	Train Epoch: [133]	Iter: 32000	Loss: 0.0353
+2019-03-25 23:29:44	Train Epoch: [133]	Iter: 32100	Loss: 0.0343
+2019-03-25 23:30:08	Train Epoch: [133]	Iter: 32200	Loss: 0.0336
+2019-03-25 23:30:33	Train Epoch: [134]	Iter: 32300	Loss: 0.0348
+2019-03-25 23:30:57	Train Epoch: [134]	Iter: 32400	Loss: 0.0349
+2019-03-25 23:31:21	Train Epoch: [135]	Iter: 32500	Loss: 0.0345
+2019-03-25 23:31:46	Train Epoch: [135]	Iter: 32600	Loss: 0.0343
+2019-03-25 23:32:10	Train Epoch: [136]	Iter: 32700	Loss: 0.0338
+2019-03-25 23:32:34	Train Epoch: [136]	Iter: 32800	Loss: 0.0332
+2019-03-25 23:32:58	Train Epoch: [136]	Iter: 32900	Loss: 0.0346
+2019-03-25 23:33:23	Train Epoch: [137]	Iter: 33000	Loss: 0.0333
+2019-03-25 23:33:46	Train Epoch: [137]	Iter: 33100	Loss: 0.0346
+2019-03-25 23:34:10	Train Epoch: [138]	Iter: 33200	Loss: 0.0339
+2019-03-25 23:34:34	Train Epoch: [138]	Iter: 33300	Loss: 0.0345
+2019-03-25 23:34:58	Train Epoch: [138]	Iter: 33400	Loss: 0.0342
+2019-03-25 23:35:22	Train Epoch: [139]	Iter: 33500	Loss: 0.0335
+2019-03-25 23:35:46	Train Epoch: [139]	Iter: 33600	Loss: 0.0334
+2019-03-25 23:36:10	Train Epoch: [140]	Iter: 33700	Loss: 0.0330
+2019-03-25 23:36:34	Train Epoch: [140]	Iter: 33800	Loss: 0.0328
+2019-03-25 23:36:58	Train Epoch: [141]	Iter: 33900	Loss: 0.0334
+2019-03-25 23:37:22	Train Epoch: [141]	Iter: 34000	Loss: 0.0336
+2019-03-25 23:37:46	Train Epoch: [141]	Iter: 34100	Loss: 0.0334
+2019-03-25 23:38:10	Train Epoch: [142]	Iter: 34200	Loss: 0.0345
+2019-03-25 23:38:35	Train Epoch: [142]	Iter: 34300	Loss: 0.0337
+2019-03-25 23:38:59	Train Epoch: [143]	Iter: 34400	Loss: 0.0331
+2019-03-25 23:39:24	Train Epoch: [143]	Iter: 34500	Loss: 0.0334
+2019-03-25 23:39:48	Train Epoch: [143]	Iter: 34600	Loss: 0.0321
+2019-03-25 23:40:12	Train Epoch: [144]	Iter: 34700	Loss: 0.0329
+2019-03-25 23:40:36	Train Epoch: [144]	Iter: 34800	Loss: 0.0324
+2019-03-25 23:41:00	Train Epoch: [145]	Iter: 34900	Loss: 0.0335
+2019-03-25 23:41:24	Train Epoch: [145]	Iter: 35000	Loss: 0.0326
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.068464
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 11.0
+Test per ans {'other': 11.0}
+Best accuracy of 11.01 was at iteration 30000
+2019-03-25 23:41:56	Train Epoch: [146]	Iter: 35100	Loss: 0.0327
+2019-03-25 23:42:21	Train Epoch: [146]	Iter: 35200	Loss: 0.0330
+2019-03-25 23:42:45	Train Epoch: [146]	Iter: 35300	Loss: 0.0330
+2019-03-25 23:43:09	Train Epoch: [147]	Iter: 35400	Loss: 0.0324
+2019-03-25 23:43:33	Train Epoch: [147]	Iter: 35500	Loss: 0.0336
+2019-03-25 23:43:57	Train Epoch: [148]	Iter: 35600	Loss: 0.0331
+2019-03-25 23:44:21	Train Epoch: [148]	Iter: 35700	Loss: 0.0332
+2019-03-25 23:44:45	Train Epoch: [148]	Iter: 35800	Loss: 0.0331
+2019-03-25 23:45:09	Train Epoch: [149]	Iter: 35900	Loss: 0.0325
+2019-03-25 23:45:33	Train Epoch: [149]	Iter: 36000	Loss: 0.0330
+2019-03-25 23:45:57	Train Epoch: [150]	Iter: 36100	Loss: 0.0331
+2019-03-25 23:46:21	Train Epoch: [150]	Iter: 36200	Loss: 0.0326
+2019-03-25 23:46:45	Train Epoch: [151]	Iter: 36300	Loss: 0.0319
+2019-03-25 23:47:09	Train Epoch: [151]	Iter: 36400	Loss: 0.0323
+2019-03-25 23:47:34	Train Epoch: [151]	Iter: 36500	Loss: 0.0323
+2019-03-25 23:47:58	Train Epoch: [152]	Iter: 36600	Loss: 0.0322
+2019-03-25 23:48:22	Train Epoch: [152]	Iter: 36700	Loss: 0.0322
+2019-03-25 23:48:46	Train Epoch: [153]	Iter: 36800	Loss: 0.0324
+2019-03-25 23:49:10	Train Epoch: [153]	Iter: 36900	Loss: 0.0323
+2019-03-25 23:49:34	Train Epoch: [153]	Iter: 37000	Loss: 0.0319
+2019-03-25 23:49:58	Train Epoch: [154]	Iter: 37100	Loss: 0.0320
+2019-03-25 23:50:22	Train Epoch: [154]	Iter: 37200	Loss: 0.0313
+2019-03-25 23:50:46	Train Epoch: [155]	Iter: 37300	Loss: 0.0317
+2019-03-25 23:51:11	Train Epoch: [155]	Iter: 37400	Loss: 0.0315
+2019-03-25 23:51:35	Train Epoch: [156]	Iter: 37500	Loss: 0.0317
+2019-03-25 23:51:59	Train Epoch: [156]	Iter: 37600	Loss: 0.0312
+2019-03-25 23:52:23	Train Epoch: [156]	Iter: 37700	Loss: 0.0314
+2019-03-25 23:52:47	Train Epoch: [157]	Iter: 37800	Loss: 0.0318
+2019-03-25 23:53:11	Train Epoch: [157]	Iter: 37900	Loss: 0.0323
+2019-03-25 23:53:35	Train Epoch: [158]	Iter: 38000	Loss: 0.0317
+2019-03-25 23:53:59	Train Epoch: [158]	Iter: 38100	Loss: 0.0324
+2019-03-25 23:54:24	Train Epoch: [158]	Iter: 38200	Loss: 0.0323
+2019-03-25 23:54:47	Train Epoch: [159]	Iter: 38300	Loss: 0.0312
+2019-03-25 23:55:12	Train Epoch: [159]	Iter: 38400	Loss: 0.0319
+2019-03-25 23:55:35	Train Epoch: [160]	Iter: 38500	Loss: 0.0306
+2019-03-25 23:56:00	Train Epoch: [160]	Iter: 38600	Loss: 0.0314
+2019-03-25 23:56:24	Train Epoch: [161]	Iter: 38700	Loss: 0.0316
+2019-03-25 23:56:48	Train Epoch: [161]	Iter: 38800	Loss: 0.0311
+2019-03-25 23:57:13	Train Epoch: [161]	Iter: 38900	Loss: 0.0311
+2019-03-25 23:57:37	Train Epoch: [162]	Iter: 39000	Loss: 0.0317
+2019-03-25 23:58:01	Train Epoch: [162]	Iter: 39100	Loss: 0.0317
+2019-03-25 23:58:25	Train Epoch: [163]	Iter: 39200	Loss: 0.0312
+2019-03-25 23:58:49	Train Epoch: [163]	Iter: 39300	Loss: 0.0311
+2019-03-25 23:59:12	Train Epoch: [163]	Iter: 39400	Loss: 0.0315
+2019-03-25 23:59:37	Train Epoch: [164]	Iter: 39500	Loss: 0.0316
+2019-03-26 00:00:01	Train Epoch: [164]	Iter: 39600	Loss: 0.0306
+2019-03-26 00:00:25	Train Epoch: [165]	Iter: 39700	Loss: 0.0304
+2019-03-26 00:00:49	Train Epoch: [165]	Iter: 39800	Loss: 0.0310
+2019-03-26 00:01:13	Train Epoch: [166]	Iter: 39900	Loss: 0.0308
+2019-03-26 00:01:37	Train Epoch: [166]	Iter: 40000	Loss: 0.0308
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.072566
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 11.24
+Test per ans {'other': 11.24}
+Best accuracy of 11.24 was at iteration 40000
+2019-03-26 00:02:09	Train Epoch: [166]	Iter: 40100	Loss: 0.0283
+2019-03-26 00:02:33	Train Epoch: [167]	Iter: 40200	Loss: 0.0266
+2019-03-26 00:02:57	Train Epoch: [167]	Iter: 40300	Loss: 0.0246
+2019-03-26 00:03:20	Train Epoch: [168]	Iter: 40400	Loss: 0.0246
+2019-03-26 00:03:45	Train Epoch: [168]	Iter: 40500	Loss: 0.0235
+2019-03-26 00:04:08	Train Epoch: [168]	Iter: 40600	Loss: 0.0238
+2019-03-26 00:04:32	Train Epoch: [169]	Iter: 40700	Loss: 0.0229
+2019-03-26 00:04:56	Train Epoch: [169]	Iter: 40800	Loss: 0.0228
+2019-03-26 00:05:20	Train Epoch: [170]	Iter: 40900	Loss: 0.0231
+2019-03-26 00:05:44	Train Epoch: [170]	Iter: 41000	Loss: 0.0229
+2019-03-26 00:06:08	Train Epoch: [170]	Iter: 41100	Loss: 0.0234
+2019-03-26 00:06:32	Train Epoch: [171]	Iter: 41200	Loss: 0.0230
+2019-03-26 00:06:56	Train Epoch: [171]	Iter: 41300	Loss: 0.0233
+2019-03-26 00:07:20	Train Epoch: [172]	Iter: 41400	Loss: 0.0232
+2019-03-26 00:07:44	Train Epoch: [172]	Iter: 41500	Loss: 0.0226
+2019-03-26 00:08:08	Train Epoch: [173]	Iter: 41600	Loss: 0.0224
+2019-03-26 00:08:31	Train Epoch: [173]	Iter: 41700	Loss: 0.0226
+2019-03-26 00:08:55	Train Epoch: [173]	Iter: 41800	Loss: 0.0228
+2019-03-26 00:09:19	Train Epoch: [174]	Iter: 41900	Loss: 0.0222
+2019-03-26 00:09:43	Train Epoch: [174]	Iter: 42000	Loss: 0.0221
+2019-03-26 00:10:07	Train Epoch: [175]	Iter: 42100	Loss: 0.0224
+2019-03-26 00:10:30	Train Epoch: [175]	Iter: 42200	Loss: 0.0228
+2019-03-26 00:10:54	Train Epoch: [175]	Iter: 42300	Loss: 0.0219
+2019-03-26 00:11:18	Train Epoch: [176]	Iter: 42400	Loss: 0.0230
+2019-03-26 00:11:42	Train Epoch: [176]	Iter: 42500	Loss: 0.0226
+2019-03-26 00:12:06	Train Epoch: [177]	Iter: 42600	Loss: 0.0223
+2019-03-26 00:12:29	Train Epoch: [177]	Iter: 42700	Loss: 0.0221
+2019-03-26 00:12:53	Train Epoch: [178]	Iter: 42800	Loss: 0.0225
+2019-03-26 00:13:17	Train Epoch: [178]	Iter: 42900	Loss: 0.0223
+2019-03-26 00:13:41	Train Epoch: [178]	Iter: 43000	Loss: 0.0227
+2019-03-26 00:14:05	Train Epoch: [179]	Iter: 43100	Loss: 0.0228
+2019-03-26 00:14:30	Train Epoch: [179]	Iter: 43200	Loss: 0.0231
+2019-03-26 00:14:54	Train Epoch: [180]	Iter: 43300	Loss: 0.0220
+2019-03-26 00:15:18	Train Epoch: [180]	Iter: 43400	Loss: 0.0218
+2019-03-26 00:15:42	Train Epoch: [180]	Iter: 43500	Loss: 0.0226
+2019-03-26 00:16:06	Train Epoch: [181]	Iter: 43600	Loss: 0.0223
+2019-03-26 00:16:30	Train Epoch: [181]	Iter: 43700	Loss: 0.0225
+2019-03-26 00:16:55	Train Epoch: [182]	Iter: 43800	Loss: 0.0225
+2019-03-26 00:17:19	Train Epoch: [182]	Iter: 43900	Loss: 0.0217
+2019-03-26 00:17:43	Train Epoch: [183]	Iter: 44000	Loss: 0.0219
+2019-03-26 00:18:07	Train Epoch: [183]	Iter: 44100	Loss: 0.0228
+2019-03-26 00:18:31	Train Epoch: [183]	Iter: 44200	Loss: 0.0221
+2019-03-26 00:18:56	Train Epoch: [184]	Iter: 44300	Loss: 0.0225
+2019-03-26 00:19:20	Train Epoch: [184]	Iter: 44400	Loss: 0.0227
+2019-03-26 00:19:45	Train Epoch: [185]	Iter: 44500	Loss: 0.0221
+2019-03-26 00:20:08	Train Epoch: [185]	Iter: 44600	Loss: 0.0217
+2019-03-26 00:20:33	Train Epoch: [185]	Iter: 44700	Loss: 0.0215
+2019-03-26 00:20:57	Train Epoch: [186]	Iter: 44800	Loss: 0.0218
+2019-03-26 00:21:21	Train Epoch: [186]	Iter: 44900	Loss: 0.0218
+2019-03-26 00:21:45	Train Epoch: [187]	Iter: 45000	Loss: 0.0226
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8311
+answer vocab size: 3000
+Validating...
+20.00%40.00%60.00%80.00%0 questions were skipped in a single epoch
+100.00%Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.064102
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [--------------------] 0% Finshed Percent: [--------------------] 2% Finshed Percent: [#-------------------] 4% Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 8% Finshed Percent: [##------------------] 10% Finshed Percent: [##------------------] 12% Finshed Percent: [###-----------------] 14% Finshed Percent: [###-----------------] 16% Finshed Percent: [####----------------] 18% Finshed Percent: [####----------------] 20% Finshed Percent: [####----------------] 22% Finshed Percent: [#####---------------] 24% Finshed Percent: [#####---------------] 26% Finshed Percent: [######--------------] 28% Finshed Percent: [######--------------] 30% Finshed Percent: [######--------------] 32% Finshed Percent: [#######-------------] 34% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 38% Finshed Percent: [########------------] 40% Finshed Percent: [########------------] 42% Finshed Percent: [#########-----------] 44% Finshed Percent: [#########-----------] 46% Finshed Percent: [##########----------] 48% Finshed Percent: [##########----------] 50% Finshed Percent: [##########----------] 52% Finshed Percent: [###########---------] 54% Finshed Percent: [###########---------] 56% Finshed Percent: [############--------] 57% Finshed Percent: [############--------] 60% Finshed Percent: [############--------] 62% Finshed Percent: [#############-------] 64% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 68% Finshed Percent: [##############------] 70% Finshed Percent: [##############------] 72% Finshed Percent: [###############-----] 74% Finshed Percent: [###############-----] 76% Finshed Percent: [################----] 78% Finshed Percent: [################----] 80% Finshed Percent: [################----] 82% Finshed Percent: [#################---] 84% Finshed Percent: [#################---] 86% Finshed Percent: [##################--] 88% Finshed Percent: [##################--] 90% Finshed Percent: [##################--] 92% Finshed Percent: [###################-] 94% Finshed Percent: [###################-] 96% Finshed Percent: [####################] 98% Done computing accuracy
+Test loss: nan
+Accuracy: 11.15
+Test per ans {'other': 11.15}
+Best accuracy of 11.24 was at iteration 40000
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+10565 questions were skipped in a single epoch
+/data/home/wennyi/vqa-mfb.pytorch/models/mfb_baseline.py:42: UserWarning: Implicit dimension choice for log_softmax has been deprecated. Change the call to include dim=X as an argument.
+  iq = F.log_softmax(iq)
+/data/home/wennyi/vqa-mfb.pytorch/utils/eval_utils.py:186: RuntimeWarning: Mean of empty slice.
+  mean_testloss = np.array(testloss_list).mean()
+/data/home/wennyi/opt/anaconda3/envs/mfb_py3/lib/python3.7/site-packages/numpy/core/_methods.py:85: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+Traceback (most recent call last):
+  File "train.py", line 136, in <module>
+    main()
+  File "train.py", line 132, in main
+    train(opt, model, train_Loader, optimizer, writer, folder, train_Data.use_embed())
+  File "train.py", line 84, in train
+    exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
+  File "/data/home/wennyi/vqa-mfb.pytorch/utils/eval_utils.py", line 121, in exec_validation
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode)
+  File "/data/home/wennyi/vqa-mfb.pytorch/utils/data_provider.py", line 25, in __init__
+    self.qdic, self.adic = VQADataProvider.load_data(self.mode, self.exp_type)
+  File "/data/home/wennyi/vqa-mfb.pytorch/utils/data_provider.py", line 176, in load_data
+    assert data_split in config.DATA_PATHS[exp_type].keys(), 'unknown data split'
+AssertionError: unknown data split
