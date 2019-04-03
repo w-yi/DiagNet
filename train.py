@@ -18,10 +18,6 @@ from utils.cuda import cuda_wrapper
 import json
 import datetime
 from tensorboardX import SummaryWriter
-sys.path.append(config.VQA_TOOLS_PATH)
-sys.path.append(config.VQA_EVAL_TOOLS_PATH)
-from vqaTools.vqa import VQA
-from vqaEvaluation.vqaEval import VQAEval
 
 
 def adjust_learning_rate(optimizer, decay_rate):
@@ -94,8 +90,7 @@ def main():
     writer = SummaryWriter()
 
     folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+
 
     train_Data = data_provider.VQADataset(opt, config.VOCABCACHE_DIR)
     train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=2)
@@ -114,7 +109,7 @@ def main():
         else:
             model = mfh_baseline(opt)
 
-    if opt.RESUME:
+    if opt.RESUME_PATH:
         print('==> Resuming from checkpoint..')
         checkpoint = torch.load(opt.RESUME_PATH)
         model.load_state_dict(checkpoint)

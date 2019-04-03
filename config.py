@@ -26,10 +26,7 @@ for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR]:
         os.makedirs(dir)
 
 # location of the data
-if socket.gethostname() == 'DESKTOP-9UNSKEL':
-    VQA_PREFIX = os.path.join(ROOT_DIR, 'VQA')
-else:
-    VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
+VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
 
 TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa')
 
@@ -45,7 +42,8 @@ DATA_PATHS = {
         'val': {
             'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_val2014_questions.json',
             'ans_file': VQA_PREFIX + '/Annotations/mscoco_val2014_annotations.json',
-            'features_prefix': VQA_PREFIX + '/Features/coco_resnet/val2014/COCO_val2014_'
+            'features_prefix': VQA_PREFIX + '/Features/coco_resnet/val2014/COCO_val2014_',
+            'image_prefix': VQA_PREFIX + '/Images/val2014/COCO_val2014_'
         },
         'test-dev': {
             'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_test-dev2015_questions.json',
@@ -102,29 +100,26 @@ DATA_PATHS = {
     },
 }
 
+FEATURE_FILENAME = {
+    'baseline': (lambda q_iid: str(q_iid).zfill(12) + '.jpg.npy'),
+    'glove': (lambda q_iid: str(q_iid) + '.npy'),
+    'textvqa': (lambda q_iid: str(q_iid) + '.jpg.npy')
+}
 
-def baseline_fn(q_iid):
-    return str(q_iid).zfill(12) + '.jpg.npy'
+IMAGE_FILENAME = {
+    'baseline': (lambda q_iid: str(q_iid).zfill(12) + '.jpg')
+}
 
-
-def glove_fn(q_iid):
-    return str(q_iid) + '.npy'
-
-
-def textvqa_fn(q_iid):
-    return str(q_iid) + '.jpg.npy'
-
+QTYPES = {
+    'what_colors': ['what^color'],
+    'what_is': ['what^is', 'what^kind', 'what^are'],
+    'is': ['is^the', 'is^this', 'is^there'],
+    'how_many': ['how^many']
+}
 
 def get_time():
     return datetime.datetime.now().strftime("%Y-%m-%dT%H%M%S")
-
-FEATURE_FILENAME = {
-    'baseline': baseline_fn,
-    'glove': glove_fn,
-    'textvqa': textvqa_fn,
-}
-
-
+    
 def parse_opt():
     parser = argparse.ArgumentParser()
     # Data input settings
@@ -142,8 +137,7 @@ def parse_opt():
     parser.add_argument('--PRINT_INTERVAL', type=int, default=100)
     parser.add_argument('--CHECKPOINT_INTERVAL', type=int, default=5000)
     parser.add_argument('--TESTDEV_INTERVAL', type=int, default=45000) # mfh_glove: 100000
-    parser.add_argument('--RESUME', type=bool, default=False)
-    parser.add_argument('--RESUME_PATH', type=str, default='./data/***.pth')
+    parser.add_argument('--RESUME_PATH', type=str, default='')
     parser.add_argument('--VAL_INTERVAL', type=int, default=5000)
     parser.add_argument('--IMAGE_CHANNEL', type=int, default=2048)
     parser.add_argument('--INIT_LERARNING_RATE', type=float, default=0.0007)
