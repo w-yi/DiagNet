@@ -30,14 +30,12 @@ class VQADataProvider:
         self._get_vocab_files()
 
         # The tokens will always use the embedding
-        self.n_ans_vocabulary = len(self.adict)
-        self.nlp = spacy.load('en_vectors_web_lg')
-#         self.nlp = spacy.load('en_core_web_sm')
-        self.embed_dict = {} # word -> embed vector
-#         if self.use_embed():
-#             self.n_ans_vocabulary = len(self.adict)
-#             self.nlp = spacy.load('en_vectors_web_lg')
-#             self.embed_dict = {} # word -> embed vector
+        if self.use_embed():
+            self.n_ans_vocabulary = len(self.adict)
+            self.nlp = spacy.load('en_vectors_web_lg')
+            # self.nlp = spacy.load('en_core_web_sm')
+            self.embed_dict = {} # word -> embed vector
+
 
     def _get_vocab_files(self):
         """
@@ -73,7 +71,7 @@ class VQADataProvider:
         question_vocab = VQADataProvider.make_question_vocab(qdic)
         print('making answer vocab...', self.opt.ANSWER_VOCAB_SPACE)
         _, adic = VQADataProvider.load_data(self.opt.ANSWER_VOCAB_SPACE, self.exp_type)
-        answer_vocab = VQADataProvider.make_answer_vocab(adic, self.opt.NUM_OUTPUT_UNITS)
+        answer_vocab = VQADataProvider.make_answer_vocab(adic, self.opt.MAX_ANSWER_VOCAB_SIZE)
         return question_vocab, answer_vocab
 
     @staticmethod
@@ -196,7 +194,7 @@ class VQADataProvider:
         """
         check usage of pretrained word embedding
         """
-        if self.exp_type == 'glove':
+        if self.exp_type == 'glove' or self.exp_type == 'textvqa':
             return True
         else:
             return False
@@ -212,7 +210,7 @@ class VQADataProvider:
 
     def getQuesStr(self,qid):
         return self.qdic[qid]['qstr']
-    
+
     def getQuesOcrTokens(self, qid):
         return self.qdic[qid]['ocr_tokens']
 
@@ -263,7 +261,7 @@ class VQADataProvider:
 
     def extract_answer_list(self,answer_obj, token_obj):
         answer_list = [ ans['answer'] for ans in answer_obj]
-        prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS + self.opt.MAX_TOKEN_SIZE)
+        prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS)
         for ans in answer_list:
             if ans in self.adict:
                 index = self.adict[ans]
@@ -271,7 +269,7 @@ class VQADataProvider:
             if ans in token_obj:
                 for idx in range(0, len(token_obj)):
                     if token_obj[idx] == ans:
-                        prob_answer_vec[self.opt.NUM_OUTPUT_UNITS + idx] += 1
+                        prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE + idx] += 1
         return prob_answer_vec / np.sum(prob_answer_vec)
 
 #         if len(prob_answer_list) == 0:
@@ -299,8 +297,8 @@ class VQADataProvider:
                     embed_matrix[i] = self.embed_dict[w]
                 cvec_token[i] = 1
         return cvec_token, embed_matrix
-    
-    
+
+
     def qlist_to_vec(self, max_length, q_list):
         """
         Converts a list of words into a format suitable for the embedding layer.
@@ -360,7 +358,7 @@ class VQADataProvider:
             for i in range(0, len(token_obj)):
                 if ans_str == token_obj:
                     # Don't forget to plus one here
-                    ans = self.opt.NUM_OUTPUT_UNITS + i
+                    ans = self.opt.MAX_ANSWER_VOCAB_SIZE + i
         else:
             ans = self.adict['']
         return ans
@@ -382,7 +380,7 @@ class VQADataProvider:
         cvec_token = np.zeros((self.batchsize, self.opt.MAX_TOKEN_SIZE))
         token_embedding = np.zeros((self.batchsize, self.opt.MAX_TOKEN_SIZE, TOKEN_EMBEDDING_SIZE))
         original_list_tokens = list()
-        
+
         if self.use_embed():
             ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
         else:
@@ -391,7 +389,7 @@ class VQADataProvider:
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             avec = np.zeros(self.batchsize)
         else:
-            avec = np.zeros((self.batchsize, self.opt.NUM_OUTPUT_UNITS + self.opt.MAX_TOKEN_SIZE))
+            avec = np.zeros((self.batchsize, self.opt.NUM_OUTPUT_UNITS))
 
         if self.use_embed():
             embed_matrix = np.zeros((self.batchsize, self.max_length, EMBEDDING_SIZE))
@@ -442,7 +440,7 @@ class VQADataProvider:
                 embed_matrix[i,...] = t_embed_matrix
             else:
                 ivec[i,...] = t_ivec
-        
+
             t_cvec_token, t_token_embedding = self.tokenlist_to_vec(q_tokens)
             cvec_token[i, ...] = t_cvec_token
             token_embedding[i, ...] = t_token_embedding

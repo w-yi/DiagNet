@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from utils.data_provider import VQADataProvider
-from utils.cuda import cuda_wrapper
+from utils.commons import cuda_wrapper, check_mkdir
 import config
 sys.path.append(config.VQA_TOOLS_PATH)
 sys.path.append(config.VQA_EVAL_TOOLS_PATH)
@@ -29,8 +29,7 @@ class QTypeGetter:
         self.savepath = {}
         for cand in (list(qtype_dict.keys()) + ['other']):
             self.savepath[cand] = os.path.join(folder, cand)
-            if not os.path.exists(self.savepath[cand]):
-                os.makedirs(self.savepath[cand])
+            check_mkdir(self.savepath[cand])
 
     def get(self, q_list):
         pattern = '^'.join(q_list[:2])
@@ -88,8 +87,7 @@ def visualize_pred(opt, stat_list, folder, mode):
 
 def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
 
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+    check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
     if not dp:

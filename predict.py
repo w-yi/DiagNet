@@ -13,9 +13,8 @@ from models.mfh_coatt_glove import mfh_coatt_glove
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph, visualize_pred
-from utils.cuda import cuda_wrapper
+from utils.commons import cuda_wrapper, check_mkdir
 import json
-import datetime
 from tensorboardX import SummaryWriter
 
 
@@ -59,8 +58,7 @@ def main():
 
     folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_pred')
 
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+    check_mkdir(folder)
 
     # pred(opt, folder)
 

@@ -1,7 +1,7 @@
 import argparse
 import socket
-import datetime
 import os
+from commons import get_time, check_mkdir
 
 # get the project root dir assuming data is located within the same project folder
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,8 +22,7 @@ VOCABCACHE_DIR = os.path.join(TRAIN_DIR, 'vocab_cache')
 CACHE_DIR = os.path.join(TRAIN_DIR, 'checkpoint')
 
 for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR]:
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    check_mkdir(dir)
 
 # location of the data
 VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
@@ -117,9 +116,7 @@ QTYPES = {
     'how_many': ['how^many']
 }
 
-def get_time():
-    return datetime.datetime.now().strftime("%Y-%m-%dT%H%M%S")
-    
+
 def parse_opt():
     parser = argparse.ArgumentParser()
     # Data input settings
@@ -131,7 +128,8 @@ def parse_opt():
     parser.add_argument('--SEED', type=int, default=-1)
     parser.add_argument('--BATCH_SIZE', type=int, default=200) # glove: 64
     parser.add_argument('--VAL_BATCH_SIZE', type=int, default=1000) # glove: 32
-    parser.add_argument('--NUM_OUTPUT_UNITS', type=int, default=3000)
+    parser.add_argument('--MAX_ANSWER_VOCAB_SIZE', type=int, default=3000)
+    parser.add_argument('--MAX_TOKEN_SIZE', type=int, default=104)
     parser.add_argument('--MAX_WORDS_IN_QUESTION', type=int, default=15)
     parser.add_argument('--MAX_ITERATIONS', type=int, default=50000) # glove: 100000
     parser.add_argument('--PRINT_INTERVAL', type=int, default=100)
@@ -152,13 +150,21 @@ def parse_opt():
     parser.add_argument('--QUESTION_VOCAB_SPACE', type=str, default='train')
     parser.add_argument('--ANSWER_VOCAB_SPACE', type=str, default='train')
 
+    parser.add_argument('--TOKEN_EMBEDDING_SIZE', type=int, default=300)
+
     # glove options
     parser.add_argument('--NUM_IMG_GLIMPSE', type=int, default=2)
     parser.add_argument('--NUM_QUESTION_GLIMPSE', type=int, default=2)
     parser.add_argument('--IMG_FEAT_SIZE', type=int, default=100)
 
+    # OCR options
+    parser.add_argument('--NUM_OCR_GLIMPSE', type=int, default=2)
+
     args = parser.parse_args()
 
-    args.ID = '_'.join([get_time(), args.MODEL, args.EXP_TYPE])
+    args.ID = '_'.join([get_time('%Y-%m-%dT%H%M%S'), args.MODEL, args.EXP_TYPE])
+
+    # define the dimention of model output
+    args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE + args.MAX_TOKEN_SIZE
 
     return args

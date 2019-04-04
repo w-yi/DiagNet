@@ -14,9 +14,8 @@ from models.mfh_coatt_glove import mfh_coatt_glove
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
-from utils.cuda import cuda_wrapper
+from utils.commons import cuda_wrapper, get_time, check_mkdir
 import json
-import datetime
 from tensorboardX import SummaryWriter
 
 
@@ -56,7 +55,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
         if iter_idx % opt.DECAY_STEPS == 0 and iter_idx != 0:
             adjust_learning_rate(optimizer, opt.DECAY_RATE)
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            now = get_time('%Y-%m-%d %H:%M:%S')
             c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL:iter_idx].mean()
             writer.add_scalar(opt.ID + '/train_loss', c_mean_loss, iter_idx)
             writer.add_scalar(opt.ID + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
