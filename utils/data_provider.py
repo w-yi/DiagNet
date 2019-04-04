@@ -1,18 +1,22 @@
+import string
+import json
+import random
 import numpy as np
-import re, json, random
-import config
 import torch.utils.data as data
 import spacy
 import os
+from collections import Counter
+
+import config
 #from torchnlp.word_to_vector import FastText
 
 QID_KEY_SEPARATOR = '/'
 ZERO_PAD = '_PAD'
 EMBEDDING_SIZE = 300
-TOKEN_EMBEDDING_SIZE = 300
+
 class VQADataProvider:
 
-    def __init__(self, opt, batchsize, mode, cache_dir=config.VOCABCACHE_DIR, max_length=15):
+    def __init__(self, opt, batchsize, mode, cache_dir=config.VOCABCACHE_DIR):
         self.opt = opt
         self.mode = mode
         self.batchsize = batchsize
@@ -20,17 +24,19 @@ class VQADataProvider:
         self.batch_index = None
         self.batch_len = None
         self.rev_adict = None
-        self.max_length = max_length
+        self.max_length = opt.MAX_QUESTION_LENGTH
         self.cache_dir = cache_dir
         self.exp_type = opt.EXP_TYPE
+        self.use_embed = opt.EMBED
+        self.use_ocr = opt.OCR
         self.max_token_size = opt.MAX_TOKEN_SIZE
 
-        self.qdic, self.adic = VQADataProvider.load_data(self.mode, self.exp_type)
+        self.qdic, self.adic = VQADataProvider.load_data(self.mode, self.exp_type, self.use_ocr)
 
         self._get_vocab_files()
 
         # The tokens will always use the embedding
-        if self.use_embed():
+        if self.use_embed:
             self.n_ans_vocabulary = len(self.adict)
             self.nlp = spacy.load('en_vectors_web_lg')
             # self.nlp = spacy.load('en_core_web_sm')
@@ -44,7 +50,10 @@ class VQADataProvider:
         """
         question_vocab, answer_vocab = {}, {}
         qdict_path = os.path.join(self.cache_dir, self.exp_type + '_qdict.json')
-        adict_path = os.path.join(self.cache_dir, self.exp_type + '_adict.json')
+        adict_prefix = '_adict.json'
+        if self.use_ocr:
+            adict_prefix = '_ocr' + adict_prefix
+        adict_path = os.path.join(self.cache_dir, self.exp_type + adict_prefix)
         if os.path.exists(qdict_path) and os.path.exists(adict_path):
             print('restoring vocab')
             with open(qdict_path,'r') as f:
@@ -67,11 +76,11 @@ class VQADataProvider:
         Produce the question and answer vocabulary files.
         """
         print('making question vocab...', self.opt.QUESTION_VOCAB_SPACE)
-        qdic, _ = VQADataProvider.load_data(self.opt.QUESTION_VOCAB_SPACE, self.exp_type)
+        qdic, _ = VQADataProvider.load_data(self.opt.QUESTION_VOCAB_SPACE, self.exp_type, self.use_ocr)
         question_vocab = VQADataProvider.make_question_vocab(qdic)
         print('making answer vocab...', self.opt.ANSWER_VOCAB_SPACE)
-        _, adic = VQADataProvider.load_data(self.opt.ANSWER_VOCAB_SPACE, self.exp_type)
-        answer_vocab = VQADataProvider.make_answer_vocab(adic, self.opt.MAX_ANSWER_VOCAB_SIZE)
+        qdic, adic = VQADataProvider.load_data(self.opt.ANSWER_VOCAB_SPACE, self.exp_type, self.use_ocr)
+        answer_vocab = VQADataProvider.make_answer_vocab(adic, qdic, self.opt.MAX_ANSWER_VOCAB_SIZE, self.use_ocr)
         return question_vocab, answer_vocab
 
     @staticmethod
@@ -94,62 +103,107 @@ class VQADataProvider:
 
         return qdict
 
+    # @staticmethod
+    # def make_answer_vocab(adic, vocab_size):
+    #     """
+    #     Returns a dictionary that maps words to indices.
+    #     """
+    #     adict = {'':0}
+    #     nadict = {'':1000000}
+    #     vid = 1
+    #     for qid in adic.keys():
+    #         answer_obj = adic[qid]
+    #         answer_list = [ans['answer'] for ans in answer_obj]
+    #
+    #         for q_ans in answer_list:
+    #             # create dict
+    #             if q_ans in adict:
+    #                 nadict[q_ans] += 1
+    #             else:
+    #                 nadict[q_ans] = 1
+    #                 adict[q_ans] = vid
+    #                 vid +=1
+    #     # debug
+    #     nalist = []
+    #     for k,v in sorted(nadict.items(), key=lambda x:x[1]):
+    #         nalist.append((k,v))
+    #
+    #     # remove words that appear less than once
+    #     n_del_ans = 0
+    #     n_valid_ans = 0
+    #     adict_nid = {}
+    #     for i, w in enumerate(nalist[:-vocab_size]):
+    #         del adict[w[0]]
+    #         n_del_ans += w[1]
+    #     for i, w in enumerate(nalist[-vocab_size:]):
+    #         n_valid_ans += w[1]
+    #         adict_nid[w[0]] = i
+    #
+    #     return adict_nid
+
     @staticmethod
-    def make_answer_vocab(adic, vocab_size):
+    def make_answer_vocab(adic, qdic, vocab_size, use_ocr):
         """
-        Returns a dictionary that maps words to indices.
+        Returns a vocab_size dictionary that maps words to indices.
+        only keep the words with highest occurrences
+        if use_ocr, exclude the answers appearing in token lists
         """
-        adict = {'':0}
-        nadict = {'':1000000}
-        vid = 1
+
+        counter = Counter()
         for qid in adic.keys():
             answer_obj = adic[qid]
             answer_list = [ans['answer'] for ans in answer_obj]
+            ocr_tokens = qdic[qid]['ocr_tokens']
+            if use_ocr:
+            answer_list = [x for x in answer_list if x not in ocr_tokens]
 
-            for q_ans in answer_list:
-                # create dict
-                if q_ans in adict:
-                    nadict[q_ans] += 1
-                else:
-                    nadict[q_ans] = 1
-                    adict[q_ans] = vid
-                    vid +=1
-        # debug
-        nalist = []
-        for k,v in sorted(nadict.items(), key=lambda x:x[1]):
-            nalist.append((k,v))
+            counter.update(answer_list)
 
-        # remove words that appear less than once
-        n_del_ans = 0
-        n_valid_ans = 0
-        adict_nid = {}
-        for i, w in enumerate(nalist[:-vocab_size]):
-            del adict[w[0]]
-            n_del_ans += w[1]
-        for i, w in enumerate(nalist[-vocab_size:]):
-            n_valid_ans += w[1]
-            adict_nid[w[0]] = i
-
-        return adict_nid
+        adict = {}
+        # TODO: check whether this is the right implementation
+        adict[''] = 0
+        idx = 1
+        alist = counter.most_common(vocab_size - 1)
+        for pair in alist:
+            adict[pair[0]] = idx
+            ++idx
+        return adict
 
     @staticmethod
-    def load_vqa_json(data_split, exp_type='baseline'):
+    def load_vqa_json(data_split, exp_type, use_ocr):
         """
         Parses the question and answer json files for the given data split.
         Returns the question dictionary and the answer dictionary.
+
+        question dict format: {
+            'question': str,
+            'image_id': int,
+            'ocr_tokens': list (only required if use_ocr)
+        }
+        answer dict format: {
+            'answers': list of str,
+            'question_id': int
+        }
+
         """
         qdic, adic = {}, {}
 
         with open(config.DATA_PATHS[exp_type][data_split]['ques_file'], 'r') as f:
             qdata = json.load(f)['questions']
             for q in qdata:
-                qdic[data_split + QID_KEY_SEPARATOR + str(q['question_id'])] = \
-                    {'qstr': q['question'], 'iid': q['image_id'], 'ocr_tokens':q['ocr_tokens']}
+                q_key = data_split + QID_KEY_SEPARATOR + str(q['question_id'])
+                qdic[q_key] = {
+                    'qstr': q['question'],
+                    'iid': q['image_id']
+                }
+                if use_ocr:
+                    qdic[q_key]['ocr_tokens'] = q['ocr_tokens']
 
         if 'test' not in data_split:
             with open(config.DATA_PATHS[exp_type][data_split]['ans_file'], 'r') as f:
                 adata = json.load(f)['annotations']
                 for a in adata:
+                    # TODO: we only use key 'answer' in this a['answers'] list
                     adic[data_split + QID_KEY_SEPARATOR + str(a['question_id'])] = \
                         a['answers']
 
@@ -175,7 +229,7 @@ class VQADataProvider:
         return qdic, adic
 
     @staticmethod
-    def load_data(data_split_str, exp_type='baseline'):
+    def load_data(data_split_str, exp_type, use_ocr):
         all_qdic, all_adic = {}, {}
 
         for data_split in data_split_str.split('+'):
@@ -185,19 +239,19 @@ class VQADataProvider:
                 all_qdic.update(qdic)
                 all_adic.update(adic)
             else:
-                qdic, adic = VQADataProvider.load_vqa_json(data_split, exp_type)
+                qdic, adic = VQADataProvider.load_vqa_json(data_split, exp_type, use_ocr)
                 all_qdic.update(qdic)
                 all_adic.update(adic)
         return all_qdic, all_adic
 
-    def use_embed(self):
-        """
-        check usage of pretrained word embedding
-        """
-        if self.exp_type == 'glove' or self.exp_type == 'textvqa':
-            return True
-        else:
-            return False
+    # def use_embed(self):
+    #     """
+    #     check usage of pretrained word embedding
+    #     """
+    #     if self.exp_type == 'glove' or self.exp_type == 'textvqa':
+    #         return True
+    #     else:
+    #         return False
 
     def getQuesIds(self):
         return list(self.qdic.keys())
@@ -212,9 +266,12 @@ class VQADataProvider:
         return self.qdic[qid]['qstr']
 
     def getQuesOcrTokens(self, qid):
-        return self.qdic[qid]['ocr_tokens']
+        if self.use_ocr:
+            return self.qdic[qid]['ocr_tokens']
+        else:
+            return []
 
-    def getAnsObj(self,qid):
+    def getAnsObj(self, qid):
         if self.mode == 'test-dev' or self.mode == 'test':
             return -1
         return self.adic[qid]
@@ -225,19 +282,20 @@ class VQADataProvider:
     @staticmethod
     def seq_to_list(s):
         t_str = s.lower()
-        for i in [r'\?',r'\!',r'\'',r'\"',r'\$',r'\:',r'\@',r'\(',r'\)',r'\,',r'\.',r'\;']:
-            t_str = re.sub( i, '', t_str)
-        for i in [r'\-',r'\/']:
-            t_str = re.sub( i, ' ', t_str)
-        q_list = re.sub(r'\?','',t_str.lower()).split(' ')
-        q_list = filter(lambda x: len(x) > 0, q_list)
+        t_str = t_str.replace('-', ' ').replace('/', ' ')
+        t_str = t_str.translate(str.maketrans('', '', string.punctuation))
+        q_list = t_str.strip().split()
         return list(q_list)
 
-    def extract_answer(self,answer_obj):
-        """ Return the most popular answer in string."""
+    def extract_answer(self, answer_obj):
+        """
+        Return the answer with maximum occurrences
+        Only consider the first 10 answers in the list
+        Only return one answer if there is a draw
+        """
         if self.mode == 'test-dev' or self.mode == 'test':
             return -1
-        answer_list = [ answer_obj[i]['answer'] for i in range(10)]
+        answer_list = [answer_obj[i]['answer'] for i in range(10)]
         dic = {}
         for ans in answer_list:
             if ans in dic:
@@ -259,17 +317,18 @@ class VQADataProvider:
 #             if ans in self.adict:
 #                 prob_answer_list.append(ans)
 
-    def extract_answer_list(self,answer_obj, token_obj):
-        answer_list = [ ans['answer'] for ans in answer_obj]
+    def extract_answer_list(self, answer_obj, token_obj):
+        answer_list = [ans['answer'] for ans in answer_obj]
         prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS)
         for ans in answer_list:
             if ans in self.adict:
                 index = self.adict[ans]
                 prob_answer_vec[index] += 1
-            if ans in token_obj:
+            if self.use_ocr and ans in token_obj:
                 for idx in range(0, len(token_obj)):
                     if token_obj[idx] == ans:
                         prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE + idx] += 1
+
         return prob_answer_vec / np.sum(prob_answer_vec)
 
 #         if len(prob_answer_list) == 0:
@@ -284,16 +343,16 @@ class VQADataProvider:
     def tokenlist_to_vec(self, token_list):
         # Input: the token list
         # Output: the embedded feature matrix for the token embeddings
-        cvec_token = np.zeros(self.opt.MAX_TOKEN_SIZE)
-        embed_matrix = np.zeros((self.opt.MAX_TOKEN_SIZE, TOKEN_EMBEDDING_SIZE))
-        for i in range(self.opt.MAX_TOKEN_SIZE):
+        cvec_token = np.zeros(self.max_token_size)
+        embed_matrix = np.zeros((self.max_token_size, self.opt.TOKEN_EMBEDDING_SIZE))
+        for i in range(self.max_token_size):
             if i >= len(token_list):
                 pass
             else:
                 w = token_list[i]
                 if w not in self.embed_dict:
                     self.embed_dict[w] = self.nlp(u'%s' % w).vector
-                if self.embed_dict[w].shape[0] == TOKEN_EMBEDDING_SIZE:
+                if self.embed_dict[w].shape[0] == self.opt.TOKEN_EMBEDDING_SIZE:
                     embed_matrix[i] = self.embed_dict[w]
                 cvec_token[i] = 1
         return cvec_token, embed_matrix
@@ -314,7 +373,7 @@ class VQADataProvider:
         qvec = np.zeros(max_length)
         cvec = np.zeros(max_length)
         embed_matrix = None
-        if self.use_embed():
+        if self.use_embed:
             # TODO: change this config
             embed_matrix = np.zeros((max_length, EMBEDDING_SIZE))
         """  pad on the left   """
@@ -335,7 +394,7 @@ class VQADataProvider:
             else:
                 w = q_list[i]
 
-                if self.use_embed():
+                if self.use_embed:
                     if w not in self.embed_dict:
                         self.embed_dict[w] = self.nlp(u'%s' % w).vector
                     embed_matrix[i] = self.embed_dict[w]
@@ -347,18 +406,18 @@ class VQADataProvider:
         return qvec, cvec, embed_matrix
 
     def answer_to_vec(self, ans_str, token_obj):
-        """ Return answer id if the answer is included in vocabulary otherwise '' """
+        """
+        Return answer id if the answer is included in common or ocr vocabulary
+        otherwise return answer id for ''
+        """
         if self.mode =='test-dev' or self.mode == 'test':
             return -1
 
-        if ans_str in self.adict:
+        # FIXME: what if the answer appears both in the dictionary and the token list?
+        if self.use_ocr and ans_str in token_obj:
+            ans = self.opt.MAX_ANSWER_VOCAB_SIZE + token_obj.index(ans_str)
+        elif ans_str in self.adict:
             ans = self.adict[ans_str]
-            # FIXME: what if the answer appears both in the dictionary and the token list?
-        elif ans_str in token_obj:
-            for i in range(0, len(token_obj)):
-                if ans_str == token_obj:
-                    # Don't forget to plus one here
-                    ans = self.opt.MAX_ANSWER_VOCAB_SIZE + i
         else:
             ans = self.adict['']
         return ans
@@ -373,26 +432,26 @@ class VQADataProvider:
 
         return self.rev_adict[ans_symbol]
 
-    def create_batch(self,qid_list):
+    def create_batch(self, qid_list):
 
-        qvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
-        cvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
-        cvec_token = np.zeros((self.batchsize, self.opt.MAX_TOKEN_SIZE))
-        token_embedding = np.zeros((self.batchsize, self.opt.MAX_TOKEN_SIZE, TOKEN_EMBEDDING_SIZE))
+        qvec = np.zeros((self.batchsize, self.max_length))
+        cvec = np.zeros((self.batchsize, self.max_length))
+        # placeholder for embed
+        embed_matrix = np.zeros((self.batchsize, self.max_length, EMBEDDING_SIZE))
+        # placeholder for ocr
+        cvec_token = np.zeros((self.batchsize, self.max_token_size))
+        token_embedding = np.zeros((self.batchsize, self.max_token_size, self.opt.TOKEN_EMBEDDING_SIZE))
         original_list_tokens = list()
 
-        if self.use_embed():
+        if self.use_embed:
             ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
         else:
-            ivec = (np.zeros(self.batchsize*2048)).reshape(self.batchsize,2048)
+            ivec = np.zeros((self.batchsize, 2048))
 
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             avec = np.zeros(self.batchsize)
         else:
             avec = np.zeros((self.batchsize, self.opt.NUM_OUTPUT_UNITS))
-
-        if self.use_embed():
-            embed_matrix = np.zeros((self.batchsize, self.max_length, EMBEDDING_SIZE))
 
         for i,qid in enumerate(qid_list):
 
@@ -400,6 +459,7 @@ class VQADataProvider:
             q_str = self.getQuesStr(qid)
             q_ans = self.getAnsObj(qid)
             q_iid = self.getImgId(qid)
+            # for ocr
             q_tokens = self.getQuesOcrTokens(qid)
             original_list_tokens += [q_tokens]
 
@@ -413,17 +473,16 @@ class VQADataProvider:
                 if data_split == 'genome':
                     t_ivec = np.load(config.DATA_PATHS[self.exp_type]['genome']['features_prefix'] + str(q_iid) + '.jpg.npy')
                 else:
-                    # print(config.DATA_PATH[self.exp_type][data_split]['features_prefix']+config.FEATURE_FILENAE[self.exp_type](q_iid))
                     t_ivec = np.load(config.DATA_PATHS[self.exp_type][data_split]['features_prefix'] + config.FEATURE_FILENAME[self.exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
-                if self.use_embed() and len(t_ivec.shape) > 2:
+                if self.use_embed and len(t_ivec.shape) > 2:
                     t_ivec = t_ivec.reshape((2048, -1))
 
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
             except:
                 t_ivec = 0.
-                print('data not found for qid : ', q_iid,  self.mode, config.DATA_PATHS[self.exp_type][data_split]['features_prefix']+config.FEATURE_FILENAME[self.exp_type](q_iid))
+                print('data not found for qid : ', q_iid, self.mode, config.DATA_PATHS[self.exp_type][data_split]['features_prefix']+config.FEATURE_FILENAME[self.exp_type](q_iid))
 
             # convert answer to vec
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
@@ -435,20 +494,18 @@ class VQADataProvider:
             qvec[i,...] = t_qvec
             cvec[i,...] = t_cvec
             avec[i,...] = t_avec
-            if self.use_embed():
+            if self.use_embed:
                 ivec[i,:,0:t_ivec.shape[0]] = t_ivec.T
                 embed_matrix[i,...] = t_embed_matrix
             else:
                 ivec[i,...] = t_ivec
 
-            t_cvec_token, t_token_embedding = self.tokenlist_to_vec(q_tokens)
-            cvec_token[i, ...] = t_cvec_token
-            token_embedding[i, ...] = t_token_embedding
+            if self.use_ocr:
+                t_cvec_token, t_token_embedding = self.tokenlist_to_vec(q_tokens)
+                cvec_token[i, ...] = t_cvec_token
+                token_embedding[i, ...] = t_token_embedding
 
-        if self.use_embed():
             return qvec, cvec, ivec, avec, embed_matrix, cvec_token, token_embedding, original_list_tokens
-        else:
-            return qvec, cvec, ivec, avec, 0, cvec_token, token_embedding, original_list_tokens
 
 
     def get_batch_vec(self):
@@ -462,11 +519,16 @@ class VQADataProvider:
             self.epoch_counter = 0
 
         def has_at_least_one_valid_answer(t_qid):
+            """
+            make sure at least one answer falls in the common answer vocabulary
+            TODO: include the ocr token list for checking as well
+            """
             answer_obj = self.getAnsObj(t_qid)
             answer_list = [ans['answer'] for ans in answer_obj]
             for ans in answer_list:
                 if ans in self.adict:
                     return True
+            return False
 
         counter = 0
         t_qid_list = []
@@ -493,11 +555,8 @@ class VQADataProvider:
                 random.shuffle(qid_list)
                 self.qid_list = qid_list
                 self.batch_index = 0
-                print("%d questions were skipped in a single epoch" % self.n_skipped)
+                print("%d questions were skipped in a single epoch" % self.n_skipped, flush=True)
                 self.n_skipped = 0
-#         print("####################################################")
-#         print(t_qid_list)
-#         print("####################################################")
         t_batch = self.create_batch(t_qid_list)
         return t_batch + (t_qid_list, t_iid_list, self.epoch_counter)
 
@@ -505,7 +564,7 @@ class VQADataProvider:
 class VQADataset(data.Dataset):
     """
     in order to use the universal api, always return the embed matrix
-    embed matrix is None if self.use_embed() evals to False
+    embed matrix is None if self.use_embed evals to False
     """
 
     def __init__(self, opt, cache_dir):

@@ -11,6 +11,7 @@ from models.mfb_baseline import mfb_baseline
 from models.mfh_baseline import mfh_baseline
 from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
+from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
@@ -79,6 +80,32 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
             exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
 
 
+def get_model(opt):
+    """
+    args priority:
+    OCR > EMBED > not specified (baseline)
+    """
+    model = None
+    if opt.MODEL == 'mfb':
+        if opt.OCR:
+            assert opt.EXP_TYPE == 'textvqa', 'dataset not supported'
+            model = mfb_coatt_embed_ocr(opt)
+        elif opt.EMBED:
+            model = mfb_coatt_glove(opt)
+        else:
+            model = mfb_baseline(opt)
+
+    elif opt.MODEL == 'mfh':
+        if opt.OCR:
+            raise RuntimeError('model not supported')
+        elif opt.EMBED:
+            model = mfh_coatt_glove(opt)
+        else:
+            model = mfh_baseline(opt)
+
+    return model
+
+
 def main():
     opt = config.parse_opt()
     # notice that unique id with timestamp is determined here
@@ -96,17 +123,7 @@ def main():
 
     opt.quest_vob_size, opt.ans_vob_size = train_Data.get_vocab_size()
 
-    model = None
-    if opt.MODEL == 'mfb':
-        if opt.EXP_TYPE == 'glove':
-            model = mfb_coatt_glove(opt)
-        else:
-            model = mfb_baseline(opt)
-    elif opt.MODEL == 'mfh':
-        if opt.EXP_TYPE == 'glove':
-            model = mfh_coatt_glove(opt)
-        else:
-            model = mfh_baseline(opt)
+    model = get_model(opt)
 
     if opt.RESUME_PATH:
         print('==> Resuming from checkpoint..')

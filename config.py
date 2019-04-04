@@ -1,7 +1,7 @@
 import argparse
 import socket
 import os
-from commons import get_time, check_mkdir
+# from utils.commons import get_time, check_mkdir
 
 # get the project root dir assuming data is located within the same project folder
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -117,11 +117,21 @@ QTYPES = {
 }
 
 
+def get_ID(args):
+    id = '_'.join([get_time('%Y-%m-%dT%H%M%S'), args.MODEL, args.EXP_TYPE])
+    if args.EMBED:
+        id += '_embed'
+    if args.OCR:
+        id += '_ocr'
+    return id
+
 def parse_opt():
     parser = argparse.ArgumentParser()
     # Data input settings
     parser.add_argument('MODEL', type=str, choices=['mfb', 'mfh'])
     parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa'])
+    parser.add_argument('--EMBED', type=bool, action='store_true')
+    parser.add_argument('--OCR', type=bool, action='store_true')
 
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
@@ -130,7 +140,7 @@ def parse_opt():
     parser.add_argument('--VAL_BATCH_SIZE', type=int, default=1000) # glove: 32
     parser.add_argument('--MAX_ANSWER_VOCAB_SIZE', type=int, default=3000)
     parser.add_argument('--MAX_TOKEN_SIZE', type=int, default=104)
-    parser.add_argument('--MAX_WORDS_IN_QUESTION', type=int, default=15)
+    parser.add_argument('--MAX_QUESTION_LENGTH', type=int, default=15)
     parser.add_argument('--MAX_ITERATIONS', type=int, default=50000) # glove: 100000
     parser.add_argument('--PRINT_INTERVAL', type=int, default=100)
     parser.add_argument('--CHECKPOINT_INTERVAL', type=int, default=5000)
@@ -152,7 +162,7 @@ def parse_opt():
 
     parser.add_argument('--TOKEN_EMBEDDING_SIZE', type=int, default=300)
 
-    # glove options
+    # embed options
     parser.add_argument('--NUM_IMG_GLIMPSE', type=int, default=2)
     parser.add_argument('--NUM_QUESTION_GLIMPSE', type=int, default=2)
     parser.add_argument('--IMG_FEAT_SIZE', type=int, default=100)
@@ -162,9 +172,11 @@ def parse_opt():
 
     args = parser.parse_args()
 
-    args.ID = '_'.join([get_time('%Y-%m-%dT%H%M%S'), args.MODEL, args.EXP_TYPE])
+    args.ID = get_ID(args)
 
     # define the dimention of model output
-    args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE + args.MAX_TOKEN_SIZE
+    args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE
+    if args.OCR:
+        args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE + args.MAX_TOKEN_SIZE
 
     return args
