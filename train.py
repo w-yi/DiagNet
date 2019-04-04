@@ -28,7 +28,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
     criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
-    for iter_idx, (data, word_length, feature, answer, embed_matrix, epoch) in enumerate(train_Loader):
+    for iter_idx, (data, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, epoch) in enumerate(train_Loader):
         model.train()
         data = torch.squeeze(data, 0)
         word_length = torch.squeeze(word_length, 0)

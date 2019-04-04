@@ -4,10 +4,12 @@ import config
 import torch.utils.data as data
 import spacy
 import os
+#from torchnlp.word_to_vector import FastText
 
 QID_KEY_SEPARATOR = '/'
 ZERO_PAD = '_PAD'
 EMBEDDING_SIZE = 300
+TOKEN_EMBEDDING_SIZE = 300
 class VQADataProvider:
 
     def __init__(self, opt, batchsize, mode, cache_dir=config.VOCABCACHE_DIR, max_length=15):
@@ -21,15 +23,21 @@ class VQADataProvider:
         self.max_length = max_length
         self.cache_dir = cache_dir
         self.exp_type = opt.EXP_TYPE
+        self.max_token_size = opt.MAX_TOKEN_SIZE
 
         self.qdic, self.adic = VQADataProvider.load_data(self.mode, self.exp_type)
 
         self._get_vocab_files()
 
-        if self.use_embed():
-            self.n_ans_vocabulary = len(self.adict)
-            self.nlp = spacy.load('en_vectors_web_lg')
-            self.embed_dict = {} # word -> embed vector
+        # The tokens will always use the embedding
+        self.n_ans_vocabulary = len(self.adict)
+        self.nlp = spacy.load('en_vectors_web_lg')
+#         self.nlp = spacy.load('en_core_web_sm')
+        self.embed_dict = {} # word -> embed vector
+#         if self.use_embed():
+#             self.n_ans_vocabulary = len(self.adict)
+#             self.nlp = spacy.load('en_vectors_web_lg')
+#             self.embed_dict = {} # word -> embed vector
 
     def _get_vocab_files(self):
         """
@@ -138,7 +146,7 @@ class VQADataProvider:
             qdata = json.load(f)['questions']
             for q in qdata:
                 qdic[data_split + QID_KEY_SEPARATOR + str(q['question_id'])] = \
-                    {'qstr': q['question'], 'iid': q['image_id']}
+                    {'qstr': q['question'], 'iid': q['image_id'], 'ocr_tokens':q['ocr_tokens']}
 
         if 'test' not in data_split:
             with open(config.DATA_PATHS[exp_type][data_split]['ans_file'], 'r') as f:
@@ -204,6 +212,9 @@ class VQADataProvider:
 
     def getQuesStr(self,qid):
         return self.qdic[qid]['qstr']
+    
+    def getQuesOcrTokens(self, qid):
+        return self.qdic[qid]['ocr_tokens']
 
     def getAnsObj(self,qid):
         if self.mode == 'test-dev' or self.mode == 'test':
@@ -238,34 +249,58 @@ class VQADataProvider:
         max_key = max((v,k) for (k,v) in dic.items())[1]
         return max_key
 
-    def extract_answer_prob(self,answer_obj):
-        """ Return the most popular answer in string."""
-        if self.mode == 'test-dev' or self.mode == 'test':
-            return -1
+#     # This is a useless function that has never been used
+#     def extract_answer_prob(self,answer_obj):
+#         """ Return the most popular answer in string."""
+#         if self.mode == 'test-dev' or self.mode == 'test':
+#             return -1
 
-        answer_list = [ ans['answer'] for ans in answer_obj]
-        prob_answer_list = []
-        for ans in answer_list:
-            if ans in self.adict:
-                prob_answer_list.append(ans)
+#         answer_list = [ ans['answer'] for ans in answer_obj]
+#         prob_answer_list = []
+#         for ans in answer_list:
+#             if ans in self.adict:
+#                 prob_answer_list.append(ans)
 
-    def extract_answer_list(self,answer_obj):
+    def extract_answer_list(self,answer_obj, token_obj):
         answer_list = [ ans['answer'] for ans in answer_obj]
-        prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS)
+        prob_answer_vec = np.zeros(self.opt.NUM_OUTPUT_UNITS + self.opt.MAX_TOKEN_SIZE)
         for ans in answer_list:
             if ans in self.adict:
                 index = self.adict[ans]
                 prob_answer_vec[index] += 1
+            if ans in token_obj:
+                for idx in range(0, len(token_obj)):
+                    if token_obj[idx] == ans:
+                        prob_answer_vec[self.opt.NUM_OUTPUT_UNITS + idx] += 1
         return prob_answer_vec / np.sum(prob_answer_vec)
 
-        if len(prob_answer_list) == 0:
-            if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
-                return 'hoge'
-            else:
-                raise Exception("This should not happen.")
-        else:
-            return random.choice(prob_answer_list)
+#         if len(prob_answer_list) == 0:
+#             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
+#                 return 'hoge'
+#             else:
+#                 raise Exception("This should not happen.")
+#         else:
+#             return random.choice(prob_answer_list)
 
+
+    def tokenlist_to_vec(self, token_list):
+        # Input: the token list
+        # Output: the embedded feature matrix for the token embeddings
+        cvec_token = np.zeros(self.opt.MAX_TOKEN_SIZE)
+        embed_matrix = np.zeros((self.opt.MAX_TOKEN_SIZE, TOKEN_EMBEDDING_SIZE))
+        for i in range(self.opt.MAX_TOKEN_SIZE):
+            if i >= len(token_list):
+                pass
+            else:
+                w = token_list[i]
+                if w not in self.embed_dict:
+                    self.embed_dict[w] = self.nlp(u'%s' % w).vector
+                if self.embed_dict[w].shape[0] == TOKEN_EMBEDDING_SIZE:
+                    embed_matrix[i] = self.embed_dict[w]
+                cvec_token[i] = 1
+        return cvec_token, embed_matrix
+    
+    
     def qlist_to_vec(self, max_length, q_list):
         """
         Converts a list of words into a format suitable for the embedding layer.
@@ -313,13 +348,19 @@ class VQADataProvider:
                 cvec[i] = 1
         return qvec, cvec, embed_matrix
 
-    def answer_to_vec(self, ans_str):
+    def answer_to_vec(self, ans_str, token_obj):
         """ Return answer id if the answer is included in vocabulary otherwise '' """
         if self.mode =='test-dev' or self.mode == 'test':
             return -1
 
         if ans_str in self.adict:
             ans = self.adict[ans_str]
+            # FIXME: what if the answer appears both in the dictionary and the token list?
+        elif ans_str in token_obj:
+            for i in range(0, len(token_obj)):
+                if ans_str == token_obj:
+                    # Don't forget to plus one here
+                    ans = self.opt.NUM_OUTPUT_UNITS + i
         else:
             ans = self.adict['']
         return ans
@@ -338,7 +379,10 @@ class VQADataProvider:
 
         qvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
         cvec = (np.zeros(self.batchsize*self.max_length)).reshape(self.batchsize,self.max_length)
-
+        cvec_token = np.zeros((self.batchsize, self.opt.MAX_TOKEN_SIZE))
+        token_embedding = np.zeros((self.batchsize, self.opt.MAX_TOKEN_SIZE, TOKEN_EMBEDDING_SIZE))
+        original_list_tokens = list()
+        
         if self.use_embed():
             ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
         else:
@@ -347,7 +391,7 @@ class VQADataProvider:
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             avec = np.zeros(self.batchsize)
         else:
-            avec = np.zeros((self.batchsize, self.opt.NUM_OUTPUT_UNITS))
+            avec = np.zeros((self.batchsize, self.opt.NUM_OUTPUT_UNITS + self.opt.MAX_TOKEN_SIZE))
 
         if self.use_embed():
             embed_matrix = np.zeros((self.batchsize, self.max_length, EMBEDDING_SIZE))
@@ -358,6 +402,8 @@ class VQADataProvider:
             q_str = self.getQuesStr(qid)
             q_ans = self.getAnsObj(qid)
             q_iid = self.getImgId(qid)
+            q_tokens = self.getQuesOcrTokens(qid)
+            original_list_tokens += [q_tokens]
 
             # convert question to vec
             q_list = VQADataProvider.seq_to_list(q_str)
@@ -384,9 +430,9 @@ class VQADataProvider:
             # convert answer to vec
             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
                 q_ans_str = self.extract_answer(q_ans)
-                t_avec = self.answer_to_vec(q_ans_str)
+                t_avec = self.answer_to_vec(q_ans_str, q_tokens)
             else:
-                t_avec = self.extract_answer_list(q_ans)
+                t_avec = self.extract_answer_list(q_ans, q_tokens)
 
             qvec[i,...] = t_qvec
             cvec[i,...] = t_cvec
@@ -396,11 +442,15 @@ class VQADataProvider:
                 embed_matrix[i,...] = t_embed_matrix
             else:
                 ivec[i,...] = t_ivec
+        
+            t_cvec_token, t_token_embedding = self.tokenlist_to_vec(q_tokens)
+            cvec_token[i, ...] = t_cvec_token
+            token_embedding[i, ...] = t_token_embedding
 
         if self.use_embed():
-            return qvec, cvec, ivec, avec, embed_matrix
+            return qvec, cvec, ivec, avec, embed_matrix, cvec_token, token_embedding, original_list_tokens
         else:
-            return qvec, cvec, ivec, avec, 0
+            return qvec, cvec, ivec, avec, 0, cvec_token, token_embedding, original_list_tokens
 
 
     def get_batch_vec(self):
@@ -447,7 +497,9 @@ class VQADataProvider:
                 self.batch_index = 0
                 print("%d questions were skipped in a single epoch" % self.n_skipped)
                 self.n_skipped = 0
-
+#         print("####################################################")
+#         print(t_qid_list)
+#         print("####################################################")
         t_batch = self.create_batch(t_qid_list)
         return t_batch + (t_qid_list, t_iid_list, self.epoch_counter)
 
@@ -469,9 +521,9 @@ class VQADataset(data.Dataset):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            word, cont, feature, answer, embed_matrix, _, _, epoch = self.dp.get_batch_vec()
+            word, cont, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, _, _, epoch = self.dp.get_batch_vec()
             word_length = np.sum(cont, axis=1)
-            return word, word_length, feature, answer, embed_matrix, epoch
+            return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, epoch
 
     def __len__(self):
         if self.mode == 'train':

@@ -1,5 +1,9 @@
 # Multi-modal Factorized Bilinear Pooling (MFB) for VQA
 
+# Important TODOs
+Add MAX_TOKEN_SIZE=104 into OPT
+
+
 Papers related to our implementation
 
 - CoAtt: [Hierarchical Question-Image Co-Attention for Visual Question Answering](https://arxiv.org/abs/1606.00061)
