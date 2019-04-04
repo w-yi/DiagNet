@@ -45,7 +45,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
         if use_embed:
             embed_matrix = torch.squeeze(embed_matrix, 0)
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
-            pred = model(data, word_length, img_feature, embed_matrix, 'train')
+            pred = model(data, word_length, img_feature, embed_matrix, cvec_token, token_embedding, 'train')
         else:
             pred = model(data, word_length, img_feature, 'train')
 
