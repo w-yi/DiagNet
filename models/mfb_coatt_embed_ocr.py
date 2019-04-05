@@ -21,8 +21,7 @@ class mfb_coatt_embed_ocr(nn.Module):
         self.Linear4_q_proj = nn.Linear(opt.LSTM_UNIT_NUM * opt.NUM_QUESTION_GLIMPSE, self.JOINT_EMB_SIZE)
         self.Linear_i_proj = nn.Linear(opt.IMAGE_CHANNEL*opt.NUM_IMG_GLIMPSE, self.JOINT_EMB_SIZE)
         #
-        self.Linear_i_proj = nn.Linear(opt.TOKEN_EMBEDDING_SIZE*opt.NUM_IMG_GLIMPSE, self.JOINT_EMB_SIZE)
-        self.Linear_o_proj = nn.Linear(opt.IMAGE_CHANNEL * opt.NUM_IMG_GLIMPSE, self.JOINT_EMB_SIZE)
+        self.Linear_o_proj = nn.Linear(opt.TOKEN_EMBEDDING_SIZE*opt.NUM_IMG_GLIMPSE, self.JOINT_EMB_SIZE)
         self.Conv_i_proj = nn.Conv2d(opt.IMAGE_CHANNEL, self.JOINT_EMB_SIZE, 1)
         #
         self.Conv_o_proj = nn.Conv2d(opt.TOKEN_EMBEDDING_SIZE, self.JOINT_EMB_SIZE, 1)

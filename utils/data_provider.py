@@ -476,7 +476,7 @@ class VQADataProvider:
                     t_ivec = np.load(config.DATA_PATHS[self.exp_type][data_split]['features_prefix'] + config.FEATURE_FILENAME[self.exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
-                if self.use_embed and len(t_ivec.shape) > 2:
+                if self.use_embed:
                     t_ivec = t_ivec.reshape((2048, -1))
 
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
@@ -495,7 +495,7 @@ class VQADataProvider:
             cvec[i,...] = t_cvec
             avec[i,...] = t_avec
             if self.use_embed:
-                ivec[i,:,0:t_ivec.shape[0]] = t_ivec.T
+                ivec[i,:,0:t_ivec.shape[0]] = t_ivec
                 embed_matrix[i,...] = t_embed_matrix
             else:
                 ivec[i,...] = t_ivec

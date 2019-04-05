@@ -44,7 +44,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder):
 
         if opt.OCR:
             embed_matrix = torch.squeeze(embed_matrix, 0)
-            cvec_token = torch.squeeze(cvec_token, 0)
+            ocr_length = torch.squeeze(ocr_length, 0)
             ocr_embedding = torch.squeeze(ocr_embedding, 0)
 
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
