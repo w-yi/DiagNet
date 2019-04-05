@@ -1,7 +1,7 @@
 import argparse
 import socket
 import os
-# from utils.commons import get_time, check_mkdir
+from utils.commons import get_time, check_mkdir
 
 # get the project root dir assuming data is located within the same project folder
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -83,17 +83,17 @@ DATA_PATHS = {
     },
     'textvqa': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train.json',
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train_ocr.json',
             'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_train.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val.json',
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val_ocr.json',
             'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_val.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test.json',
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test_ocr.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/test/'
         }
     },
@@ -130,8 +130,8 @@ def parse_opt():
     # Data input settings
     parser.add_argument('MODEL', type=str, choices=['mfb', 'mfh'])
     parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa'])
-    parser.add_argument('--EMBED', type=bool, action='store_true')
-    parser.add_argument('--OCR', type=bool, action='store_true')
+    parser.add_argument('--EMBED', action='store_true')
+    parser.add_argument('--OCR', action='store_true')
 
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
@@ -177,6 +177,7 @@ def parse_opt():
     # define the dimention of model output
     args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE
     if args.OCR:
+        assert args.EMBED, 'ocr only supported with embed now'
         args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE + args.MAX_TOKEN_SIZE
 
     return args

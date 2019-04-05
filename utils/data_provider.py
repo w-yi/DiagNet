@@ -35,7 +35,6 @@ class VQADataProvider:
 
         self._get_vocab_files()
 
-        # The tokens will always use the embedding
         if self.use_embed:
             self.n_ans_vocabulary = len(self.adict)
             self.nlp = spacy.load('en_vectors_web_lg')
@@ -153,9 +152,9 @@ class VQADataProvider:
         for qid in adic.keys():
             answer_obj = adic[qid]
             answer_list = [ans['answer'] for ans in answer_obj]
-            ocr_tokens = qdic[qid]['ocr_tokens']
             if use_ocr:
-            answer_list = [x for x in answer_list if x not in ocr_tokens]
+                ocr_tokens = qdic[qid]['ocr_tokens']
+                answer_list = [x for x in answer_list if x not in ocr_tokens]
 
             counter.update(answer_list)
 
@@ -166,7 +165,7 @@ class VQADataProvider:
         alist = counter.most_common(vocab_size - 1)
         for pair in alist:
             adict[pair[0]] = idx
-            ++idx
+            idx += 1
         return adict
 
     @staticmethod
@@ -177,6 +176,7 @@ class VQADataProvider:
 
         question dict format: {
             'question': str,
+            'question_id': int,
             'image_id': int,
             'ocr_tokens': list (only required if use_ocr)
         }
@@ -505,7 +505,7 @@ class VQADataProvider:
                 cvec_token[i, ...] = t_cvec_token
                 token_embedding[i, ...] = t_token_embedding
 
-            return qvec, cvec, ivec, avec, embed_matrix, cvec_token, token_embedding, original_list_tokens
+        return qvec, cvec, ivec, avec, embed_matrix, cvec_token, token_embedding, original_list_tokens
 
 
     def get_batch_vec(self):
@@ -590,6 +590,3 @@ class VQADataset(data.Dataset):
 
     def get_vocab_size(self):
         return self.dp.get_vocab_size()
-
-    def use_embed(self):
-        return self.dp.use_embed()

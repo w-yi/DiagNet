@@ -45,11 +45,15 @@ class QTypeGetter:
             return self.savepath[qtype]
 
 
-def visualize_pred(opt, stat_list, folder, mode):
+def visualize_pred(opt, folder, mode):
 
     img_prefix = config.DATA_PATHS[opt.EXP_TYPE][mode]['image_prefix']
     qtype_getter = QTypeGetter(config.QTYPES, VISUALIZE_LIMIT, folder)
 
+    with open(os.path.join(folder, 'visualize.json')) as f:
+        stat_list = json.load(f)
+
+    print('generating prediction images...', flush=True)
     for t_question in stat_list:
         q_list = t_question['q_list']
         savepath = qtype_getter.get(q_list)
@@ -98,20 +102,27 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
     stat_list = []
     total_questions = len(dp.getQuesIds())
 
+    percent_counter = 0
+
     print('Validating...')
     while epoch == 0:
-        t_word, word_length, t_img_feature, t_answer, t_embed_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
+        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, all_ocr_list, qid_list, iid_list, epoch = dp.get_batch_vec()
         word_length = np.sum(word_length,axis=1)
-        data = cuda_wrapper(Variable(torch.from_numpy(t_word))).long()
+        data = cuda_wrapper(Variable(torch.from_numpy(data))).long()
         word_length = cuda_wrapper(torch.from_numpy(word_length))
-        img_feature = cuda_wrapper(Variable(torch.from_numpy(t_img_feature))).float()
-        label = cuda_wrapper(Variable(torch.from_numpy(t_answer)))
-        if dp.use_embed():
-            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(t_embed_matrix))).float()
+        img_feature = cuda_wrapper(Variable(torch.from_numpy(img_feature))).float()
+        label = cuda_wrapper(Variable(torch.from_numpy(answer)))
+
+        if opt.OCR:
+            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
+            ocr_length = cuda_wrapper(torch.from_numpy(ocr_length))
+            ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
+            pred = model(data, word_length, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+        elif opt.EMBED:
+            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             pred = model(data, word_length, img_feature, embed_matrix, mode)
         else:
             pred = model(data, word_length, img_feature, mode)
-
 
         if mode == 'test-dev' or mode == 'test':
             pass
@@ -120,11 +131,11 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
             loss = (loss.data).cpu().numpy()
             testloss_list.append(loss)
         pred = (pred.data).cpu().numpy()
-        t_pred_list = np.argmax(pred, axis=1)
-        t_pred_str = [dp.vec_to_answer(pred_symbol) for pred_symbol in t_pred_list]
+        pred_max = np.argmax(pred, axis=1)
+        pred_str = [dp.vec_to_answer(pred_symbol) for pred_symbol in pred_max]
 
-        for qid, iid, ans, pred in zip(t_qid_list, t_iid_list, t_answer.tolist(), t_pred_str):
-            pred_list.append((pred,int(dp.getStrippedQuesId(qid))))
+        for qid, iid, ans, pred in zip(qid_list, iid_list, answer.tolist(), pred_str):
+            pred_list.append((pred, int(dp.getStrippedQuesId(qid))))
             if visualize:
                 q_list = dp.seq_to_list(dp.getQuesStr(qid))
                 if mode == 'test-dev' or mode == 'test':
@@ -141,8 +152,10 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
                                     'ans_list': ans_list,
                                     'pred'  : pred })
         percent = 100 * float(len(pred_list)) / total_questions
-        sys.stdout.write('\r' + ('%.2f' % percent) + '%')
-        sys.stdout.flush()
+        if percent <= 100 and percent - percent_counter >= 5:
+            percent_counter = percent
+            sys.stdout.write('\r' + ('%.2f' % percent) + '%')
+            sys.stdout.flush()
 
     if visualize:
         with open(os.path.join(folder, 'visualize.json'), 'w') as f:

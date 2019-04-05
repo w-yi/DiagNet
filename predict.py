@@ -60,12 +60,9 @@ def main():
 
     check_mkdir(folder)
 
-    # pred(opt, folder)
+    pred(opt, folder)
 
-    with open('debug.json') as f:
-        stat_list = json.load(f)
-
-    visualize_pred(opt, stat_list, folder, 'val')
+    visualize_pred(opt, folder, 'val')
 
 
 if __name__ == '__main__':

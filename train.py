@@ -24,28 +24,39 @@ def adjust_learning_rate(optimizer, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * decay_rate
 
-def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
+def train(opt, model, train_Loader, optimizer, writer, folder):
     criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
-    for iter_idx, (data, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, epoch) in enumerate(train_Loader):
+    for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, epoch) in enumerate(train_Loader):
         model.train()
         data = torch.squeeze(data, 0)
         word_length = torch.squeeze(word_length, 0)
-        feature = torch.squeeze(feature, 0)
-        answer = torch.squeeze(answer, 0)
+        img_feature = torch.squeeze(img_feature, 0)
+        label = torch.squeeze(label, 0)
         epoch = epoch.numpy()
 
         data = cuda_wrapper(Variable(data)).long()
         word_length = cuda_wrapper(word_length)
-        img_feature = cuda_wrapper(Variable(feature)).float()
-        label = cuda_wrapper(Variable(answer)).float()
+        img_feature = cuda_wrapper(Variable(img_feature)).float()
+        label = cuda_wrapper(Variable(label)).float()
         optimizer.zero_grad()
 
-        if use_embed:
+        if opt.OCR:
+            embed_matrix = torch.squeeze(embed_matrix, 0)
+            cvec_token = torch.squeeze(cvec_token, 0)
+            ocr_embedding = torch.squeeze(ocr_embedding, 0)
+
+            embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
+            ocr_length = cuda_wrapper(ocr_length)
+            ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
+
+            pred = model(data, word_length, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+        elif opt.EMBED:
             embed_matrix = torch.squeeze(embed_matrix, 0)
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
-            pred = model(data, word_length, img_feature, embed_matrix, cvec_token, token_embedding, 'train')
+
+            pred = model(data, word_length, img_feature, embed_matrix, 'train')
         else:
             pred = model(data, word_length, img_feature, 'train')
 
@@ -119,7 +130,7 @@ def main():
 
 
     train_Data = data_provider.VQADataset(opt, config.VOCABCACHE_DIR)
-    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=2)
+    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=0)
 
     opt.quest_vob_size, opt.ans_vob_size = train_Data.get_vocab_size()
 
@@ -140,7 +151,7 @@ def main():
     model = cuda_wrapper(model)
     optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
 
-    train(opt, model, train_Loader, optimizer, writer, folder, train_Data.use_embed())
+    train(opt, model, train_Loader, optimizer, writer, folder)
     writer.close()
 
 if __name__ == '__main__':
