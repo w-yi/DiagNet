@@ -12,6 +12,7 @@ from models.mfh_baseline import mfh_baseline
 from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
 from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
+from models.mfh_coatt_embed_ocr import mfh_coatt_embed_ocr
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
@@ -108,7 +109,8 @@ def get_model(opt):
 
     elif opt.MODEL == 'mfh':
         if opt.OCR:
-            raise RuntimeError('model not supported')
+            assert opt.EXP_TYPE == 'textvqa', 'dataset not supported'
+            model = mfh_coatt_embed_ocr(opt)
         elif opt.EMBED:
             model = mfh_coatt_glove(opt)
         else:

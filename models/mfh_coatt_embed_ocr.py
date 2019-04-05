@@ -138,8 +138,8 @@ class mfh_coatt_embed_ocr(nn.Module):
         OCR Attention with MFB
         '''
         # q_feat_resh = torch.squeeze(qatt_feature_concat)  # N x 2048
-        o_feat_resh = torch.unsqueeze(token_embedding, 3)  # N x 300 x 104 x 1
-        oatt_q_proj = self.Linear4_q_proj(o_feat_resh)  # N x 5000
+        o_feat_resh = torch.unsqueeze(token_embedding.transpose(1, 2), 3)  # N x 300 x 104 x 1
+        oatt_q_proj = self.Linear4_q_proj(q_feat_resh)  # N x 5000
         oatt_q_resh = oatt_q_proj.view(self.batch_size, self.JOINT_EMB_SIZE, 1, 1)  # N x 5000 x 1 x 1
         oatt_o_conv = self.Conv1_o_proj(o_feat_resh)  # N x 5000 x 104 x 1
         oatt_oq_eltwise = oatt_q_resh * oatt_o_conv
