@@ -97,12 +97,32 @@ DATA_PATHS = {
             'features_prefix': TEXTVQA_PREFIX + '/baseline/test/'
         }
     },
+    'textvqa_butd': {
+        'train': {
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_train_partial.json',
+            'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_partial.json',
+            'features_prefix': TEXTVQA_PREFIX + '/features_butd/train/',
+            'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/train/'
+        },
+        'val': {
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_val_complete.json',
+            'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
+            'features_prefix': TEXTVQA_PREFIX + '/features_butd/val/',
+            'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/val/'
+        },
+        'test': {
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_test_complete.json',
+            'features_prefix': TEXTVQA_PREFIX + '/features_butd/test/',
+            'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/test/'
+        }
+    },
 }
 
 FEATURE_FILENAME = {
     'baseline': (lambda q_iid: str(q_iid).zfill(12) + '.jpg.npy'),
     'glove': (lambda q_iid: str(q_iid) + '.npy'),
-    'textvqa': (lambda q_iid: str(q_iid) + '.jpg.npy')
+    'textvqa': (lambda q_iid: str(q_iid) + '.jpg.npy'),
+    'textvqa_butd': (lambda q_iid: str(q_iid) + '.jpg.npy')
 }
 
 IMAGE_FILENAME = {
@@ -129,7 +149,7 @@ def parse_opt():
     parser = argparse.ArgumentParser()
     # Data input settings
     parser.add_argument('MODEL', type=str, choices=['mfb', 'mfh'])
-    parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa'])
+    parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa', 'textvqa_butd'])
     parser.add_argument('--EMBED', action='store_true')
     parser.add_argument('--OCR', action='store_true')
 
