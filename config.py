@@ -99,19 +99,19 @@ DATA_PATHS = {
     },
     'textvqa_butd': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_train_partial.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_train_ocr_partial.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_partial.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/train/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_val_complete.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_val_ocr_complete.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/val/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test': {
-            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_test_complete.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_test_ocr_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/test/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/test/'
         }
