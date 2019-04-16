@@ -1,7 +1,7 @@
 import argparse
 import socket
-import datetime
 import os
+from utils.commons import get_time, check_mkdir
 
 # get the project root dir assuming data is located within the same project folder
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,14 +22,10 @@ VOCABCACHE_DIR = os.path.join(TRAIN_DIR, 'vocab_cache')
 CACHE_DIR = os.path.join(TRAIN_DIR, 'checkpoint')
 
 for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR]:
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    check_mkdir(dir)
 
 # location of the data
-if socket.gethostname() == 'DESKTOP-9UNSKEL':
-    VQA_PREFIX = os.path.join(ROOT_DIR, 'VQA')
-else:
-    VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
+VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
 
 TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa')
 
@@ -45,7 +41,8 @@ DATA_PATHS = {
         'val': {
             'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_val2014_questions.json',
             'ans_file': VQA_PREFIX + '/Annotations/mscoco_val2014_annotations.json',
-            'features_prefix': VQA_PREFIX + '/Features/coco_resnet/val2014/COCO_val2014_'
+            'features_prefix': VQA_PREFIX + '/Features/coco_resnet/val2014/COCO_val2014_',
+            'image_prefix': VQA_PREFIX + '/Images/val2014/COCO_val2014_'
         },
         'test-dev': {
             'ques_file': VQA_PREFIX + '/Questions/OpenEnded_mscoco_test-dev2015_questions.json',
@@ -86,64 +83,69 @@ DATA_PATHS = {
     },
     'textvqa': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train.json',
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train_ocr.json',
             'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_train.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val.json',
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val_ocr.json',
             'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_val.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test.json',
+            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test_ocr.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/test/'
         }
     },
 }
 
-
-def baseline_fn(q_iid):
-    return str(q_iid).zfill(12) + '.jpg.npy'
-
-
-def glove_fn(q_iid):
-    return str(q_iid) + '.npy'
-
-
-def textvqa_fn(q_iid):
-    return str(q_iid) + '.jpg.npy'
-
-
-def get_time():
-    return datetime.datetime.now().strftime("%Y-%m-%dT%H%M%S")
-
 FEATURE_FILENAME = {
-    'baseline': baseline_fn,
-    'glove': glove_fn,
-    'textvqa': textvqa_fn,
+    'baseline': (lambda q_iid: str(q_iid).zfill(12) + '.jpg.npy'),
+    'glove': (lambda q_iid: str(q_iid) + '.npy'),
+    'textvqa': (lambda q_iid: str(q_iid) + '.jpg.npy')
 }
 
+IMAGE_FILENAME = {
+    'baseline': (lambda q_iid: str(q_iid).zfill(12) + '.jpg')
+}
+
+QTYPES = {
+    'what_colors': ['what^color'],
+    'what_is': ['what^is', 'what^kind', 'what^are'],
+    'is': ['is^the', 'is^this', 'is^there'],
+    'how_many': ['how^many']
+}
+
+
+def get_ID(args):
+    id = '_'.join([get_time('%Y-%m-%dT%H%M%S'), args.MODEL, args.EXP_TYPE])
+    if args.EMBED:
+        id += '_embed'
+    if args.OCR:
+        id += '_ocr'
+    return id
 
 def parse_opt():
     parser = argparse.ArgumentParser()
     # Data input settings
     parser.add_argument('MODEL', type=str, choices=['mfb', 'mfh'])
     parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa'])
+    parser.add_argument('--EMBED', action='store_true')
+    parser.add_argument('--OCR', action='store_true')
 
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
     parser.add_argument('--SEED', type=int, default=-1)
     parser.add_argument('--BATCH_SIZE', type=int, default=200) # glove: 64
     parser.add_argument('--VAL_BATCH_SIZE', type=int, default=1000) # glove: 32
-    parser.add_argument('--NUM_OUTPUT_UNITS', type=int, default=3000)
-    parser.add_argument('--MAX_WORDS_IN_QUESTION', type=int, default=15)
+    parser.add_argument('--MAX_ANSWER_VOCAB_SIZE', type=int, default=3000)
+    parser.add_argument('--MAX_TOKEN_SIZE', type=int, default=104)
+    parser.add_argument('--MAX_QUESTION_LENGTH', type=int, default=15)
     parser.add_argument('--MAX_ITERATIONS', type=int, default=50000) # glove: 100000
     parser.add_argument('--PRINT_INTERVAL', type=int, default=100)
     parser.add_argument('--CHECKPOINT_INTERVAL', type=int, default=5000)
     parser.add_argument('--TESTDEV_INTERVAL', type=int, default=45000) # mfh_glove: 100000
-    parser.add_argument('--RESUME', type=bool, default=False)
-    parser.add_argument('--RESUME_PATH', type=str, default='./data/***.pth')
+    parser.add_argument('--RESUME_PATH', type=str, default='')
     parser.add_argument('--VAL_INTERVAL', type=int, default=5000)
     parser.add_argument('--IMAGE_CHANNEL', type=int, default=2048)
     parser.add_argument('--INIT_LERARNING_RATE', type=float, default=0.0007)
@@ -158,13 +160,24 @@ def parse_opt():
     parser.add_argument('--QUESTION_VOCAB_SPACE', type=str, default='train')
     parser.add_argument('--ANSWER_VOCAB_SPACE', type=str, default='train')
 
-    # glove options
+    parser.add_argument('--TOKEN_EMBEDDING_SIZE', type=int, default=300)
+
+    # embed options
     parser.add_argument('--NUM_IMG_GLIMPSE', type=int, default=2)
     parser.add_argument('--NUM_QUESTION_GLIMPSE', type=int, default=2)
     parser.add_argument('--IMG_FEAT_SIZE', type=int, default=100)
 
+    # OCR options
+    parser.add_argument('--NUM_OCR_GLIMPSE', type=int, default=2)
+
     args = parser.parse_args()
 
-    args.ID = '_'.join([get_time(), args.MODEL, args.EXP_TYPE])
+    args.ID = get_ID(args)
+
+    # define the dimention of model output
+    args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE
+    if args.OCR:
+        assert args.EMBED, 'ocr only supported with embed now'
+        args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE + args.MAX_TOKEN_SIZE
 
     return args

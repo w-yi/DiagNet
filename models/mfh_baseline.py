@@ -2,10 +2,8 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
-import sys
-sys.path.append("..")
 
-from utils.cuda import cuda_wrapper
+from utils.commons import cuda_wrapper
 
 
 class mfh_baseline(nn.Module):
@@ -29,9 +27,9 @@ class mfh_baseline(nn.Module):
         else:
             self.batch_size = self.opt.BATCH_SIZE
         data_out = cuda_wrapper(Variable(torch.zeros(self.batch_size, self.opt.LSTM_UNIT_NUM)))
-        data = torch.transpose(data, 1, 0).long() 
-        data = torch.tanh(self.Embedding(data)) 
-        data, _ = self.LSTM1(data) 
+        data = torch.transpose(data, 1, 0).long()
+        data = torch.tanh(self.Embedding(data))
+        data, _ = self.LSTM1(data)
         for i in range(self.batch_size):
             data_out[i] = data[int(word_length[i]) - 1][i]
         q_feat = self.Dropout1(data_out)
@@ -55,8 +53,8 @@ class mfh_baseline(nn.Module):
         mfb_o3_out = torch.sqrt(F.relu(mfb_o3_out)) - torch.sqrt(F.relu(-mfb_o3_out))
         mfb_o3_out = F.normalize(mfb_o3_out)
 
-        mfb_o23_out = torch.cat((mfb_o2_out, mfb_o3_out), 1)        #200,2000     
-        prediction = self.Linear_predict(mfb_o23_out)               
+        mfb_o23_out = torch.cat((mfb_o2_out, mfb_o3_out), 1)        #200,2000
+        prediction = self.Linear_predict(mfb_o23_out)
         prediction = F.log_softmax(prediction)
 
         return prediction

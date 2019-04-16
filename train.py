@@ -11,44 +11,52 @@ from models.mfb_baseline import mfb_baseline
 from models.mfh_baseline import mfh_baseline
 from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
+from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
+from models.mfh_coatt_embed_ocr import mfh_coatt_embed_ocr
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
-from utils.cuda import cuda_wrapper
+from utils.commons import cuda_wrapper, get_time, check_mkdir
 import json
-import datetime
 from tensorboardX import SummaryWriter
-sys.path.append(config.VQA_TOOLS_PATH)
-sys.path.append(config.VQA_EVAL_TOOLS_PATH)
-from vqaTools.vqa import VQA
-from vqaEvaluation.vqaEval import VQAEval
 
 
 def adjust_learning_rate(optimizer, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * decay_rate
 
-def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
+def train(opt, model, train_Loader, optimizer, writer, folder):
     criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
-    for iter_idx, (data, word_length, feature, answer, embed_matrix, epoch) in enumerate(train_Loader):
+    for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, epoch) in enumerate(train_Loader):
         model.train()
         data = torch.squeeze(data, 0)
         word_length = torch.squeeze(word_length, 0)
-        feature = torch.squeeze(feature, 0)
-        answer = torch.squeeze(answer, 0)
+        img_feature = torch.squeeze(img_feature, 0)
+        label = torch.squeeze(label, 0)
         epoch = epoch.numpy()
 
         data = cuda_wrapper(Variable(data)).long()
         word_length = cuda_wrapper(word_length)
-        img_feature = cuda_wrapper(Variable(feature)).float()
-        label = cuda_wrapper(Variable(answer)).float()
+        img_feature = cuda_wrapper(Variable(img_feature)).float()
+        label = cuda_wrapper(Variable(label)).float()
         optimizer.zero_grad()
 
-        if use_embed:
+        if opt.OCR:
+            embed_matrix = torch.squeeze(embed_matrix, 0)
+            ocr_length = torch.squeeze(ocr_length, 0)
+            ocr_embedding = torch.squeeze(ocr_embedding, 0)
+
+            embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
+            ocr_length = cuda_wrapper(ocr_length)
+            ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
+
+            pred = model(data, word_length, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+        elif opt.EMBED:
             embed_matrix = torch.squeeze(embed_matrix, 0)
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
+
             pred = model(data, word_length, img_feature, embed_matrix, 'train')
         else:
             pred = model(data, word_length, img_feature, 'train')
@@ -60,7 +68,7 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
         if iter_idx % opt.DECAY_STEPS == 0 and iter_idx != 0:
             adjust_learning_rate(optimizer, opt.DECAY_RATE)
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            now = get_time('%Y-%m-%d %H:%M:%S')
             c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL:iter_idx].mean()
             writer.add_scalar(opt.ID + '/train_loss', c_mean_loss, iter_idx)
             writer.add_scalar(opt.ID + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
@@ -84,6 +92,33 @@ def train(opt, model, train_Loader, optimizer, writer, folder, use_embed):
             exec_validation(model, opt, mode='test-dev', folder=folder, it=iter_idx)
 
 
+def get_model(opt):
+    """
+    args priority:
+    OCR > EMBED > not specified (baseline)
+    """
+    model = None
+    if opt.MODEL == 'mfb':
+        if opt.OCR:
+            assert opt.EXP_TYPE == 'textvqa', 'dataset not supported'
+            model = mfb_coatt_embed_ocr(opt)
+        elif opt.EMBED:
+            model = mfb_coatt_glove(opt)
+        else:
+            model = mfb_baseline(opt)
+
+    elif opt.MODEL == 'mfh':
+        if opt.OCR:
+            assert opt.EXP_TYPE == 'textvqa', 'dataset not supported'
+            model = mfh_coatt_embed_ocr(opt)
+        elif opt.EMBED:
+            model = mfh_coatt_glove(opt)
+        else:
+            model = mfh_baseline(opt)
+
+    return model
+
+
 def main():
     opt = config.parse_opt()
     # notice that unique id with timestamp is determined here
@@ -94,27 +129,16 @@ def main():
     writer = SummaryWriter()
 
     folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+
 
     train_Data = data_provider.VQADataset(opt, config.VOCABCACHE_DIR)
-    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=2)
+    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=0)
 
     opt.quest_vob_size, opt.ans_vob_size = train_Data.get_vocab_size()
 
-    model = None
-    if opt.MODEL == 'mfb':
-        if opt.EXP_TYPE == 'glove':
-            model = mfb_coatt_glove(opt)
-        else:
-            model = mfb_baseline(opt)
-    elif opt.MODEL == 'mfh':
-        if opt.EXP_TYPE == 'glove':
-            model = mfh_coatt_glove(opt)
-        else:
-            model = mfh_baseline(opt)
+    model = get_model(opt)
 
-    if opt.RESUME:
+    if opt.RESUME_PATH:
         print('==> Resuming from checkpoint..')
         checkpoint = torch.load(opt.RESUME_PATH)
         model.load_state_dict(checkpoint)
@@ -129,7 +153,7 @@ def main():
     model = cuda_wrapper(model)
     optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
 
-    train(opt, model, train_Loader, optimizer, writer, folder, train_Data.use_embed())
+    train(opt, model, train_Loader, optimizer, writer, folder)
     writer.close()
 
 if __name__ == '__main__':
