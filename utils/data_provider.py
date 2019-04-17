@@ -504,7 +504,7 @@ class VQADataProvider:
             cvec[i,...] = t_cvec
             avec[i,...] = t_avec
             if self.use_embed:
-                ivec[i,:,0:t_ivec.shape[0]] = t_ivec
+                ivec[i,:,0:t_ivec.shape[1]] = t_ivec
                 embed_matrix[i,...] = t_embed_matrix
             else:
                 ivec[i,...] = t_ivec

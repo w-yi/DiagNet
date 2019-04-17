@@ -3,6 +3,7 @@
 *.pth
 data/
 *.sh
+*.out
 backup/
 
 */__pycache__/

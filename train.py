@@ -100,7 +100,7 @@ def get_model(opt):
     model = None
     if opt.MODEL == 'mfb':
         if opt.OCR:
-            assert opt.EXP_TYPE == 'textvqa', 'dataset not supported'
+            assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
             model = mfb_coatt_embed_ocr(opt)
         elif opt.EMBED:
             model = mfb_coatt_glove(opt)
@@ -109,7 +109,7 @@ def get_model(opt):
 
     elif opt.MODEL == 'mfh':
         if opt.OCR:
-            assert opt.EXP_TYPE == 'textvqa', 'dataset not supported'
+            assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
             model = mfh_coatt_embed_ocr(opt)
         elif opt.EMBED:
             model = mfh_coatt_glove(opt)
