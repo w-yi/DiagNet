@@ -343,19 +343,14 @@ class VQADataProvider:
     def tokenlist_to_vec(self, token_list):
         # Input: the token list
         # Output: the embedded feature matrix for the token embeddings
-        cvec_token = np.zeros(self.max_token_size)
         embed_matrix = np.zeros((self.max_token_size, self.opt.TOKEN_EMBEDDING_SIZE))
-        for i in range(self.max_token_size):
-            if i >= len(token_list):
-                pass
-            else:
-                w = token_list[i]
-                if w not in self.embed_dict:
-                    self.embed_dict[w] = self.nlp(u'%s' % w).vector
-                if self.embed_dict[w].shape[0] == self.opt.TOKEN_EMBEDDING_SIZE:
-                    embed_matrix[i] = self.embed_dict[w]
-                cvec_token[i] = 1
-        return cvec_token, embed_matrix
+        for i in range(len(token_list)):
+            w = token_list[i]
+            if w not in self.embed_dict:
+                self.embed_dict[w] = self.nlp(u'%s' % w).vector
+            if self.embed_dict[w].shape[0] == self.opt.TOKEN_EMBEDDING_SIZE:
+                embed_matrix[i] = self.embed_dict[w]
+        return embed_matrix
 
 
     def qlist_to_vec(self, max_length, q_list):
@@ -371,10 +366,8 @@ class VQADataProvider:
         cvec -- A max_length length sequence continuation indicator vector
         """
         qvec = np.zeros(max_length)
-        cvec = np.zeros(max_length)
         embed_matrix = None
         if self.use_embed:
-            # TODO: change this config
             embed_matrix = np.zeros((max_length, EMBEDDING_SIZE))
         """  pad on the left   """
         # for i in range(max_length):
@@ -388,22 +381,17 @@ class VQADataProvider:
         #         qvec[i] = self.qdict[w]
         #         cvec[i] = 0 if i == max_length - len(q_list) else 1
         """  pad on the right   """
-        for i in range(max_length):
-            if i >= len(q_list):
-                pass
-            else:
-                w = q_list[i]
+        for i in range(len(q_list)):
+            w = q_list[i]
+            if self.use_embed:
+                if w not in self.embed_dict:
+                    self.embed_dict[w] = self.nlp(u'%s' % w).vector
+                embed_matrix[i] = self.embed_dict[w]
 
-                if self.use_embed:
-                    if w not in self.embed_dict:
-                        self.embed_dict[w] = self.nlp(u'%s' % w).vector
-                    embed_matrix[i] = self.embed_dict[w]
-
-                if w not in self.qdict:
-                    w = ''
-                qvec[i] = self.qdict[w]
-                cvec[i] = 1
-        return qvec, cvec, embed_matrix
+            if w not in self.qdict:
+                w = ''
+            qvec[i] = self.qdict[w]
+        return qvec, embed_matrix
 
     def answer_to_vec(self, ans_str, token_obj):
         """
@@ -423,7 +411,7 @@ class VQADataProvider:
         return ans
 
     def vec_to_answer(self, ans_symbol):
-        """ Return answer id if the answer is included in vocabulary otherwise '' """
+        """ Return answer string according to id """
         if self.rev_adict is None:
             rev_adict = {}
             for k,v in self.adict.items():
@@ -432,16 +420,34 @@ class VQADataProvider:
 
         return self.rev_adict[ans_symbol]
 
+    def vec_to_answer_ocr(self, ans_symbol, ocr_tokens):
+        """
+        Return answer string according to id
+        if id exceeds ocr length, return ''
+        """
+        if self.rev_adict is None:
+            rev_adict = {}
+            for k,v in self.adict.items():
+                rev_adict[v] = k
+            self.rev_adict = rev_adict
+
+        if ans_symbol < self.opt.MAX_ANSWER_VOCAB_SIZE:
+            return self.rev_adict[ans_symbol]
+        elif ans_symbol < self.opt.MAX_ANSWER_VOCAB_SIZE + len(ocr_tokens):
+            return ocr_tokens[ans_symbol - self.opt.MAX_ANSWER_VOCAB_SIZE]
+        else:
+            return ''
+
     def create_batch(self, qid_list):
 
         qvec = np.zeros((self.batchsize, self.max_length))
-        cvec = np.zeros((self.batchsize, self.max_length))
+        q_length = np.zeros(self.batchsize)
         # placeholder for embed
         embed_matrix = np.zeros((self.batchsize, self.max_length, EMBEDDING_SIZE))
         # placeholder for ocr
-        cvec_token = np.zeros((self.batchsize, self.max_token_size))
-        token_embedding = np.zeros((self.batchsize, self.max_token_size, self.opt.TOKEN_EMBEDDING_SIZE))
-        original_list_tokens = list()
+        ocr_length = np.zeros(self.batchsize)
+        ocr_embedding = np.zeros((self.batchsize, self.max_token_size, self.opt.TOKEN_EMBEDDING_SIZE))
+        ocr_tokens = list()
 
         if self.use_embed:
             ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
@@ -461,11 +467,11 @@ class VQADataProvider:
             q_iid = self.getImgId(qid)
             # for ocr
             q_tokens = self.getQuesOcrTokens(qid)
-            original_list_tokens += [q_tokens]
+            ocr_tokens += [q_tokens]
 
             # convert question to vec
             q_list = VQADataProvider.seq_to_list(q_str)
-            t_qvec, t_cvec, t_embed_matrix = self.qlist_to_vec(self.max_length, q_list)
+            t_qvec, t_embed_matrix = self.qlist_to_vec(self.max_length, q_list)
 
             try:
                 qid_split = qid.split(QID_KEY_SEPARATOR)
@@ -501,7 +507,7 @@ class VQADataProvider:
                 t_avec = self.extract_answer_list(q_ans, q_tokens)
 
             qvec[i,...] = t_qvec
-            cvec[i,...] = t_cvec
+            q_length[i] = len(q_list)
             avec[i,...] = t_avec
             if self.use_embed:
                 ivec[i,:,0:t_ivec.shape[1]] = t_ivec
@@ -510,11 +516,11 @@ class VQADataProvider:
                 ivec[i,...] = t_ivec
 
             if self.use_ocr:
-                t_cvec_token, t_token_embedding = self.tokenlist_to_vec(q_tokens)
-                cvec_token[i, ...] = t_cvec_token
-                token_embedding[i, ...] = t_token_embedding
+                t_ocr_embedding = self.tokenlist_to_vec(q_tokens)
+                ocr_length[i] = len(q_tokens)
+                ocr_embedding[i, ...] = t_ocr_embedding
 
-        return qvec, cvec, ivec, avec, embed_matrix, cvec_token, token_embedding, original_list_tokens
+        return qvec, q_length, ivec, avec, embed_matrix, ocr_length, ocr_embedding, ocr_tokens
 
 
     def get_batch_vec(self):
@@ -587,8 +593,7 @@ class VQADataset(data.Dataset):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            word, cont, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, _, _, epoch = self.dp.get_batch_vec()
-            word_length = np.sum(cont, axis=1)
+            word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, _, _, epoch = self.dp.get_batch_vec()
             return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, epoch
 
     def __len__(self):

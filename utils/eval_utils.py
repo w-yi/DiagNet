@@ -106,8 +106,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
 
     print('Validating...')
     while epoch == 0:
-        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, all_ocr_list, qid_list, iid_list, epoch = dp.get_batch_vec()
-        word_length = np.sum(word_length,axis=1)
+        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, qid_list, iid_list, epoch = dp.get_batch_vec()
         data = cuda_wrapper(Variable(torch.from_numpy(data))).long()
         word_length = cuda_wrapper(torch.from_numpy(word_length))
         img_feature = cuda_wrapper(Variable(torch.from_numpy(img_feature))).float()
@@ -131,10 +130,16 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
             loss = (loss.data).cpu().numpy()
             testloss_list.append(loss)
         pred = (pred.data).cpu().numpy()
-        pred_max = np.argmax(pred, axis=1)
-        pred_str = [dp.vec_to_answer(pred_symbol) for pred_symbol in pred_max]
+        if opt.OCR:
+            ocr_mask = np.fromfunction(lambda i, j: j >= opt.MAX_ANSWER_VOCAB_SIZE + ocr_tokens[i], pred.shape, dtype=int)
+            masked_pred = np.ma.array(pred, mask=ocr_mask)
+            ocr_max = np.ma.argmax(masked_pred, axis=1)
+            pred_str = [dp.vec_to_answer_ocr(pred_symbol, ocr) for pred_symbol, ocr in zip(pred_max, ocr_tokens)]
+        else:
+            pred_max = np.argmax(pred, axis=1)
+            pred_str = [dp.vec_to_answer(pred_symbol) for pred_symbol in pred_max]
 
-        for qid, iid, ans, pred in zip(qid_list, iid_list, answer.tolist(), pred_str):
+        for qid, iid, ans, pred, ocr in zip(qid_list, iid_list, answer.tolist(), pred_str, ocr_tokens):
             pred_list.append((pred, int(dp.getStrippedQuesId(qid))))
             if visualize:
                 q_list = dp.seq_to_list(dp.getQuesStr(qid))
@@ -142,7 +147,10 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
                     ans_str = ''
                     ans_list = ['']*10
                 else:
-                    ans_str = dp.vec_to_answer(ans)
+                    if opt.OCR:
+                        ans_str = dp.vec_to_answer_ocr(ans, ocr)
+                    else:
+                        ans_str = dp.vec_to_answer(ans)
                     ans_list = [ dp.getAnsObj(qid)[i]['answer'] for i in range(10)]
                 stat_list.append({\
                                     'qid'   : qid,
