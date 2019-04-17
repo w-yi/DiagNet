@@ -45,7 +45,7 @@ class VQADataProvider:
     def _get_vocab_files(self):
         """
         get vocab files
-        load cached files if exist
+        load cached files if exists
         """
         question_vocab, answer_vocab = {}, {}
         qdict_path = os.path.join(self.cache_dir, self.exp_type + '_qdict.json')
@@ -280,12 +280,16 @@ class VQADataProvider:
         return len(self.qdict), len(self.adict)
 
     @staticmethod
-    def seq_to_list(s):
+    def seq_to_list(s, max_length):
+        """
+        slice question into token list
+        cut the remaining tokens if exceeds max_length
+        """
         t_str = s.lower()
         t_str = t_str.replace('-', ' ').replace('/', ' ')
         t_str = t_str.translate(str.maketrans('', '', string.punctuation))
         q_list = t_str.strip().split()
-        return list(q_list)
+        return q_list[:max_length]
 
     def extract_answer(self, answer_obj):
         """
@@ -470,7 +474,7 @@ class VQADataProvider:
             ocr_tokens += [q_tokens]
 
             # convert question to vec
-            q_list = VQADataProvider.seq_to_list(q_str)
+            q_list = VQADataProvider.seq_to_list(q_str, self.max_length)
             t_qvec, t_embed_matrix = self.qlist_to_vec(self.max_length, q_list)
 
             try:

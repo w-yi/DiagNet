@@ -131,6 +131,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
             testloss_list.append(loss)
         pred = (pred.data).cpu().numpy()
         if opt.OCR:
+            # select the largest index within the ocr length boundary
             ocr_mask = np.fromfunction(lambda i, j: j >= opt.MAX_ANSWER_VOCAB_SIZE + ocr_tokens[i], pred.shape, dtype=int)
             masked_pred = np.ma.array(pred, mask=ocr_mask)
             ocr_max = np.ma.argmax(masked_pred, axis=1)
@@ -142,7 +143,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
         for qid, iid, ans, pred, ocr in zip(qid_list, iid_list, answer.tolist(), pred_str, ocr_tokens):
             pred_list.append((pred, int(dp.getStrippedQuesId(qid))))
             if visualize:
-                q_list = dp.seq_to_list(dp.getQuesStr(qid))
+                q_list = dp.seq_to_list(dp.getQuesStr(qid), opt.MAX_QUESTION_LENGTH)
                 if mode == 'test-dev' or mode == 'test':
                     ans_str = ''
                     ans_list = ['']*10
