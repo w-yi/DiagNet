@@ -116,12 +116,12 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             ocr_length = cuda_wrapper(torch.from_numpy(ocr_length))
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
-            pred = model(data, word_length, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
-            pred = model(data, word_length, img_feature, embed_matrix, mode)
+            pred = model(data, img_feature, embed_matrix, mode)
         else:
-            pred = model(data, word_length, img_feature, mode)
+            pred = model(data, img_feature, mode)
 
         if mode == 'test-dev' or mode == 'test':
             pass

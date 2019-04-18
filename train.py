@@ -25,7 +25,8 @@ def adjust_learning_rate(optimizer, decay_rate):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * decay_rate
 
-def train(opt, model, train_Loader, optimizer, writer, folder):
+
+def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder):
     criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
     results = []
@@ -52,21 +53,20 @@ def train(opt, model, train_Loader, optimizer, writer, folder):
             ocr_length = cuda_wrapper(ocr_length)
             ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
 
-            pred = model(data, word_length, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
         elif opt.EMBED:
             embed_matrix = torch.squeeze(embed_matrix, 0)
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
 
-            pred = model(data, word_length, img_feature, embed_matrix, 'train')
+            pred = model(data, img_feature, embed_matrix, 'train')
         else:
-            pred = model(data, word_length, img_feature, 'train')
+            pred = model(data, img_feature, 'train')
 
         loss = criterion(pred, label)
         loss.backward()
         optimizer.step()
         train_loss[iter_idx] = loss.data.float()
-        if iter_idx % opt.DECAY_STEPS == 0 and iter_idx != 0:
-            adjust_learning_rate(optimizer, opt.DECAY_RATE)
+        lr_scheduler.step()
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
             now = get_time('%Y-%m-%d %H:%M:%S')
             c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL:iter_idx].mean()
@@ -76,7 +76,11 @@ def train(opt, model, train_Loader, optimizer, writer, folder):
                         now, epoch, iter_idx, c_mean_loss), flush=True)
         if iter_idx % opt.CHECKPOINT_INTERVAL == 0 and iter_idx != 0:
             save_path = os.path.join(config.CACHE_DIR, opt.ID + '_iter_' + str(iter_idx) + '.pth')
-            torch.save(model.state_dict(), save_path)
+            torch.save({
+                'model': model.state_dict(),
+                'optimizer': optimizer.state_dict(),
+                'lr_scheduler': lr_scheduler.state_dict()
+            }, save_path)
         if iter_idx % opt.VAL_INTERVAL == 0 and iter_idx != 0:
             test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx)
             writer.add_scalar(opt.ID + '/val_loss', test_loss, iter_idx)
@@ -130,18 +134,21 @@ def main():
 
     folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
 
-
     train_Data = data_provider.VQADataset(opt, config.VOCABCACHE_DIR)
     train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=0)
 
     opt.quest_vob_size, opt.ans_vob_size = train_Data.get_vocab_size()
 
     model = get_model(opt)
+    optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
+    lr_scheduler = optim.lr_scheduler.StepLR(optimizer, opt.DECAY_STEPS, opt.DECAY_RATE)
 
     if opt.RESUME_PATH:
         print('==> Resuming from checkpoint..')
         checkpoint = torch.load(opt.RESUME_PATH)
-        model.load_state_dict(checkpoint)
+        model.load_state_dict(checkpoint['model'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
     else:
         '''init model parameter'''
         for name, param in model.named_parameters():
@@ -151,10 +158,12 @@ def main():
                 init.kaiming_uniform_(param)
                 # init.xavier_uniform(param)  # for mfb_coatt_glove
     model = cuda_wrapper(model)
-    optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
+    optimizer = cuda_wrapper(optimizer)
+    lr_scheduler = cuda_wrapper(lr_scheduler)
 
-    train(opt, model, train_Loader, optimizer, writer, folder)
+    train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder)
     writer.close()
+
 
 if __name__ == '__main__':
     main()
