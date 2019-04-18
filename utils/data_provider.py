@@ -76,14 +76,14 @@ class VQADataProvider:
         """
         print('making question vocab...', self.opt.QUESTION_VOCAB_SPACE)
         qdic, _ = VQADataProvider.load_data(self.opt.QUESTION_VOCAB_SPACE, self.exp_type, self.use_ocr)
-        question_vocab = VQADataProvider.make_question_vocab(qdic)
+        question_vocab = VQADataProvider.make_question_vocab(qdic, self.max_length)
         print('making answer vocab...', self.opt.ANSWER_VOCAB_SPACE)
         qdic, adic = VQADataProvider.load_data(self.opt.ANSWER_VOCAB_SPACE, self.exp_type, self.use_ocr)
         answer_vocab = VQADataProvider.make_answer_vocab(adic, qdic, self.opt.MAX_ANSWER_VOCAB_SIZE, self.use_ocr)
         return question_vocab, answer_vocab
 
     @staticmethod
-    def make_question_vocab(qdic):
+    def make_question_vocab(qdic, max_length):
         """
         Returns a dictionary that maps words to indices.
         """
@@ -92,7 +92,7 @@ class VQADataProvider:
         for qid in qdic.keys():
             # sequence to list
             q_str = qdic[qid]['qstr']
-            q_list = VQADataProvider.seq_to_list(q_str)
+            q_list = VQADataProvider.seq_to_list(q_str, max_length)
 
             # create dict
             for w in q_list:
@@ -283,7 +283,7 @@ class VQADataProvider:
     def seq_to_list(s, max_length):
         """
         slice question into token list
-        cut the remaining tokens if exceeds max_length
+        drop the remaining tokens if exceeds max_length
         """
         t_str = s.lower()
         t_str = t_str.replace('-', ' ').replace('/', ' ')
