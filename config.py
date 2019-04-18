@@ -99,19 +99,19 @@ DATA_PATHS = {
     },
     'textvqa_butd': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_train_ocr_partial.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_train_ocr_partial_sorted.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_partial.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/train/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_val_ocr_complete.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_val_ocr_complete_sorted.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/val/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/val/'
         },
-        'test': {
-            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_test_ocr_complete.json',
+        'test-dev': {
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_test_ocr_complete_sorted.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/test/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/test/'
         }
@@ -157,19 +157,19 @@ def parse_opt():
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
     parser.add_argument('--SEED', type=int, default=-1)
     parser.add_argument('--BATCH_SIZE', type=int, default=200) # glove: 64
-    parser.add_argument('--VAL_BATCH_SIZE', type=int, default=1000) # glove: 32
+    parser.add_argument('--VAL_BATCH_SIZE', type=int, default=200) # glove: 32
     parser.add_argument('--MAX_ANSWER_VOCAB_SIZE', type=int, default=3000)
     parser.add_argument('--MAX_TOKEN_SIZE', type=int, default=104)
     parser.add_argument('--MAX_QUESTION_LENGTH', type=int, default=15)
-    parser.add_argument('--MAX_ITERATIONS', type=int, default=50000) # glove: 100000
+    parser.add_argument('--MAX_ITERATIONS', type=int, default=50000) # non-glove: 50000, glove:100000
     parser.add_argument('--PRINT_INTERVAL', type=int, default=100)
-    parser.add_argument('--CHECKPOINT_INTERVAL', type=int, default=5000)
-    parser.add_argument('--TESTDEV_INTERVAL', type=int, default=45000) # mfh_glove: 100000
+    parser.add_argument('--CHECKPOINT_INTERVAL', type=int, default=1000)
+    parser.add_argument('--TESTDEV_INTERVAL', type=int, default=100000) # non-mfh_glove: 45000
     parser.add_argument('--RESUME_PATH', type=str, default='')
     parser.add_argument('--VAL_INTERVAL', type=int, default=5000)
     parser.add_argument('--IMAGE_CHANNEL', type=int, default=2048)
     parser.add_argument('--INIT_LERARNING_RATE', type=float, default=0.0007)
-    parser.add_argument('--DECAY_STEPS', type=int, default=20000) # glove: 40000
+    parser.add_argument('--DECAY_STEPS', type=int, default=40000) # non-glove: 20000
     parser.add_argument('--DECAY_RATE', type=float, default=0.5)
     parser.add_argument('--MFB_FACTOR_NUM', type=int, default=5)
     parser.add_argument('--MFB_OUT_DIM', type=int, default=1000)

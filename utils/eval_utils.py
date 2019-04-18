@@ -116,12 +116,12 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             ocr_length = cuda_wrapper(torch.from_numpy(ocr_length))
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
-            pred = model(data, word_length, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
-            pred = model(data, word_length, img_feature, embed_matrix, mode)
+            pred = model(data, img_feature, embed_matrix, mode)
         else:
-            pred = model(data, word_length, img_feature, mode)
+            pred = model(data, img_feature, mode)
 
         if mode == 'test-dev' or mode == 'test':
             pass
@@ -132,9 +132,11 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
         pred = (pred.data).cpu().numpy()
         if opt.OCR:
             # select the largest index within the ocr length boundary
-            ocr_mask = np.fromfunction(lambda i, j: j >= opt.MAX_ANSWER_VOCAB_SIZE + ocr_tokens[i], pred.shape, dtype=int)
+            ocr_mask = np.fromfunction(lambda i, j: j >= (ocr_length[i].cpu().numpy() + opt.MAX_ANSWER_VOCAB_SIZE), pred.shape, dtype=int)
             masked_pred = np.ma.array(pred, mask=ocr_mask)
-            ocr_max = np.ma.argmax(masked_pred, axis=1)
+            #print(masked_pred[0][3000:], ocr_length[0])
+            #print(masked_pred[0])
+            pred_max = np.ma.argmax(masked_pred, axis=1)
             pred_str = [dp.vec_to_answer_ocr(pred_symbol, ocr) for pred_symbol, ocr in zip(pred_max, ocr_tokens)]
         else:
             pred_max = np.argmax(pred, axis=1)
