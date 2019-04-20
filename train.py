@@ -21,16 +21,13 @@ import json
 from tensorboardX import SummaryWriter
 
 
-def adjust_learning_rate(optimizer, decay_rate):
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = param_group['lr'] * decay_rate
-
-
 def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder):
     criterion = nn.KLDivLoss(reduction='batchmean')
-    train_loss = np.zeros(opt.MAX_ITERATIONS + 1)
+    train_loss = np.zeros(opt.MAX_ITERATIONS)
     results = []
     for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, epoch) in enumerate(train_Loader):
+        if iter_idx >= opt.MAX_ITERATIONS:
+            break
         model.train()
         data = torch.squeeze(data, 0)
         word_length = torch.squeeze(word_length, 0)
@@ -69,7 +66,7 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder):
         lr_scheduler.step()
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
             now = get_time('%Y-%m-%d %H:%M:%S')
-            c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL:iter_idx].mean()
+            c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
             writer.add_scalar(opt.ID + '/train_loss', c_mean_loss, iter_idx)
             writer.add_scalar(opt.ID + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
             print('{}\tTrain Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
@@ -135,21 +132,26 @@ def main():
     folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_' + opt.TRAIN_DATA_SPLITS)
 
     train_Data = data_provider.VQADataset(opt, config.VOCABCACHE_DIR)
-    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=0)
+    train_Loader = torch.utils.data.DataLoader(dataset=train_Data, shuffle=True, pin_memory=True, num_workers=2)
 
     opt.quest_vob_size, opt.ans_vob_size = train_Data.get_vocab_size()
 
-    model = get_model(opt)
-    optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
-    lr_scheduler = optim.lr_scheduler.StepLR(optimizer, opt.DECAY_STEPS, opt.DECAY_RATE)
+    #model = get_model(opt)
+    #optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
+    #lr_scheduler = optim.lr_scheduler.StepLR(optimizer, opt.DECAY_STEPS, opt.DECAY_RATE)
 
     if opt.RESUME_PATH:
         print('==> Resuming from checkpoint..')
         checkpoint = torch.load(opt.RESUME_PATH)
+        model = get_model(opt)
         model.load_state_dict(checkpoint['model'])
+        model = cuda_wrapper(model)
+        optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
         optimizer.load_state_dict(checkpoint['optimizer'])
+        lr_scheduler = optim.lr_scheduler.StepLR(optimizer, opt.DECAY_STEPS, opt.DECAY_RATE)
         lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
     else:
+        model = get_model(opt)
         '''init model parameter'''
         for name, param in model.named_parameters():
             if 'bias' in name:  # bias can't init by xavier
@@ -157,9 +159,9 @@ def main():
             elif 'weight' in name:
                 init.kaiming_uniform_(param)
                 # init.xavier_uniform(param)  # for mfb_coatt_glove
-    model = cuda_wrapper(model)
-    optimizer = cuda_wrapper(optimizer)
-    lr_scheduler = cuda_wrapper(lr_scheduler)
+        model = cuda_wrapper(model)
+        optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
+        lr_scheduler = optim.lr_scheduler.StepLR(optimizer, opt.DECAY_STEPS, opt.DECAY_RATE)
 
     train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder)
     writer.close()

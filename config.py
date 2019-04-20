@@ -161,12 +161,12 @@ def parse_opt():
     parser.add_argument('--MAX_ANSWER_VOCAB_SIZE', type=int, default=3000)
     parser.add_argument('--MAX_TOKEN_SIZE', type=int, default=104)
     parser.add_argument('--MAX_QUESTION_LENGTH', type=int, default=15)
-    parser.add_argument('--MAX_ITERATIONS', type=int, default=50000) # non-glove: 50000, glove:100000
+    parser.add_argument('--MAX_ITERATIONS', type=int, default=100000) # non-glove: 50000, glove:100000
     parser.add_argument('--PRINT_INTERVAL', type=int, default=100)
     parser.add_argument('--CHECKPOINT_INTERVAL', type=int, default=1000)
     parser.add_argument('--TESTDEV_INTERVAL', type=int, default=100000) # non-mfh_glove: 45000
     parser.add_argument('--RESUME_PATH', type=str, default='')
-    parser.add_argument('--VAL_INTERVAL', type=int, default=5000)
+    parser.add_argument('--VAL_INTERVAL', type=int, default=2000)
     parser.add_argument('--IMAGE_CHANNEL', type=int, default=2048)
     parser.add_argument('--INIT_LERARNING_RATE', type=float, default=0.0007)
     parser.add_argument('--DECAY_STEPS', type=int, default=40000) # non-glove: 20000
