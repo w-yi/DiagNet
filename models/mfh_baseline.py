@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-from utils.cuda import cuda_wrapper
+from utils.commons import cuda_wrapper
 
 
 class mfh_baseline(nn.Module):

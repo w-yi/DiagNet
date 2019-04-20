@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from utils.data_provider import VQADataProvider
-from utils.cuda import cuda_wrapper
+from utils.commons import cuda_wrapper, check_mkdir
 import config
 sys.path.append(config.VQA_TOOLS_PATH)
 sys.path.append(config.VQA_EVAL_TOOLS_PATH)
@@ -29,8 +29,7 @@ class QTypeGetter:
         self.savepath = {}
         for cand in (list(qtype_dict.keys()) + ['other']):
             self.savepath[cand] = os.path.join(folder, cand)
-            if not os.path.exists(self.savepath[cand]):
-                os.makedirs(self.savepath[cand])
+            check_mkdir(self.savepath[cand])
 
     def get(self, q_list):
         pattern = '^'.join(q_list[:2])
@@ -46,11 +45,15 @@ class QTypeGetter:
             return self.savepath[qtype]
 
 
-def visualize_pred(opt, stat_list, folder, mode):
+def visualize_pred(opt, folder, mode):
 
     img_prefix = config.DATA_PATHS[opt.EXP_TYPE][mode]['image_prefix']
     qtype_getter = QTypeGetter(config.QTYPES, VISUALIZE_LIMIT, folder)
 
+    with open(os.path.join(folder, 'visualize.json')) as f:
+        stat_list = json.load(f)
+
+    print('generating prediction images...', flush=True)
     for t_question in stat_list:
         q_list = t_question['q_list']
         savepath = qtype_getter.get(q_list)
@@ -88,8 +91,7 @@ def visualize_pred(opt, stat_list, folder, mode):
 
 def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
 
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+    check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
     if not dp:
@@ -100,20 +102,26 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
     stat_list = []
     total_questions = len(dp.getQuesIds())
 
+    percent_counter = 0
+
     print('Validating...')
     while epoch == 0:
-        t_word, word_length, t_img_feature, t_answer, t_embed_matrix, t_qid_list, t_iid_list, epoch = dp.get_batch_vec()
-        word_length = np.sum(word_length,axis=1)
-        data = cuda_wrapper(Variable(torch.from_numpy(t_word))).long()
+        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, qid_list, iid_list, epoch = dp.get_batch_vec()
+        data = cuda_wrapper(Variable(torch.from_numpy(data))).long()
         word_length = cuda_wrapper(torch.from_numpy(word_length))
-        img_feature = cuda_wrapper(Variable(torch.from_numpy(t_img_feature))).float()
-        label = cuda_wrapper(Variable(torch.from_numpy(t_answer)))
-        if dp.use_embed():
-            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(t_embed_matrix))).float()
-            pred = model(data, word_length, img_feature, embed_matrix, mode)
-        else:
-            pred = model(data, word_length, img_feature, mode)
+        img_feature = cuda_wrapper(Variable(torch.from_numpy(img_feature))).float()
+        label = cuda_wrapper(Variable(torch.from_numpy(answer)))
 
+        if opt.OCR:
+            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
+            ocr_length = cuda_wrapper(torch.from_numpy(ocr_length))
+            ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
+            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+        elif opt.EMBED:
+            embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
+            pred = model(data, img_feature, embed_matrix, mode)
+        else:
+            pred = model(data, img_feature, mode)
 
         if mode == 'test-dev' or mode == 'test':
             pass
@@ -122,18 +130,30 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
             loss = (loss.data).cpu().numpy()
             testloss_list.append(loss)
         pred = (pred.data).cpu().numpy()
-        t_pred_list = np.argmax(pred, axis=1)
-        t_pred_str = [dp.vec_to_answer(pred_symbol) for pred_symbol in t_pred_list]
+        if opt.OCR:
+            # select the largest index within the ocr length boundary
+            ocr_mask = np.fromfunction(lambda i, j: j >= (ocr_length[i].cpu().numpy() + opt.MAX_ANSWER_VOCAB_SIZE), pred.shape, dtype=int)
+            masked_pred = np.ma.array(pred, mask=ocr_mask)
+            #print(masked_pred[0][3000:], ocr_length[0])
+            #print(masked_pred[0])
+            pred_max = np.ma.argmax(masked_pred, axis=1)
+            pred_str = [dp.vec_to_answer_ocr(pred_symbol, ocr) for pred_symbol, ocr in zip(pred_max, ocr_tokens)]
+        else:
+            pred_max = np.argmax(pred, axis=1)
+            pred_str = [dp.vec_to_answer(pred_symbol) for pred_symbol in pred_max]
 
-        for qid, iid, ans, pred in zip(t_qid_list, t_iid_list, t_answer.tolist(), t_pred_str):
-            pred_list.append((pred,int(dp.getStrippedQuesId(qid))))
+        for qid, iid, ans, pred, ocr in zip(qid_list, iid_list, answer.tolist(), pred_str, ocr_tokens):
+            pred_list.append((pred, int(dp.getStrippedQuesId(qid))))
             if visualize:
-                q_list = dp.seq_to_list(dp.getQuesStr(qid))
+                q_list = dp.seq_to_list(dp.getQuesStr(qid), opt.MAX_QUESTION_LENGTH)
                 if mode == 'test-dev' or mode == 'test':
                     ans_str = ''
                     ans_list = ['']*10
                 else:
-                    ans_str = dp.vec_to_answer(ans)
+                    if opt.OCR:
+                        ans_str = dp.vec_to_answer_ocr(ans, ocr)
+                    else:
+                        ans_str = dp.vec_to_answer(ans)
                     ans_list = [ dp.getAnsObj(qid)[i]['answer'] for i in range(10)]
                 stat_list.append({\
                                     'qid'   : qid,
@@ -143,8 +163,10 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
                                     'ans_list': ans_list,
                                     'pred'  : pred })
         percent = 100 * float(len(pred_list)) / total_questions
-        sys.stdout.write('\r' + ('%.2f' % percent) + '%')
-        sys.stdout.flush()
+        if percent <= 100 and percent - percent_counter >= 5:
+            percent_counter = percent
+            sys.stdout.write('\r' + ('%.2f' % percent) + '%')
+            sys.stdout.flush()
 
     if visualize:
         with open(os.path.join(folder, 'visualize.json'), 'w') as f:

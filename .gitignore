@@ -1,16 +1,9 @@
 *.pyc
 
 *.pth
-data/textvqa/
-data/shared_textvqa/
-data/VQA/Annotations/
-data/VQA/Features/
-data/VQA/Questions/
-data/VQA/QuestionTypes/
-data/VQA/Images/
-data/textvqa_features/
-data/backup_textvqa
+data/
 *.sh
+*.out
 backup/
 
 */__pycache__/
@@ -21,4 +14,3 @@ backup/
 *.zip
 runs/
 training/
-job/

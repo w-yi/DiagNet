@@ -82,6 +82,8 @@ class VQAEval:
 		accAnsType  = {}
 		print("computing accuracy")
 		step = 0
+		# keep track of progress
+		self.progress = 0
 		for quesId in quesIds:
 			resAns      = res[quesId]['answer']
 			resAns      = resAns.replace('\n', ' ')
@@ -176,7 +178,9 @@ class VQAEval:
 		if progress >= 1:
 			progress = 1
 			status = "Done...\r\n"
-		block = int(round(barLength*progress))
-		text = "\rFinshed Percent: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), int(progress*100), status)
-		sys.stdout.write(text)
-		sys.stdout.flush()
+		if progress - self.progress >= 5e-2:
+			self.progress = progress
+			block = int(round(barLength*progress))
+			text = "\rFinshed Percent: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), int(progress*100), status)
+			sys.stdout.write(text)
+			sys.stdout.flush()
