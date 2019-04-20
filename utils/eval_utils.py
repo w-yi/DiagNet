@@ -45,7 +45,7 @@ class QTypeGetter:
             return self.savepath[qtype]
 
 
-def visualize_pred(opt, folder, mode):
+def visualize_pred(opt, folder, mode, logger):
 
     img_prefix = config.DATA_PATHS[opt.EXP_TYPE][mode]['image_prefix']
     qtype_getter = QTypeGetter(config.QTYPES, VISUALIZE_LIMIT, folder)
@@ -53,7 +53,7 @@ def visualize_pred(opt, folder, mode):
     with open(os.path.join(folder, 'visualize.json')) as f:
         stat_list = json.load(f)
 
-    print('generating prediction images...', flush=True)
+    logger.info('generating prediction images...')
     for t_question in stat_list:
         q_list = t_question['q_list']
         savepath = qtype_getter.get(q_list)
@@ -89,13 +89,13 @@ def visualize_pred(opt, folder, mode):
             plt.close()
 
 
-def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
+def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=None):
 
     check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
     if not dp:
-        dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode)
+        dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, logger=logger)
     epoch = 0
     pred_list = []
     testloss_list = []
@@ -104,7 +104,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
 
     percent_counter = 0
 
-    print('Validating...')
+    logger.info('Validating...')
     while epoch == 0:
         data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, qid_list, iid_list, epoch = dp.get_batch_vec()
         data = cuda_wrapper(Variable(torch.from_numpy(data))).long()
@@ -121,7 +121,7 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             pred = model(data, img_feature, embed_matrix, mode)
         else:
-            pred = model(data, img_feature, mode)
+            pred = model(data, word_length, img_feature, mode)
 
         if mode == 'test-dev' or mode == 'test':
             pass
@@ -172,14 +172,14 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
         with open(os.path.join(folder, 'visualize.json'), 'w') as f:
             json.dump(stat_list, f, indent=4, sort_keys=True)
 
-    print('Deduping arr of len', len(pred_list))
+    logger.info('Deduping arr of len {}'.format(len(pred_list)))
     deduped = []
     seen = set()
     for ans, qid in pred_list:
         if qid not in seen:
             seen.add(qid)
             deduped.append((ans, qid))
-    print('New len', len(deduped))
+    logger.info('New len {}'.format(len(deduped)))
     final_list=[]
     for ans,qid in deduped:
         final_list.append({u'answer': ans, u'question_id': qid})
@@ -205,13 +205,13 @@ def exec_validation(model, opt, mode, folder, it, visualize=False, dp=None):
         acc_perAnswerType = vqaEval.accuracy['perAnswerType']
         return mean_testloss, acc_overall, acc_perQuestionType, acc_perAnswerType
     elif mode == 'test-dev':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.ID  + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         # if visualize:
         #     visualize_pred(stat_list,mode)
     elif mode == 'test':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.ID + '_' + opt.TRAIN_DATA_SPLITS + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.ID + '-' + str(it).zfill(8)+'_results')
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         # if visualize:
