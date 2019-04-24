@@ -28,7 +28,7 @@ class mfb_coatt_glove(nn.Module):
         self.Linear_predict = nn.Linear(opt.MFB_OUT_DIM, opt.NUM_OUTPUT_UNITS)
 
 
-    def forward(self, data, word_length, img_feature, glove, mode):
+    def forward(self, data, img_feature, glove, mode):
         if mode == 'val':
             self.batch_size = self.opt.VAL_BATCH_SIZE
         else:

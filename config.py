@@ -20,8 +20,10 @@ OUTPUT_DIR = os.path.join(TRAIN_DIR, 'output')
 VOCABCACHE_DIR = os.path.join(TRAIN_DIR, 'vocab_cache')
 # model checkpoints
 CACHE_DIR = os.path.join(TRAIN_DIR, 'checkpoint')
+# logging files
+LOG_DIR = os.path.join(ROOT_DIR, 'logs')
 
-for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR]:
+for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR, LOG_DIR]:
     check_mkdir(dir)
 
 # location of the data
