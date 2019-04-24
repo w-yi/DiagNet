@@ -13,6 +13,8 @@ from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
 from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
 from models.mfh_coatt_embed_ocr import mfh_coatt_embed_ocr
+from models.mfb_coatt_embed_ocr_bin import mfb_coatt_embed_ocr_bin
+from models.mfh_coatt_embed_ocr_bin import mfh_coatt_embed_ocr_bin
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
@@ -23,6 +25,8 @@ from tensorboardX import SummaryWriter
 
 def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, logger):
     criterion = nn.KLDivLoss(reduction='batchmean')
+    if opt.BINARY:
+        criterion2 = nn.BCELoss()
     train_loss = np.zeros(opt.MAX_ITERATIONS)
     results = []
     for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, ocr_answer_flags, epoch) in enumerate(train_Loader):
@@ -52,7 +56,7 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
             if opt.BINARY:
                 ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
-                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, ocr_answer_flags, 'train')
+                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
             else:
                 pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
         elif opt.EMBED:
@@ -62,7 +66,12 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
         else:
             pred = model(data, word_length, img_feature, 'train')
 
-        loss = criterion(pred, label)
+        if opt.BINARY:
+            loss = criterion2(binary, ocr_answer_flags) * opt.BIN_LOSS_RATE
+            loss += criterion(pred1[ocr_answer_flags == 0], label[ocr_answer_flags == 0][0:opt.MAX_ANSWER_VOCAB_SIZE])
+            loss += criterion(pred2[ocr_answer_flags == 1], label[ocr_answer_flags == 1][opt.MAX_ANSWER_VOCAB_SIZE:])
+        else:
+            loss = criterion(pred, loss)
         loss.backward()
         optimizer.step()
         train_loss[iter_idx] = loss.data.float()
@@ -108,7 +117,10 @@ def get_model(opt):
     if opt.MODEL == 'mfb':
         if opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
-            model = mfb_coatt_embed_ocr(opt)
+            if opt.BINARY:
+                model = mfb_coatt_embed_ocr_bin(opt)
+            else:
+                model = mfb_coatt_embed_ocr(opt)
         elif opt.EMBED:
             model = mfb_coatt_glove(opt)
         else:
@@ -117,7 +129,10 @@ def get_model(opt):
     elif opt.MODEL == 'mfh':
         if opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
-            model = mfh_coatt_embed_ocr(opt)
+            if opt.BINARY:
+                model = mfh_coatt_embed_ocr_bin(opt)
+            else:
+                model = mfh_coatt_embed_ocr(opt)
         elif opt.EMBED:
             model = mfh_coatt_glove(opt)
         else:

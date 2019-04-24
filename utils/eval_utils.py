@@ -94,6 +94,8 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
     check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
+    if opt.BINARY:
+        criterion2 = nn.BCELoss()
     if not dp:
         dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, logger=logger)
     epoch = 0
@@ -118,7 +120,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
             if opt.BINARY:
                 ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
-                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, ocr_answer_flags, mode)
+                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
             else:
                 pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:
@@ -130,13 +132,26 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         if mode == 'test-dev' or mode == 'test':
             pass
         else:
-            loss = criterion(pred, label.long())
+            if opt.BINARY:
+                loss = criterion2(binary, ocr_answer_flags) * opt.BIN_LOSS_RATE
+                loss += criterion(pred1[binary <= 0.5], label[binary <= 0.5][0:opt.MAX_ANSWER_VOCAB_SIZE])
+                loss += criterion(pred2[binary > 0.5], label[binary > 0.5][opt.MAX_ANSWER_VOCAB_SIZE:])
+            else:
+                loss = criterion(pred, label.long())
             loss = (loss.data).cpu().numpy()
             testloss_list.append(loss)
-        pred = (pred.data).cpu().numpy()
+        if opt.BINARY:
+            binary = (binary.data).cpu().numpy()
+            pred1 = (pred1.data).cpu().numpy()
+            pred2 = (pred2.data).cpu().numpy()
+        else:
+            pred = (pred.data).cpu().numpy()
         if opt.OCR:
             # select the largest index within the ocr length boundary
-            ocr_mask = np.fromfunction(lambda i, j: j >= (ocr_length[i].cpu().numpy() + opt.MAX_ANSWER_VOCAB_SIZE), pred.shape, dtype=int)
+            ocr_mask = np.fromfunction(lambda i, j: j >= (ocr_length[i].cpu().numpy() + opt.MAX_ANSWER_VOCAB_SIZE),
+                                       pred.shape, dtype=int)
+            if opt.BINARY:
+                ocr_mask += np.fromfunction(lambda i, j: (binary[i] <= 0.5 and j >= opt.MAX_ANSWER_VOCAB_SIZE) or (binary[i] > 0.5 and j < opt.MAX_ANSWER_VOCAB_SIZE), pred.shape, dtype=int)
             masked_pred = np.ma.array(pred, mask=ocr_mask)
             #print(masked_pred[0][3000:], ocr_length[0])
             #print(masked_pred[0])
