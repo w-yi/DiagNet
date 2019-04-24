@@ -106,7 +106,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
 
     logger.info('Validating...')
     while epoch == 0:
-        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_binary_flags, qid_list, iid_list, epoch = dp.get_batch_vec()
+        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_answer_flags, qid_list, iid_list, epoch = dp.get_batch_vec()
         data = cuda_wrapper(Variable(torch.from_numpy(data))).long()
         word_length = cuda_wrapper(torch.from_numpy(word_length))
         img_feature = cuda_wrapper(Variable(torch.from_numpy(img_feature))).float()
@@ -117,8 +117,8 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             ocr_length = cuda_wrapper(torch.from_numpy(ocr_length))
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
             if opt.BINARY:
-                ocr_binary_flags = cuda_wrapper(ocr_binary_flags)
-                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, ocr_binary_flags, mode)
+                ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
+                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, ocr_answer_flags, mode)
             else:
                 pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:

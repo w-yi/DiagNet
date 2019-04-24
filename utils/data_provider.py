@@ -481,7 +481,7 @@ class VQADataProvider:
             q_tokens = self.getQuesOcrTokens(qid)
             ocr_tokens += [q_tokens]
             # for ocr binary
-            ocr_binary_flag = self.getQuesOcrFlag(qid)
+            ocr_answer_flag = self.getQuesOcrFlag(qid)
 
             # convert question to vec
             q_list = VQADataProvider.seq_to_list(q_str, self.max_length)
@@ -539,10 +539,10 @@ class VQADataProvider:
                 ocr_embedding[i, ...] = t_ocr_embedding
 
             if self.use_binary:
-                ocr_binary_flags[i] = ocr_binary_flag
+                ocr_answer_flags[i] = ocr_answer_flag
 
 
-        return qvec, q_length, ivec, avec, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_binary_flags
+        return qvec, q_length, ivec, avec, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_answer_flags
 
 
     def get_batch_vec(self):
@@ -615,8 +615,8 @@ class VQADataset(data.Dataset):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_binary_flags,  _, _, epoch = self.dp.get_batch_vec()
-            return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_binary_flags, epoch
+            word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_answer_flags,  _, _, epoch = self.dp.get_batch_vec()
+            return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_answer_flags, epoch
 
     def __len__(self):
         if self.mode == 'train':
