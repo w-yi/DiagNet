@@ -185,7 +185,7 @@ class mfh_coatt_embed_ocr(nn.Module):
 
         mfb_q_o3_proj_ = self.Linear6_q_proj(q_feat_resh)  # N x 5000
         mfb_o_o3_proj = self.Linear3_o_proj(oatt_feature_concat)  # N x 5000
-        mfb_oq_o3_eltwise = torch.mul(mfb_o_o3_proj, mfb_o_o3_proj)  # N x 5000
+        mfb_oq_o3_eltwise = torch.mul(mfb_q_o3_proj_, mfb_o_o3_proj)  # N x 5000
         mfb_oq_o3_eltwise = torch.mul(mfb_oq_o3_eltwise, mfb_oq_o2_drop)
         mfb_oq_o3_drop = self.Dropout_M(mfb_oq_o3_eltwise)
         mfb_oq_o3_resh = mfb_oq_o3_drop.view(self.batch_size, 1, self.opt.MFB_OUT_DIM,
