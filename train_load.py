@@ -147,9 +147,9 @@ def main():
         model.load_state_dict(checkpoint['model'])
         model = cuda_wrapper(model)
         optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
-        optimizer.load_state_dict(checkpoint['optimizer'])
+        #optimizer.load_state_dict(checkpoint['optimizer'])
         lr_scheduler = optim.lr_scheduler.StepLR(optimizer, opt.DECAY_STEPS, opt.DECAY_RATE)
-        lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
+        #lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
     else:
         model = get_model(opt)
         '''init model parameter'''

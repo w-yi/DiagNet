@@ -1,0 +1,1461 @@
+parsed 34599 questions for train
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+2019-04-20 23:18:00	Train Epoch: [0]	Iter: 100	Loss: 5.8912
+2019-04-20 23:21:03	Train Epoch: [0]	Iter: 200	Loss: 5.1774
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-20 23:24:05	Train Epoch: [1]	Iter: 300	Loss: 4.6778
+2019-04-20 23:27:07	Train Epoch: [1]	Iter: 400	Loss: 4.3457
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-20 23:30:10	Train Epoch: [2]	Iter: 500	Loss: 4.0191
+2019-04-20 23:33:12	Train Epoch: [2]	Iter: 600	Loss: 3.6576
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-20 23:36:14	Train Epoch: [3]	Iter: 700	Loss: 3.4711
+2019-04-20 23:39:16	Train Epoch: [3]	Iter: 800	Loss: 3.0558
+2019-04-20 23:42:19	Train Epoch: [3]	Iter: 900	Loss: 2.8877
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-20 23:45:21	Train Epoch: [4]	Iter: 1000	Loss: 2.5414
+2019-04-20 23:48:21	Train Epoch: [4]	Iter: 1100	Loss: 2.3469
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-20 23:51:18	Train Epoch: [5]	Iter: 1200	Loss: 2.1017
+2019-04-20 23:54:18	Train Epoch: [5]	Iter: 1300	Loss: 1.8398
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-20 23:57:20	Train Epoch: [6]	Iter: 1400	Loss: 1.7102
+2019-04-21 00:00:21	Train Epoch: [6]	Iter: 1500	Loss: 1.3538
+2019-04-21 00:03:23	Train Epoch: [6]	Iter: 1600	Loss: 1.2428
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:06:24	Train Epoch: [7]	Iter: 1700	Loss: 0.9579
+2019-04-21 00:09:26	Train Epoch: [7]	Iter: 1800	Loss: 0.8448
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:12:27	Train Epoch: [8]	Iter: 1900	Loss: 0.6921
+2019-04-21 00:15:29	Train Epoch: [8]	Iter: 2000	Loss: 0.5773
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.495028
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 7.565617
+Accuracy: 18.4
+Test per ans {'other': 18.4}
+Best accuracy of 18.4 was at iteration 2000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:19:21	Train Epoch: [9]	Iter: 2100	Loss: 0.5151
+2019-04-21 00:22:23	Train Epoch: [9]	Iter: 2200	Loss: 0.4235
+2019-04-21 00:25:24	Train Epoch: [9]	Iter: 2300	Loss: 0.3975
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:28:25	Train Epoch: [10]	Iter: 2400	Loss: 0.3445
+2019-04-21 00:31:27	Train Epoch: [10]	Iter: 2500	Loss: 0.3249
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:34:29	Train Epoch: [11]	Iter: 2600	Loss: 0.3004
+2019-04-21 00:37:30	Train Epoch: [11]	Iter: 2700	Loss: 0.2789
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:40:32	Train Epoch: [12]	Iter: 2800	Loss: 0.2678
+2019-04-21 00:43:34	Train Epoch: [12]	Iter: 2900	Loss: 0.2440
+2019-04-21 00:46:35	Train Epoch: [12]	Iter: 3000	Loss: 0.2394
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:49:36	Train Epoch: [13]	Iter: 3100	Loss: 0.2142
+2019-04-21 00:52:34	Train Epoch: [13]	Iter: 3200	Loss: 0.2041
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 00:55:36	Train Epoch: [14]	Iter: 3300	Loss: 0.1863
+2019-04-21 00:58:37	Train Epoch: [14]	Iter: 3400	Loss: 0.1785
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:01:38	Train Epoch: [15]	Iter: 3500	Loss: 0.1716
+2019-04-21 01:04:35	Train Epoch: [15]	Iter: 3600	Loss: 0.1651
+2019-04-21 01:07:32	Train Epoch: [15]	Iter: 3700	Loss: 0.1568
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:10:28	Train Epoch: [16]	Iter: 3800	Loss: 0.1541
+2019-04-21 01:13:25	Train Epoch: [16]	Iter: 3900	Loss: 0.1488
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:16:22	Train Epoch: [17]	Iter: 4000	Loss: 0.1459
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.507271
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 8.144604
+Accuracy: 18.55
+Test per ans {'other': 18.55}
+Best accuracy of 18.55 was at iteration 4000
+2019-04-21 01:20:15	Train Epoch: [17]	Iter: 4100	Loss: 0.1395
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:23:13	Train Epoch: [18]	Iter: 4200	Loss: 0.1265
+2019-04-21 01:26:15	Train Epoch: [18]	Iter: 4300	Loss: 0.1193
+11418 questions were skipped in a single epoch
+2019-04-21 01:29:17	Train Epoch: [18]	Iter: 4400	Loss: 0.1161
+11418 questions were skipped in a single epoch
+2019-04-21 01:32:19	Train Epoch: [19]	Iter: 4500	Loss: 0.1128
+2019-04-21 01:35:21	Train Epoch: [19]	Iter: 4600	Loss: 0.1119
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:38:23	Train Epoch: [20]	Iter: 4700	Loss: 0.1103
+2019-04-21 01:41:25	Train Epoch: [20]	Iter: 4800	Loss: 0.1081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:44:27	Train Epoch: [21]	Iter: 4900	Loss: 0.1068
+2019-04-21 01:47:28	Train Epoch: [21]	Iter: 5000	Loss: 0.1049
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:50:29	Train Epoch: [22]	Iter: 5100	Loss: 0.0996
+2019-04-21 01:53:26	Train Epoch: [22]	Iter: 5200	Loss: 0.0918
+2019-04-21 01:56:24	Train Epoch: [22]	Iter: 5300	Loss: 0.0875
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 01:59:21	Train Epoch: [23]	Iter: 5400	Loss: 0.0863
+2019-04-21 02:02:18	Train Epoch: [23]	Iter: 5500	Loss: 0.0886
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:05:15	Train Epoch: [24]	Iter: 5600	Loss: 0.0858
+2019-04-21 02:08:12	Train Epoch: [24]	Iter: 5700	Loss: 0.0841
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:11:09	Train Epoch: [25]	Iter: 5800	Loss: 0.0849
+2019-04-21 02:14:07	Train Epoch: [25]	Iter: 5900	Loss: 0.0873
+2019-04-21 02:17:04	Train Epoch: [25]	Iter: 6000	Loss: 0.0839
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.521447
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 8.422342
+Accuracy: 18.42
+Test per ans {'other': 18.42}
+Best accuracy of 18.55 was at iteration 4000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:21:07	Train Epoch: [26]	Iter: 6100	Loss: 0.0808
+2019-04-21 02:24:12	Train Epoch: [26]	Iter: 6200	Loss: 0.0743
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:27:17	Train Epoch: [27]	Iter: 6300	Loss: 0.0703
+2019-04-21 02:30:22	Train Epoch: [27]	Iter: 6400	Loss: 0.0687
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:33:27	Train Epoch: [28]	Iter: 6500	Loss: 0.0675
+2019-04-21 02:36:33	Train Epoch: [28]	Iter: 6600	Loss: 0.0686
+2019-04-21 02:39:39	Train Epoch: [28]	Iter: 6700	Loss: 0.0682
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:42:44	Train Epoch: [29]	Iter: 6800	Loss: 0.0683
+2019-04-21 02:45:50	Train Epoch: [29]	Iter: 6900	Loss: 0.0679
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:48:56	Train Epoch: [30]	Iter: 7000	Loss: 0.0686
+2019-04-21 02:52:03	Train Epoch: [30]	Iter: 7100	Loss: 0.0654
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 02:55:09	Train Epoch: [31]	Iter: 7200	Loss: 0.0617
+2019-04-21 02:58:14	Train Epoch: [31]	Iter: 7300	Loss: 0.0581
+2019-04-21 03:01:20	Train Epoch: [31]	Iter: 7400	Loss: 0.0563
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:04:26	Train Epoch: [32]	Iter: 7500	Loss: 0.0565
+2019-04-21 03:07:31	Train Epoch: [32]	Iter: 7600	Loss: 0.0564
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:10:37	Train Epoch: [33]	Iter: 7700	Loss: 0.0572
+2019-04-21 03:13:43	Train Epoch: [33]	Iter: 7800	Loss: 0.0577
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:16:49	Train Epoch: [34]	Iter: 7900	Loss: 0.0574
+2019-04-21 03:19:55	Train Epoch: [34]	Iter: 8000	Loss: 0.0583
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.512139
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 8.741015
+Accuracy: 18.53
+Test per ans {'other': 18.53}
+Best accuracy of 18.55 was at iteration 4000
+2019-04-21 03:23:57	Train Epoch: [34]	Iter: 8100	Loss: 0.0549
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:27:02	Train Epoch: [35]	Iter: 8200	Loss: 0.0517
+2019-04-21 03:30:06	Train Epoch: [35]	Iter: 8300	Loss: 0.0482
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:33:11	Train Epoch: [36]	Iter: 8400	Loss: 0.0485
+2019-04-21 03:36:16	Train Epoch: [36]	Iter: 8500	Loss: 0.0482
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:39:20	Train Epoch: [37]	Iter: 8600	Loss: 0.0478
+2019-04-21 03:42:25	Train Epoch: [37]	Iter: 8700	Loss: 0.0487
+2019-04-21 03:45:30	Train Epoch: [37]	Iter: 8800	Loss: 0.0488
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:48:34	Train Epoch: [38]	Iter: 8900	Loss: 0.0500
+2019-04-21 03:51:39	Train Epoch: [38]	Iter: 9000	Loss: 0.0486
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 03:54:47	Train Epoch: [39]	Iter: 9100	Loss: 0.0479
+2019-04-21 03:57:52	Train Epoch: [39]	Iter: 9200	Loss: 0.0448
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 04:00:56	Train Epoch: [40]	Iter: 9300	Loss: 0.0429
+2019-04-21 04:04:01	Train Epoch: [40]	Iter: 9400	Loss: 0.0417
+11418 questions were skipped in a single epoch
+2019-04-21 04:07:06	Train Epoch: [40]	Iter: 9500	Loss: 0.0404
+11418 questions were skipped in a single epoch
+2019-04-21 04:10:10	Train Epoch: [41]	Iter: 9600	Loss: 0.0427
+2019-04-21 04:13:15	Train Epoch: [41]	Iter: 9700	Loss: 0.0414
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 04:16:20	Train Epoch: [42]	Iter: 9800	Loss: 0.0422
+2019-04-21 04:19:25	Train Epoch: [42]	Iter: 9900	Loss: 0.0422
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 04:22:30	Train Epoch: [43]	Iter: 10000	Loss: 0.0418
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.497366
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 8.883045
+Accuracy: 18.66
+Test per ans {'other': 18.66}
+Best accuracy of 18.66 was at iteration 10000
+2019-04-21 04:26:33	Train Epoch: [43]	Iter: 10100	Loss: 0.0416
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 04:29:39	Train Epoch: [44]	Iter: 10200	Loss: 0.0386
+2019-04-21 04:32:45	Train Epoch: [44]	Iter: 10300	Loss: 0.0370
+2019-04-21 04:35:50	Train Epoch: [44]	Iter: 10400	Loss: 0.0360
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 04:38:56	Train Epoch: [45]	Iter: 10500	Loss: 0.0360
+2019-04-21 04:42:02	Train Epoch: [45]	Iter: 10600	Loss: 0.0364
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 04:45:07	Train Epoch: [46]	Iter: 10700	Loss: 0.0360
+2019-04-21 04:48:13	Train Epoch: [46]	Iter: 10800	Loss: 0.0365
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 04:51:19	Train Epoch: [47]	Iter: 10900	Loss: 0.0360
+2019-04-21 04:54:25	Train Epoch: [47]	Iter: 11000	Loss: 0.0372
+2019-04-21 04:57:32	Train Epoch: [47]	Iter: 11100	Loss: 0.0359
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:00:38	Train Epoch: [48]	Iter: 11200	Loss: 0.0338
+2019-04-21 05:03:43	Train Epoch: [48]	Iter: 11300	Loss: 0.0323
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:06:49	Train Epoch: [49]	Iter: 11400	Loss: 0.0317
+2019-04-21 05:09:55	Train Epoch: [49]	Iter: 11500	Loss: 0.0319
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:13:01	Train Epoch: [50]	Iter: 11600	Loss: 0.0318
+2019-04-21 05:16:06	Train Epoch: [50]	Iter: 11700	Loss: 0.0324
+2019-04-21 05:19:12	Train Epoch: [50]	Iter: 11800	Loss: 0.0324
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:22:17	Train Epoch: [51]	Iter: 11900	Loss: 0.0332
+2019-04-21 05:25:23	Train Epoch: [51]	Iter: 12000	Loss: 0.0327
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.520837
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.02418
+Accuracy: 18.62
+Test per ans {'other': 18.62}
+Best accuracy of 18.66 was at iteration 10000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:29:27	Train Epoch: [52]	Iter: 12100	Loss: 0.0316
+2019-04-21 05:32:32	Train Epoch: [52]	Iter: 12200	Loss: 0.0299
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:35:37	Train Epoch: [53]	Iter: 12300	Loss: 0.0288
+2019-04-21 05:38:42	Train Epoch: [53]	Iter: 12400	Loss: 0.0289
+2019-04-21 05:41:47	Train Epoch: [53]	Iter: 12500	Loss: 0.0288
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:44:53	Train Epoch: [54]	Iter: 12600	Loss: 0.0288
+2019-04-21 05:47:58	Train Epoch: [54]	Iter: 12700	Loss: 0.0289
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:51:03	Train Epoch: [55]	Iter: 12800	Loss: 0.0292
+2019-04-21 05:54:09	Train Epoch: [55]	Iter: 12900	Loss: 0.0286
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 05:57:14	Train Epoch: [56]	Iter: 13000	Loss: 0.0283
+2019-04-21 06:00:17	Train Epoch: [56]	Iter: 13100	Loss: 0.0285
+2019-04-21 06:03:22	Train Epoch: [56]	Iter: 13200	Loss: 0.0269
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 06:06:28	Train Epoch: [57]	Iter: 13300	Loss: 0.0257
+2019-04-21 06:09:34	Train Epoch: [57]	Iter: 13400	Loss: 0.0253
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 06:12:40	Train Epoch: [58]	Iter: 13500	Loss: 0.0254
+2019-04-21 06:15:46	Train Epoch: [58]	Iter: 13600	Loss: 0.0253
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 06:18:51	Train Epoch: [59]	Iter: 13700	Loss: 0.0252
+2019-04-21 06:21:57	Train Epoch: [59]	Iter: 13800	Loss: 0.0259
+2019-04-21 06:25:03	Train Epoch: [59]	Iter: 13900	Loss: 0.0257
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 06:28:10	Train Epoch: [60]	Iter: 14000	Loss: 0.0261
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.489277
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.11107
+Accuracy: 18.41
+Test per ans {'other': 18.41}
+Best accuracy of 18.66 was at iteration 10000
+2019-04-21 06:32:07	Train Epoch: [60]	Iter: 14100	Loss: 0.0253
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 06:35:07	Train Epoch: [61]	Iter: 14200	Loss: 0.0243
+2019-04-21 06:38:12	Train Epoch: [61]	Iter: 14300	Loss: 0.0230
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 06:41:17	Train Epoch: [62]	Iter: 14400	Loss: 0.0230
+2019-04-21 06:44:21	Train Epoch: [62]	Iter: 14500	Loss: 0.0231
+11418 questions were skipped in a single epoch
+2019-04-21 06:47:26	Train Epoch: [62]	Iter: 14600	Loss: 0.0233
+11418 questions were skipped in a single epoch
+2019-04-21 06:50:32	Train Epoch: [63]	Iter: 14700	Loss: 0.0232
+2019-04-21 06:53:37	Train Epoch: [63]	Iter: 14800	Loss: 0.0231
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 06:56:42	Train Epoch: [64]	Iter: 14900	Loss: 0.0235
+2019-04-21 06:59:48	Train Epoch: [64]	Iter: 15000	Loss: 0.0233
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:02:55	Train Epoch: [65]	Iter: 15100	Loss: 0.0229
+2019-04-21 07:06:00	Train Epoch: [65]	Iter: 15200	Loss: 0.0220
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:09:05	Train Epoch: [66]	Iter: 15300	Loss: 0.0212
+2019-04-21 07:12:10	Train Epoch: [66]	Iter: 15400	Loss: 0.0211
+2019-04-21 07:15:15	Train Epoch: [66]	Iter: 15500	Loss: 0.0212
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:18:20	Train Epoch: [67]	Iter: 15600	Loss: 0.0212
+2019-04-21 07:21:25	Train Epoch: [67]	Iter: 15700	Loss: 0.0211
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:24:30	Train Epoch: [68]	Iter: 15800	Loss: 0.0211
+2019-04-21 07:27:35	Train Epoch: [68]	Iter: 15900	Loss: 0.0211
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:30:40	Train Epoch: [69]	Iter: 16000	Loss: 0.0208
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.487049
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.210065
+Accuracy: 18.39
+Test per ans {'other': 18.39}
+Best accuracy of 18.66 was at iteration 10000
+2019-04-21 07:34:40	Train Epoch: [69]	Iter: 16100	Loss: 0.0205
+2019-04-21 07:37:45	Train Epoch: [69]	Iter: 16200	Loss: 0.0197
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:40:49	Train Epoch: [70]	Iter: 16300	Loss: 0.0196
+2019-04-21 07:43:54	Train Epoch: [70]	Iter: 16400	Loss: 0.0191
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:46:59	Train Epoch: [71]	Iter: 16500	Loss: 0.0192
+2019-04-21 07:50:01	Train Epoch: [71]	Iter: 16600	Loss: 0.0193
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 07:53:06	Train Epoch: [72]	Iter: 16700	Loss: 0.0190
+2019-04-21 07:56:11	Train Epoch: [72]	Iter: 16800	Loss: 0.0197
+2019-04-21 07:59:16	Train Epoch: [72]	Iter: 16900	Loss: 0.0196
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:02:21	Train Epoch: [73]	Iter: 17000	Loss: 0.0199
+2019-04-21 08:05:24	Train Epoch: [73]	Iter: 17100	Loss: 0.0190
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:08:21	Train Epoch: [74]	Iter: 17200	Loss: 0.0184
+2019-04-21 08:11:19	Train Epoch: [74]	Iter: 17300	Loss: 0.0177
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:14:18	Train Epoch: [75]	Iter: 17400	Loss: 0.0179
+2019-04-21 08:17:21	Train Epoch: [75]	Iter: 17500	Loss: 0.0180
+2019-04-21 08:20:25	Train Epoch: [75]	Iter: 17600	Loss: 0.0178
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:23:29	Train Epoch: [76]	Iter: 17700	Loss: 0.0180
+2019-04-21 08:26:33	Train Epoch: [76]	Iter: 17800	Loss: 0.0176
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:29:38	Train Epoch: [77]	Iter: 17900	Loss: 0.0178
+2019-04-21 08:32:42	Train Epoch: [77]	Iter: 18000	Loss: 0.0178
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.504017
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.320587
+Accuracy: 18.54
+Test per ans {'other': 18.54}
+Best accuracy of 18.66 was at iteration 10000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:36:42	Train Epoch: [78]	Iter: 18100	Loss: 0.0178
+2019-04-21 08:39:46	Train Epoch: [78]	Iter: 18200	Loss: 0.0170
+2019-04-21 08:42:50	Train Epoch: [78]	Iter: 18300	Loss: 0.0167
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:45:54	Train Epoch: [79]	Iter: 18400	Loss: 0.0167
+2019-04-21 08:48:58	Train Epoch: [79]	Iter: 18500	Loss: 0.0166
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:52:02	Train Epoch: [80]	Iter: 18600	Loss: 0.0164
+2019-04-21 08:55:07	Train Epoch: [80]	Iter: 18700	Loss: 0.0164
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 08:58:12	Train Epoch: [81]	Iter: 18800	Loss: 0.0165
+2019-04-21 09:01:16	Train Epoch: [81]	Iter: 18900	Loss: 0.0167
+2019-04-21 09:04:21	Train Epoch: [81]	Iter: 19000	Loss: 0.0166
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:07:23	Train Epoch: [82]	Iter: 19100	Loss: 0.0161
+2019-04-21 09:10:27	Train Epoch: [82]	Iter: 19200	Loss: 0.0159
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:13:30	Train Epoch: [83]	Iter: 19300	Loss: 0.0156
+2019-04-21 09:16:34	Train Epoch: [83]	Iter: 19400	Loss: 0.0156
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:19:37	Train Epoch: [84]	Iter: 19500	Loss: 0.0154
+2019-04-21 09:22:41	Train Epoch: [84]	Iter: 19600	Loss: 0.0154
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:25:45	Train Epoch: [84]	Iter: 19700	Loss: 0.0153
+2019-04-21 09:28:49	Train Epoch: [85]	Iter: 19800	Loss: 0.0155
+2019-04-21 09:31:53	Train Epoch: [85]	Iter: 19900	Loss: 0.0156
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:34:58	Train Epoch: [86]	Iter: 20000	Loss: 0.0154
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.494355
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.402702
+Accuracy: 18.27
+Test per ans {'other': 18.27}
+Best accuracy of 18.66 was at iteration 10000
+2019-04-21 09:38:56	Train Epoch: [86]	Iter: 20100	Loss: 0.0151
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:42:00	Train Epoch: [87]	Iter: 20200	Loss: 0.0149
+2019-04-21 09:45:04	Train Epoch: [87]	Iter: 20300	Loss: 0.0147
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:48:07	Train Epoch: [88]	Iter: 20400	Loss: 0.0145
+2019-04-21 09:51:11	Train Epoch: [88]	Iter: 20500	Loss: 0.0144
+2019-04-21 09:54:15	Train Epoch: [88]	Iter: 20600	Loss: 0.0145
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 09:57:19	Train Epoch: [89]	Iter: 20700	Loss: 0.0147
+2019-04-21 10:00:22	Train Epoch: [89]	Iter: 20800	Loss: 0.0144
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:03:26	Train Epoch: [90]	Iter: 20900	Loss: 0.0143
+2019-04-21 10:06:30	Train Epoch: [90]	Iter: 21000	Loss: 0.0145
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:09:33	Train Epoch: [91]	Iter: 21100	Loss: 0.0145
+2019-04-21 10:12:31	Train Epoch: [91]	Iter: 21200	Loss: 0.0141
+2019-04-21 10:15:28	Train Epoch: [91]	Iter: 21300	Loss: 0.0135
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:18:31	Train Epoch: [92]	Iter: 21400	Loss: 0.0136
+2019-04-21 10:21:29	Train Epoch: [92]	Iter: 21500	Loss: 0.0138
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:24:31	Train Epoch: [93]	Iter: 21600	Loss: 0.0138
+2019-04-21 10:27:33	Train Epoch: [93]	Iter: 21700	Loss: 0.0137
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:30:31	Train Epoch: [94]	Iter: 21800	Loss: 0.0135
+2019-04-21 10:33:32	Train Epoch: [94]	Iter: 21900	Loss: 0.0137
+2019-04-21 10:36:36	Train Epoch: [94]	Iter: 22000	Loss: 0.0138
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.509101
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.433325
+Accuracy: 18.41
+Test per ans {'other': 18.41}
+Best accuracy of 18.66 was at iteration 10000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:40:34	Train Epoch: [95]	Iter: 22100	Loss: 0.0139
+2019-04-21 10:43:37	Train Epoch: [95]	Iter: 22200	Loss: 0.0132
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:46:41	Train Epoch: [96]	Iter: 22300	Loss: 0.0132
+2019-04-21 10:49:45	Train Epoch: [96]	Iter: 22400	Loss: 0.0129
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 10:52:48	Train Epoch: [97]	Iter: 22500	Loss: 0.0129
+2019-04-21 10:55:52	Train Epoch: [97]	Iter: 22600	Loss: 0.0130
+2019-04-21 10:58:56	Train Epoch: [97]	Iter: 22700	Loss: 0.0129
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:01:59	Train Epoch: [98]	Iter: 22800	Loss: 0.0128
+2019-04-21 11:05:03	Train Epoch: [98]	Iter: 22900	Loss: 0.0133
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:08:07	Train Epoch: [99]	Iter: 23000	Loss: 0.0129
+2019-04-21 11:11:10	Train Epoch: [99]	Iter: 23100	Loss: 0.0127
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:14:12	Train Epoch: [100]	Iter: 23200	Loss: 0.0125
+2019-04-21 11:17:15	Train Epoch: [100]	Iter: 23300	Loss: 0.0125
+2019-04-21 11:20:19	Train Epoch: [100]	Iter: 23400	Loss: 0.0125
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:23:23	Train Epoch: [101]	Iter: 23500	Loss: 0.0124
+2019-04-21 11:26:27	Train Epoch: [101]	Iter: 23600	Loss: 0.0124
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:29:32	Train Epoch: [102]	Iter: 23700	Loss: 0.0122
+2019-04-21 11:32:36	Train Epoch: [102]	Iter: 23800	Loss: 0.0124
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:35:41	Train Epoch: [103]	Iter: 23900	Loss: 0.0123
+2019-04-21 11:38:46	Train Epoch: [103]	Iter: 24000	Loss: 0.0123
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.512219
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.492317
+Accuracy: 18.54
+Test per ans {'other': 18.54}
+Best accuracy of 18.66 was at iteration 10000
+2019-04-21 11:42:45	Train Epoch: [103]	Iter: 24100	Loss: 0.0123
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:45:48	Train Epoch: [104]	Iter: 24200	Loss: 0.0121
+2019-04-21 11:48:52	Train Epoch: [104]	Iter: 24300	Loss: 0.0119
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:51:55	Train Epoch: [105]	Iter: 24400	Loss: 0.0120
+2019-04-21 11:54:59	Train Epoch: [105]	Iter: 24500	Loss: 0.0119
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 11:58:03	Train Epoch: [106]	Iter: 24600	Loss: 0.0116
+2019-04-21 12:01:07	Train Epoch: [106]	Iter: 24700	Loss: 0.0118
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:04:10	Train Epoch: [106]	Iter: 24800	Loss: 0.0118
+2019-04-21 12:07:14	Train Epoch: [107]	Iter: 24900	Loss: 0.0120
+2019-04-21 12:10:18	Train Epoch: [107]	Iter: 25000	Loss: 0.0119
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:13:20	Train Epoch: [108]	Iter: 25100	Loss: 0.0116
+2019-04-21 12:16:20	Train Epoch: [108]	Iter: 25200	Loss: 0.0115
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:19:25	Train Epoch: [109]	Iter: 25300	Loss: 0.0115
+2019-04-21 12:22:30	Train Epoch: [109]	Iter: 25400	Loss: 0.0112
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:25:36	Train Epoch: [110]	Iter: 25500	Loss: 0.0112
+2019-04-21 12:28:42	Train Epoch: [110]	Iter: 25600	Loss: 0.0113
+2019-04-21 12:31:49	Train Epoch: [110]	Iter: 25700	Loss: 0.0116
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:34:55	Train Epoch: [111]	Iter: 25800	Loss: 0.0115
+2019-04-21 12:38:02	Train Epoch: [111]	Iter: 25900	Loss: 0.0114
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:41:08	Train Epoch: [112]	Iter: 26000	Loss: 0.0114
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.567429
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.493891
+Accuracy: 18.53
+Test per ans {'other': 18.53}
+Best accuracy of 18.66 was at iteration 10000
+2019-04-21 12:45:19	Train Epoch: [112]	Iter: 26100	Loss: 0.0111
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:48:27	Train Epoch: [113]	Iter: 26200	Loss: 0.0110
+2019-04-21 12:51:34	Train Epoch: [113]	Iter: 26300	Loss: 0.0111
+2019-04-21 12:54:41	Train Epoch: [113]	Iter: 26400	Loss: 0.0110
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 12:57:49	Train Epoch: [114]	Iter: 26500	Loss: 0.0110
+2019-04-21 13:00:57	Train Epoch: [114]	Iter: 26600	Loss: 0.0110
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:04:04	Train Epoch: [115]	Iter: 26700	Loss: 0.0110
+2019-04-21 13:07:11	Train Epoch: [115]	Iter: 26800	Loss: 0.0111
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:10:18	Train Epoch: [116]	Iter: 26900	Loss: 0.0111
+2019-04-21 13:13:25	Train Epoch: [116]	Iter: 27000	Loss: 0.0107
+2019-04-21 13:16:35	Train Epoch: [116]	Iter: 27100	Loss: 0.0109
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:19:42	Train Epoch: [117]	Iter: 27200	Loss: 0.0106
+2019-04-21 13:22:48	Train Epoch: [117]	Iter: 27300	Loss: 0.0107
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:25:56	Train Epoch: [118]	Iter: 27400	Loss: 0.0105
+2019-04-21 13:29:03	Train Epoch: [118]	Iter: 27500	Loss: 0.0105
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:32:11	Train Epoch: [119]	Iter: 27600	Loss: 0.0105
+2019-04-21 13:35:19	Train Epoch: [119]	Iter: 27700	Loss: 0.0107
+2019-04-21 13:38:27	Train Epoch: [119]	Iter: 27800	Loss: 0.0106
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:41:34	Train Epoch: [120]	Iter: 27900	Loss: 0.0104
+2019-04-21 13:44:41	Train Epoch: [120]	Iter: 28000	Loss: 0.0103
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.606790
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.526944
+Accuracy: 18.37
+Test per ans {'other': 18.37}
+Best accuracy of 18.66 was at iteration 10000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:48:51	Train Epoch: [121]	Iter: 28100	Loss: 0.0104
+2019-04-21 13:51:58	Train Epoch: [121]	Iter: 28200	Loss: 0.0105
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 13:55:06	Train Epoch: [122]	Iter: 28300	Loss: 0.0105
+2019-04-21 13:58:14	Train Epoch: [122]	Iter: 28400	Loss: 0.0103
+2019-04-21 14:01:21	Train Epoch: [122]	Iter: 28500	Loss: 0.0103
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:04:30	Train Epoch: [123]	Iter: 28600	Loss: 0.0103
+2019-04-21 14:07:38	Train Epoch: [123]	Iter: 28700	Loss: 0.0102
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:10:46	Train Epoch: [124]	Iter: 28800	Loss: 0.0104
+2019-04-21 14:13:54	Train Epoch: [124]	Iter: 28900	Loss: 0.0104
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:17:01	Train Epoch: [125]	Iter: 29000	Loss: 0.0102
+2019-04-21 14:20:12	Train Epoch: [125]	Iter: 29100	Loss: 0.0103
+2019-04-21 14:23:19	Train Epoch: [125]	Iter: 29200	Loss: 0.0098
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:26:25	Train Epoch: [126]	Iter: 29300	Loss: 0.0101
+2019-04-21 14:29:33	Train Epoch: [126]	Iter: 29400	Loss: 0.0098
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:32:40	Train Epoch: [127]	Iter: 29500	Loss: 0.0100
+2019-04-21 14:35:47	Train Epoch: [127]	Iter: 29600	Loss: 0.0100
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:38:55	Train Epoch: [128]	Iter: 29700	Loss: 0.0099
+2019-04-21 14:42:02	Train Epoch: [128]	Iter: 29800	Loss: 0.0098
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:45:10	Train Epoch: [128]	Iter: 29900	Loss: 0.0100
+2019-04-21 14:48:18	Train Epoch: [129]	Iter: 30000	Loss: 0.0097
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.569076
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.559818
+Accuracy: 18.51
+Test per ans {'other': 18.51}
+Best accuracy of 18.66 was at iteration 10000
+2019-04-21 14:52:28	Train Epoch: [129]	Iter: 30100	Loss: 0.0098
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 14:55:34	Train Epoch: [130]	Iter: 30200	Loss: 0.0099
+2019-04-21 14:58:41	Train Epoch: [130]	Iter: 30300	Loss: 0.0098
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:01:46	Train Epoch: [131]	Iter: 30400	Loss: 0.0099
+2019-04-21 15:04:51	Train Epoch: [131]	Iter: 30500	Loss: 0.0098
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:07:57	Train Epoch: [132]	Iter: 30600	Loss: 0.0097
+2019-04-21 15:11:03	Train Epoch: [132]	Iter: 30700	Loss: 0.0097
+2019-04-21 15:14:09	Train Epoch: [132]	Iter: 30800	Loss: 0.0097
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:17:14	Train Epoch: [133]	Iter: 30900	Loss: 0.0097
+2019-04-21 15:20:20	Train Epoch: [133]	Iter: 31000	Loss: 0.0096
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:23:29	Train Epoch: [134]	Iter: 31100	Loss: 0.0098
+2019-04-21 15:26:34	Train Epoch: [134]	Iter: 31200	Loss: 0.0096
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:29:41	Train Epoch: [135]	Iter: 31300	Loss: 0.0095
+2019-04-21 15:32:46	Train Epoch: [135]	Iter: 31400	Loss: 0.0096
+2019-04-21 15:35:52	Train Epoch: [135]	Iter: 31500	Loss: 0.0095
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:38:58	Train Epoch: [136]	Iter: 31600	Loss: 0.0095
+2019-04-21 15:42:05	Train Epoch: [136]	Iter: 31700	Loss: 0.0096
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:45:11	Train Epoch: [137]	Iter: 31800	Loss: 0.0093
+2019-04-21 15:48:17	Train Epoch: [137]	Iter: 31900	Loss: 0.0095
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 15:51:26	Train Epoch: [138]	Iter: 32000	Loss: 0.0095
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.759406
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.560479
+Accuracy: 18.68
+Test per ans {'other': 18.68}
+Best accuracy of 18.68 was at iteration 32000
+2019-04-21 15:55:35	Train Epoch: [138]	Iter: 32100	Loss: 0.0096
+2019-04-21 15:58:40	Train Epoch: [138]	Iter: 32200	Loss: 0.0093
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:01:47	Train Epoch: [139]	Iter: 32300	Loss: 0.0093
+2019-04-21 16:04:53	Train Epoch: [139]	Iter: 32400	Loss: 0.0093
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:07:59	Train Epoch: [140]	Iter: 32500	Loss: 0.0095
+2019-04-21 16:11:04	Train Epoch: [140]	Iter: 32600	Loss: 0.0093
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:14:10	Train Epoch: [141]	Iter: 32700	Loss: 0.0093
+2019-04-21 16:17:17	Train Epoch: [141]	Iter: 32800	Loss: 0.0093
+2019-04-21 16:20:24	Train Epoch: [141]	Iter: 32900	Loss: 0.0093
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:23:32	Train Epoch: [142]	Iter: 33000	Loss: 0.0092
+2019-04-21 16:26:43	Train Epoch: [142]	Iter: 33100	Loss: 0.0094
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:29:52	Train Epoch: [143]	Iter: 33200	Loss: 0.0091
+2019-04-21 16:33:00	Train Epoch: [143]	Iter: 33300	Loss: 0.0092
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:36:08	Train Epoch: [144]	Iter: 33400	Loss: 0.0091
+2019-04-21 16:39:16	Train Epoch: [144]	Iter: 33500	Loss: 0.0091
+2019-04-21 16:42:25	Train Epoch: [144]	Iter: 33600	Loss: 0.0091
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:45:34	Train Epoch: [145]	Iter: 33700	Loss: 0.0093
+2019-04-21 16:48:42	Train Epoch: [145]	Iter: 33800	Loss: 0.0091
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:51:50	Train Epoch: [146]	Iter: 33900	Loss: 0.0090
+2019-04-21 16:55:00	Train Epoch: [146]	Iter: 34000	Loss: 0.0090
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.748474
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.584434
+Accuracy: 18.72
+Test per ans {'other': 18.72}
+Best accuracy of 18.72 was at iteration 34000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 16:59:13	Train Epoch: [147]	Iter: 34100	Loss: 0.0089
+2019-04-21 17:02:21	Train Epoch: [147]	Iter: 34200	Loss: 0.0090
+2019-04-21 17:05:30	Train Epoch: [147]	Iter: 34300	Loss: 0.0091
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:08:37	Train Epoch: [148]	Iter: 34400	Loss: 0.0088
+2019-04-21 17:11:47	Train Epoch: [148]	Iter: 34500	Loss: 0.0091
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:14:56	Train Epoch: [149]	Iter: 34600	Loss: 0.0090
+2019-04-21 17:18:06	Train Epoch: [149]	Iter: 34700	Loss: 0.0090
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:21:16	Train Epoch: [150]	Iter: 34800	Loss: 0.0090
+2019-04-21 17:24:25	Train Epoch: [150]	Iter: 34900	Loss: 0.0089
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:27:33	Train Epoch: [150]	Iter: 35000	Loss: 0.0091
+2019-04-21 17:30:49	Train Epoch: [151]	Iter: 35100	Loss: 0.0090
+2019-04-21 17:33:59	Train Epoch: [151]	Iter: 35200	Loss: 0.0090
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:37:09	Train Epoch: [152]	Iter: 35300	Loss: 0.0087
+2019-04-21 17:40:18	Train Epoch: [152]	Iter: 35400	Loss: 0.0089
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:43:28	Train Epoch: [153]	Iter: 35500	Loss: 0.0088
+2019-04-21 17:46:37	Train Epoch: [153]	Iter: 35600	Loss: 0.0089
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:49:46	Train Epoch: [154]	Iter: 35700	Loss: 0.0089
+2019-04-21 17:52:56	Train Epoch: [154]	Iter: 35800	Loss: 0.0089
+2019-04-21 17:56:05	Train Epoch: [154]	Iter: 35900	Loss: 0.0087
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 17:59:14	Train Epoch: [155]	Iter: 36000	Loss: 0.0088
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.599161
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.589692
+Accuracy: 18.76
+Test per ans {'other': 18.76}
+Best accuracy of 18.76 was at iteration 36000
+2019-04-21 18:03:29	Train Epoch: [155]	Iter: 36100	Loss: 0.0087
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:06:39	Train Epoch: [156]	Iter: 36200	Loss: 0.0088
+2019-04-21 18:09:49	Train Epoch: [156]	Iter: 36300	Loss: 0.0088
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:12:59	Train Epoch: [157]	Iter: 36400	Loss: 0.0087
+2019-04-21 18:16:09	Train Epoch: [157]	Iter: 36500	Loss: 0.0088
+2019-04-21 18:19:20	Train Epoch: [157]	Iter: 36600	Loss: 0.0087
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:22:29	Train Epoch: [158]	Iter: 36700	Loss: 0.0087
+2019-04-21 18:25:34	Train Epoch: [158]	Iter: 36800	Loss: 0.0086
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:28:38	Train Epoch: [159]	Iter: 36900	Loss: 0.0087
+2019-04-21 18:31:43	Train Epoch: [159]	Iter: 37000	Loss: 0.0086
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:34:51	Train Epoch: [160]	Iter: 37100	Loss: 0.0088
+2019-04-21 18:37:56	Train Epoch: [160]	Iter: 37200	Loss: 0.0086
+2019-04-21 18:41:01	Train Epoch: [160]	Iter: 37300	Loss: 0.0086
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:44:06	Train Epoch: [161]	Iter: 37400	Loss: 0.0086
+2019-04-21 18:47:11	Train Epoch: [161]	Iter: 37500	Loss: 0.0086
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:50:16	Train Epoch: [162]	Iter: 37600	Loss: 0.0085
+2019-04-21 18:53:22	Train Epoch: [162]	Iter: 37700	Loss: 0.0086
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 18:56:28	Train Epoch: [163]	Iter: 37800	Loss: 0.0086
+2019-04-21 18:59:34	Train Epoch: [163]	Iter: 37900	Loss: 0.0086
+2019-04-21 19:02:40	Train Epoch: [163]	Iter: 38000	Loss: 0.0086
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.532983
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.59405
+Accuracy: 18.74
+Test per ans {'other': 18.74}
+Best accuracy of 18.76 was at iteration 36000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:06:44	Train Epoch: [164]	Iter: 38100	Loss: 0.0087
+2019-04-21 19:09:50	Train Epoch: [164]	Iter: 38200	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:12:56	Train Epoch: [165]	Iter: 38300	Loss: 0.0085
+2019-04-21 19:16:03	Train Epoch: [165]	Iter: 38400	Loss: 0.0086
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:19:09	Train Epoch: [166]	Iter: 38500	Loss: 0.0086
+2019-04-21 19:22:16	Train Epoch: [166]	Iter: 38600	Loss: 0.0085
+2019-04-21 19:25:22	Train Epoch: [166]	Iter: 38700	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:28:29	Train Epoch: [167]	Iter: 38800	Loss: 0.0085
+2019-04-21 19:31:35	Train Epoch: [167]	Iter: 38900	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:34:41	Train Epoch: [168]	Iter: 39000	Loss: 0.0085
+2019-04-21 19:37:50	Train Epoch: [168]	Iter: 39100	Loss: 0.0085
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:40:57	Train Epoch: [169]	Iter: 39200	Loss: 0.0084
+2019-04-21 19:44:03	Train Epoch: [169]	Iter: 39300	Loss: 0.0087
+2019-04-21 19:47:10	Train Epoch: [169]	Iter: 39400	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:50:17	Train Epoch: [170]	Iter: 39500	Loss: 0.0084
+2019-04-21 19:53:23	Train Epoch: [170]	Iter: 39600	Loss: 0.0085
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 19:56:30	Train Epoch: [171]	Iter: 39700	Loss: 0.0084
+2019-04-21 19:59:37	Train Epoch: [171]	Iter: 39800	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:02:43	Train Epoch: [172]	Iter: 39900	Loss: 0.0083
+2019-04-21 20:05:49	Train Epoch: [172]	Iter: 40000	Loss: 0.0083
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.544834
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.619535
+Accuracy: 18.74
+Test per ans {'other': 18.74}
+Best accuracy of 18.76 was at iteration 36000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:09:51	Train Epoch: [172]	Iter: 40100	Loss: 0.0084
+2019-04-21 20:12:58	Train Epoch: [173]	Iter: 40200	Loss: 0.0084
+2019-04-21 20:16:04	Train Epoch: [173]	Iter: 40300	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:19:10	Train Epoch: [174]	Iter: 40400	Loss: 0.0085
+2019-04-21 20:22:17	Train Epoch: [174]	Iter: 40500	Loss: 0.0083
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:25:23	Train Epoch: [175]	Iter: 40600	Loss: 0.0084
+2019-04-21 20:28:29	Train Epoch: [175]	Iter: 40700	Loss: 0.0083
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:31:35	Train Epoch: [176]	Iter: 40800	Loss: 0.0084
+2019-04-21 20:34:42	Train Epoch: [176]	Iter: 40900	Loss: 0.0083
+2019-04-21 20:37:48	Train Epoch: [176]	Iter: 41000	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:40:55	Train Epoch: [177]	Iter: 41100	Loss: 0.0083
+2019-04-21 20:44:01	Train Epoch: [177]	Iter: 41200	Loss: 0.0085
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:47:08	Train Epoch: [178]	Iter: 41300	Loss: 0.0083
+2019-04-21 20:50:15	Train Epoch: [178]	Iter: 41400	Loss: 0.0084
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 20:53:21	Train Epoch: [179]	Iter: 41500	Loss: 0.0082
+2019-04-21 20:56:27	Train Epoch: [179]	Iter: 41600	Loss: 0.0082
+2019-04-21 20:59:34	Train Epoch: [179]	Iter: 41700	Loss: 0.0082
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:02:40	Train Epoch: [180]	Iter: 41800	Loss: 0.0083
+2019-04-21 21:05:46	Train Epoch: [180]	Iter: 41900	Loss: 0.0083
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:08:53	Train Epoch: [181]	Iter: 42000	Loss: 0.0083
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.532108
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.607748
+Accuracy: 18.79
+Test per ans {'other': 18.79}
+Best accuracy of 18.79 was at iteration 42000
+2019-04-21 21:12:57	Train Epoch: [181]	Iter: 42100	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:16:04	Train Epoch: [182]	Iter: 42200	Loss: 0.0083
+2019-04-21 21:19:10	Train Epoch: [182]	Iter: 42300	Loss: 0.0082
+2019-04-21 21:22:16	Train Epoch: [182]	Iter: 42400	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:25:23	Train Epoch: [183]	Iter: 42500	Loss: 0.0083
+2019-04-21 21:28:31	Train Epoch: [183]	Iter: 42600	Loss: 0.0082
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:31:37	Train Epoch: [184]	Iter: 42700	Loss: 0.0081
+2019-04-21 21:34:43	Train Epoch: [184]	Iter: 42800	Loss: 0.0082
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:37:50	Train Epoch: [185]	Iter: 42900	Loss: 0.0081
+2019-04-21 21:40:57	Train Epoch: [185]	Iter: 43000	Loss: 0.0081
+2019-04-21 21:44:07	Train Epoch: [185]	Iter: 43100	Loss: 0.0083
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:47:13	Train Epoch: [186]	Iter: 43200	Loss: 0.0083
+2019-04-21 21:50:20	Train Epoch: [186]	Iter: 43300	Loss: 0.0082
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:53:27	Train Epoch: [187]	Iter: 43400	Loss: 0.0081
+2019-04-21 21:56:33	Train Epoch: [187]	Iter: 43500	Loss: 0.0082
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 21:59:39	Train Epoch: [188]	Iter: 43600	Loss: 0.0082
+2019-04-21 22:02:46	Train Epoch: [188]	Iter: 43700	Loss: 0.0081
+2019-04-21 22:05:52	Train Epoch: [188]	Iter: 43800	Loss: 0.0082
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:08:59	Train Epoch: [189]	Iter: 43900	Loss: 0.0081
+2019-04-21 22:12:05	Train Epoch: [189]	Iter: 44000	Loss: 0.0082
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.550009
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.624229
+Accuracy: 18.8
+Test per ans {'other': 18.8}
+Best accuracy of 18.8 was at iteration 44000
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:16:10	Train Epoch: [190]	Iter: 44100	Loss: 0.0081
+2019-04-21 22:19:16	Train Epoch: [190]	Iter: 44200	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:22:23	Train Epoch: [191]	Iter: 44300	Loss: 0.0080
+2019-04-21 22:25:29	Train Epoch: [191]	Iter: 44400	Loss: 0.0081
+2019-04-21 22:28:35	Train Epoch: [191]	Iter: 44500	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:31:42	Train Epoch: [192]	Iter: 44600	Loss: 0.0082
+2019-04-21 22:34:49	Train Epoch: [192]	Iter: 44700	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:37:55	Train Epoch: [193]	Iter: 44800	Loss: 0.0081
+2019-04-21 22:41:02	Train Epoch: [193]	Iter: 44900	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:44:09	Train Epoch: [194]	Iter: 45000	Loss: 0.0080
+2019-04-21 22:47:17	Train Epoch: [194]	Iter: 45100	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:50:24	Train Epoch: [194]	Iter: 45200	Loss: 0.0080
+2019-04-21 22:53:30	Train Epoch: [195]	Iter: 45300	Loss: 0.0081
+2019-04-21 22:56:37	Train Epoch: [195]	Iter: 45400	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 22:59:43	Train Epoch: [196]	Iter: 45500	Loss: 0.0081
+2019-04-21 23:02:49	Train Epoch: [196]	Iter: 45600	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:05:56	Train Epoch: [197]	Iter: 45700	Loss: 0.0082
+2019-04-21 23:09:03	Train Epoch: [197]	Iter: 45800	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:12:09	Train Epoch: [198]	Iter: 45900	Loss: 0.0080
+2019-04-21 23:15:16	Train Epoch: [198]	Iter: 46000	Loss: 0.0080
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.548448
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.612144
+Accuracy: 18.72
+Test per ans {'other': 18.72}
+Best accuracy of 18.8 was at iteration 44000
+2019-04-21 23:19:21	Train Epoch: [198]	Iter: 46100	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:22:27	Train Epoch: [199]	Iter: 46200	Loss: 0.0080
+2019-04-21 23:25:33	Train Epoch: [199]	Iter: 46300	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:28:39	Train Epoch: [200]	Iter: 46400	Loss: 0.0081
+2019-04-21 23:31:45	Train Epoch: [200]	Iter: 46500	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:34:52	Train Epoch: [201]	Iter: 46600	Loss: 0.0080
+2019-04-21 23:37:59	Train Epoch: [201]	Iter: 46700	Loss: 0.0080
+2019-04-21 23:41:05	Train Epoch: [201]	Iter: 46800	Loss: 0.0079
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:44:12	Train Epoch: [202]	Iter: 46900	Loss: 0.0080
+2019-04-21 23:47:18	Train Epoch: [202]	Iter: 47000	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:50:27	Train Epoch: [203]	Iter: 47100	Loss: 0.0078
+2019-04-21 23:53:33	Train Epoch: [203]	Iter: 47200	Loss: 0.0081
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-21 23:56:40	Train Epoch: [204]	Iter: 47300	Loss: 0.0079
+2019-04-21 23:59:45	Train Epoch: [204]	Iter: 47400	Loss: 0.0080
+2019-04-22 00:02:50	Train Epoch: [204]	Iter: 47500	Loss: 0.0079
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:05:56	Train Epoch: [205]	Iter: 47600	Loss: 0.0079
+2019-04-22 00:09:02	Train Epoch: [205]	Iter: 47700	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:12:08	Train Epoch: [206]	Iter: 47800	Loss: 0.0079
+2019-04-22 00:15:14	Train Epoch: [206]	Iter: 47900	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:18:20	Train Epoch: [207]	Iter: 48000	Loss: 0.0078
+parsed 5000 questions for val
+restoring vocab
+question vocab size: 8244
+answer vocab size: 3000
+Validating...
+8.00%16.00%24.00%32.00%40.00%48.00%56.00%64.00%72.00%80.00%88.00%96.00%0 questions were skipped in a single epoch
+Deduping arr of len 5000
+New len 5000
+loading VQA annotations and questions into memory...
+0:00:00.542923
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.01s)
+creating index...
+index created!
+computing accuracy
+Finshed Percent: [#-------------------] 6% Finshed Percent: [##------------------] 12% Finshed Percent: [####----------------] 18% Finshed Percent: [#####---------------] 24% Finshed Percent: [######--------------] 30% Finshed Percent: [#######-------------] 36% Finshed Percent: [########------------] 42% Finshed Percent: [##########----------] 48% Finshed Percent: [###########---------] 54% Finshed Percent: [############--------] 60% Finshed Percent: [#############-------] 66% Finshed Percent: [##############------] 72% Finshed Percent: [################----] 78% Finshed Percent: [#################---] 84% Finshed Percent: [##################--] 90% Finshed Percent: [###################-] 96% Done computing accuracy
+Test loss: 9.613171
+Accuracy: 18.69
+Test per ans {'other': 18.69}
+Best accuracy of 18.8 was at iteration 44000
+2019-04-22 00:22:25	Train Epoch: [207]	Iter: 48100	Loss: 0.0079
+2019-04-22 00:25:30	Train Epoch: [207]	Iter: 48200	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:28:37	Train Epoch: [208]	Iter: 48300	Loss: 0.0080
+2019-04-22 00:31:43	Train Epoch: [208]	Iter: 48400	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:34:50	Train Epoch: [209]	Iter: 48500	Loss: 0.0078
+2019-04-22 00:37:56	Train Epoch: [209]	Iter: 48600	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:41:02	Train Epoch: [210]	Iter: 48700	Loss: 0.0078
+2019-04-22 00:44:08	Train Epoch: [210]	Iter: 48800	Loss: 0.0079
+2019-04-22 00:47:15	Train Epoch: [210]	Iter: 48900	Loss: 0.0077
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:50:21	Train Epoch: [211]	Iter: 49000	Loss: 0.0078
+2019-04-22 00:53:30	Train Epoch: [211]	Iter: 49100	Loss: 0.0080
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 00:56:37	Train Epoch: [212]	Iter: 49200	Loss: 0.0079
+2019-04-22 00:59:43	Train Epoch: [212]	Iter: 49300	Loss: 0.0079
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 01:02:49	Train Epoch: [213]	Iter: 49400	Loss: 0.0079
+2019-04-22 01:05:55	Train Epoch: [213]	Iter: 49500	Loss: 0.0079
+2019-04-22 01:09:01	Train Epoch: [213]	Iter: 49600	Loss: 0.0079
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 01:12:07	Train Epoch: [214]	Iter: 49700	Loss: 0.0079
+2019-04-22 01:15:13	Train Epoch: [214]	Iter: 49800	Loss: 0.0079
+11418 questions were skipped in a single epoch
+11418 questions were skipped in a single epoch
+2019-04-22 01:18:19	Train Epoch: [215]	Iter: 49900	Loss: 0.0080

@@ -12,5 +12,7 @@ backup/
 .DS_Store
 .python-version
 *.zip
+*.tar.gz
 runs/
 training/
+.gd/
