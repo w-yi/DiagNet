@@ -25,14 +25,10 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
     criterion = nn.KLDivLoss(reduction='batchmean')
     train_loss = np.zeros(opt.MAX_ITERATIONS)
     results = []
-    for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, epoch) in enumerate(train_Loader):
+    for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, ocr_binary_flags, epoch) in enumerate(train_Loader):
         if iter_idx >= opt.MAX_ITERATIONS:
             break
         model.train()
-        data = torch.squeeze(data, 0)
-        word_length = torch.squeeze(word_length, 0)
-        img_feature = torch.squeeze(img_feature, 0)
-        label = torch.squeeze(label, 0)
         epoch = epoch.numpy()
 
         data = cuda_wrapper(Variable(data)).long()
@@ -42,17 +38,15 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
         optimizer.zero_grad()
 
         if opt.OCR:
-            embed_matrix = torch.squeeze(embed_matrix, 0)
-            ocr_length = torch.squeeze(ocr_length, 0)
-            ocr_embedding = torch.squeeze(ocr_embedding, 0)
-
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
             ocr_length = cuda_wrapper(ocr_length)
             ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
-
-            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+            if opt.BINARY:
+                ocr_binary_flags = cuda_wrapper(ocr_binary_flags)
+                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, ocr_binary_flags, 'train')
+            else:
+                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
         elif opt.EMBED:
-            embed_matrix = torch.squeeze(embed_matrix, 0)
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
 
             pred = model(data, img_feature, embed_matrix, 'train')

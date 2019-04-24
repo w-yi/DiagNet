@@ -30,6 +30,7 @@ class VQADataProvider:
         self.exp_type = opt.EXP_TYPE
         self.use_embed = opt.EMBED
         self.use_ocr = opt.OCR
+        self.use_binary = opt.BINARY
         self.max_token_size = opt.MAX_TOKEN_SIZE
 
         self.qdic, self.adic = self.load_data(mode)
@@ -146,7 +147,7 @@ class VQADataProvider:
         """
         Returns a vocab_size dictionary that maps words to indices.
         only keep the words with highest occurrences
-        if use_ocr, exclude the answers appearing in token lists
+        if use_ocr, exclude the answers appeared in token lists
         """
 
         counter = Counter()
@@ -178,7 +179,8 @@ class VQADataProvider:
             'question': str,
             'question_id': int,
             'image_id': int,
-            'ocr_tokens': list (only required if use_ocr)
+            'ocr_tokens': list (only used if use_ocr)
+            'ocr_answer_flag': int (0/1; only used if use_ocr and use_binary)
         }
         answer dict format: {
             'answers': list of str,
@@ -198,6 +200,8 @@ class VQADataProvider:
                 }
                 if self.use_ocr:
                     qdic[q_key]['ocr_tokens'] = q['ocr_tokens']
+                if self.use_binary:
+                    qdic[q_key]['ocr_answer_flag'] = q['ocr_answer_flag']
 
         if 'test' not in data_split:
             with open(config.DATA_PATHS[self.exp_type][data_split]['ans_file'], 'r') as f:
@@ -270,6 +274,12 @@ class VQADataProvider:
         else:
             return []
 
+    def getQuesOcrFlag(self, qid):
+        if self.use_binary:
+            return self.qdic[qid]['ocr_answer_flag']
+        else:
+            return 0
+
     def getAnsObj(self, qid):
         if self.mode == 'test-dev' or self.mode == 'test':
             return -1
@@ -277,6 +287,8 @@ class VQADataProvider:
 
     def get_vocab_size(self):
         return len(self.qdict), len(self.adict)
+
+
 
     @staticmethod
     def seq_to_list(s, max_length):
@@ -299,14 +311,9 @@ class VQADataProvider:
         if self.mode == 'test-dev' or self.mode == 'test':
             return -1
         answer_list = [answer_obj[i]['answer'] for i in range(10)]
-        dic = {}
-        for ans in answer_list:
-            if ans in dic:
-                dic[ans] +=1
-            else:
-                dic[ans] = 1
-        max_key = max((v,k) for (k,v) in dic.items())[1]
-        return max_key
+        counter = Counter(answer_list)
+
+        return counter.most_common(1)[0][0]
 
 #     # This is a useless function that has never been used
 #     def extract_answer_prob(self,answer_obj):
@@ -451,6 +458,8 @@ class VQADataProvider:
         ocr_length = np.zeros(self.batchsize)
         ocr_embedding = np.zeros((self.batchsize, self.max_token_size, self.opt.TOKEN_EMBEDDING_SIZE))
         ocr_tokens = list()
+        # placeholder for binary indicator
+        ocr_answer_flags = np.zeros(self.batchsize)
 
         if self.use_embed:
             ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
@@ -471,6 +480,8 @@ class VQADataProvider:
             # for ocr
             q_tokens = self.getQuesOcrTokens(qid)
             ocr_tokens += [q_tokens]
+            # for ocr binary
+            ocr_binary_flag = self.getQuesOcrFlag(qid)
 
             # convert question to vec
             q_list = VQADataProvider.seq_to_list(q_str, self.max_length)
@@ -486,6 +497,7 @@ class VQADataProvider:
                     if os.path.isfile(path):
                         t_ivec = np.load(path)
                     else:
+                        # fallback to alternative feature if feature file not found
                         t_ivec = np.load(config.DATA_PATHS[self.exp_type][data_split]['features_prefix_alternative'] + config.FEATURE_FILENAME[self.exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
@@ -526,7 +538,11 @@ class VQADataProvider:
                 ocr_length[i] = len(q_tokens)
                 ocr_embedding[i, ...] = t_ocr_embedding
 
-        return qvec, q_length, ivec, avec, embed_matrix, ocr_length, ocr_embedding, ocr_tokens
+            if self.use_binary:
+                ocr_binary_flags[i] = ocr_binary_flag
+
+
+        return qvec, q_length, ivec, avec, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_binary_flags
 
 
     def get_batch_vec(self):
@@ -599,8 +615,8 @@ class VQADataset(data.Dataset):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, _, _, epoch = self.dp.get_batch_vec()
-            return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, epoch
+            word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_binary_flags,  _, _, epoch = self.dp.get_batch_vec()
+            return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_binary_flags, epoch
 
     def __len__(self):
         if self.mode == 'train':

@@ -101,19 +101,19 @@ DATA_PATHS = {
     },
     'textvqa_butd': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_train_ocr_partial_sorted.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_train_ocr_partial_sorted_flag.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_partial.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/train/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_val_ocr_complete_sorted.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_val_ocr_complete_sorted_flag.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/val/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test-dev': {
-            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_test_ocr_complete_sorted.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_test_ocr_complete_sorted_flag.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/test/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/test/'
         }
@@ -153,7 +153,10 @@ def parse_opt():
     parser.add_argument('MODEL', type=str, choices=['mfb', 'mfh'])
     parser.add_argument('EXP_TYPE', type=str, choices=['baseline', 'glove', 'textvqa', 'textvqa_butd'])
     parser.add_argument('--EMBED', action='store_true')
+    # use ocr infomation from textvqa dataset
     parser.add_argument('--OCR', action='store_true')
+    # use a binary predictor to determine whether answer falls in the ocr text set
+    parser.add_argument('--BINARY', action='store_true')
 
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
@@ -201,5 +204,7 @@ def parse_opt():
     if args.OCR:
         assert args.EMBED, 'ocr only supported with embed now'
         args.NUM_OUTPUT_UNITS = args.MAX_ANSWER_VOCAB_SIZE + args.MAX_TOKEN_SIZE
+    if args.BINARY:
+        assert args.OCR, 'binary predictor only enabled with ocr'
 
     return args
