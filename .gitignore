@@ -1,11 +1,9 @@
 *.pyc
-
 *.pth
 data/
 *.sh
 *.out
 backup/
-
 */__pycache__/
 .idea/
 *.ipynb_checkpoints/
@@ -17,3 +15,4 @@ training/
 
 .gd/
 *.tar.gz
+logs/

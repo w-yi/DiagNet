@@ -16,9 +16,10 @@ EMBEDDING_SIZE = 300
 
 class VQADataProvider:
 
-    def __init__(self, opt, batchsize, mode, cache_dir=config.VOCABCACHE_DIR):
+    def __init__(self, opt, batchsize, mode, logger, cache_dir=config.VOCABCACHE_DIR):
         self.opt = opt
         self.mode = mode
+        self.logger = logger
         self.batchsize = batchsize
         self.d_vocabulary = None
         self.batch_index = None
@@ -29,9 +30,10 @@ class VQADataProvider:
         self.exp_type = opt.EXP_TYPE
         self.use_embed = opt.EMBED
         self.use_ocr = opt.OCR
+        self.use_binary = opt.BINARY
         self.max_token_size = opt.MAX_TOKEN_SIZE
 
-        self.qdic, self.adic = VQADataProvider.load_data(self.mode, self.exp_type, self.use_ocr)
+        self.qdic, self.adic = self.load_data(mode)
 
         self._get_vocab_files()
 
@@ -54,7 +56,7 @@ class VQADataProvider:
             adict_prefix = '_ocr' + adict_prefix
         adict_path = os.path.join(self.cache_dir, self.exp_type + adict_prefix)
         if os.path.exists(qdict_path) and os.path.exists(adict_path):
-            print('restoring vocab')
+            self.logger.info('restoring vocab')
             with open(qdict_path,'r') as f:
                 q_dict = json.load(f)
             with open(adict_path,'r') as f:
@@ -65,8 +67,8 @@ class VQADataProvider:
                 json.dump(q_dict, f)
             with open(adict_path,'w') as f:
                 json.dump(a_dict, f)
-        print('question vocab size:', len(q_dict))
-        print('answer vocab size:', len(a_dict), flush=True)
+        self.logger.info('question vocab size: {}'.format(len(q_dict)))
+        self.logger.info('answer vocab size: {}'.format(len(a_dict)))
         self.qdict = q_dict
         self.adict = a_dict
 
@@ -74,11 +76,11 @@ class VQADataProvider:
         """
         Produce the question and answer vocabulary files.
         """
-        print('making question vocab...', self.opt.QUESTION_VOCAB_SPACE)
-        qdic, _ = VQADataProvider.load_data(self.opt.QUESTION_VOCAB_SPACE, self.exp_type, self.use_ocr)
+        self.logger.info('making question vocab...' + self.opt.QUESTION_VOCAB_SPACE)
+        qdic, _ = self.load_data(self.opt.QUESTION_VOCAB_SPACE)
         question_vocab = VQADataProvider.make_question_vocab(qdic, self.max_length)
-        print('making answer vocab...', self.opt.ANSWER_VOCAB_SPACE)
-        qdic, adic = VQADataProvider.load_data(self.opt.ANSWER_VOCAB_SPACE, self.exp_type, self.use_ocr)
+        self.logger.info('making answer vocab...' + self.opt.ANSWER_VOCAB_SPACE)
+        qdic, adic = self.load_data(self.opt.ANSWER_VOCAB_SPACE)
         answer_vocab = VQADataProvider.make_answer_vocab(adic, qdic, self.opt.MAX_ANSWER_VOCAB_SIZE, self.use_ocr)
         return question_vocab, answer_vocab
 
@@ -145,7 +147,7 @@ class VQADataProvider:
         """
         Returns a vocab_size dictionary that maps words to indices.
         only keep the words with highest occurrences
-        if use_ocr, exclude the answers appearing in token lists
+        if use_ocr, exclude the answers appeared in token lists
         """
 
         counter = Counter()
@@ -168,8 +170,7 @@ class VQADataProvider:
             idx += 1
         return adict
 
-    @staticmethod
-    def load_vqa_json(data_split, exp_type, use_ocr):
+    def load_vqa_json(self, data_split):
         """
         Parses the question and answer json files for the given data split.
         Returns the question dictionary and the answer dictionary.
@@ -178,7 +179,8 @@ class VQADataProvider:
             'question': str,
             'question_id': int,
             'image_id': int,
-            'ocr_tokens': list (only required if use_ocr)
+            'ocr_tokens': list (only used if use_ocr)
+            'ocr_answer_flag': int (0/1; only used if use_ocr and use_binary)
         }
         answer dict format: {
             'answers': list of str,
@@ -188,7 +190,7 @@ class VQADataProvider:
         """
         qdic, adic = {}, {}
 
-        with open(config.DATA_PATHS[exp_type][data_split]['ques_file'], 'r') as f:
+        with open(config.DATA_PATHS[self.exp_type][data_split]['ques_file'], 'r') as f:
             qdata = json.load(f)['questions']
             for q in qdata:
                 q_key = data_split + QID_KEY_SEPARATOR + str(q['question_id'])
@@ -196,18 +198,20 @@ class VQADataProvider:
                     'qstr': q['question'],
                     'iid': q['image_id']
                 }
-                if use_ocr:
+                if self.use_ocr:
                     qdic[q_key]['ocr_tokens'] = q['ocr_tokens']
+                if self.use_binary:
+                    qdic[q_key]['ocr_answer_flag'] = q['ocr_answer_flag']
 
         if 'test' not in data_split:
-            with open(config.DATA_PATHS[exp_type][data_split]['ans_file'], 'r') as f:
+            with open(config.DATA_PATHS[self.exp_type][data_split]['ans_file'], 'r') as f:
                 adata = json.load(f)['annotations']
                 for a in adata:
                     # TODO: we only use key 'answer' in this a['answers'] list
                     adic[data_split + QID_KEY_SEPARATOR + str(a['question_id'])] = \
                         a['answers']
 
-        print('parsed', len(qdic), 'questions for', data_split)
+        self.logger.info('parsed {} questions for {}'.format(len(qdic), data_split))
         return qdic, adic
 
     @staticmethod
@@ -228,18 +232,17 @@ class VQADataProvider:
         print('parsed', len(qdic), 'questions for genome')
         return qdic, adic
 
-    @staticmethod
-    def load_data(data_split_str, exp_type, use_ocr):
+    def load_data(self, data_split_str):
         all_qdic, all_adic = {}, {}
 
         for data_split in data_split_str.split('+'):
-            assert data_split in config.DATA_PATHS[exp_type].keys(), 'unknown data split'
+            assert data_split in config.DATA_PATHS[self.exp_type].keys(), 'unknown data split'
             if data_split == 'genome':
-                qdic, adic = VQADataProvider.load_genome_json(exp_type)
+                qdic, adic = VQADataProvider.load_genome_json(self.exp_type)
                 all_qdic.update(qdic)
                 all_adic.update(adic)
             else:
-                qdic, adic = VQADataProvider.load_vqa_json(data_split, exp_type, use_ocr)
+                qdic, adic = self.load_vqa_json(data_split)
                 all_qdic.update(qdic)
                 all_adic.update(adic)
         return all_qdic, all_adic
@@ -271,6 +274,12 @@ class VQADataProvider:
         else:
             return []
 
+    def getQuesOcrFlag(self, qid):
+        if self.use_binary:
+            return self.qdic[qid]['ocr_answer_flag']
+        else:
+            return 0
+
     def getAnsObj(self, qid):
         if self.mode == 'test-dev' or self.mode == 'test':
             return -1
@@ -278,6 +287,8 @@ class VQADataProvider:
 
     def get_vocab_size(self):
         return len(self.qdict), len(self.adict)
+
+
 
     @staticmethod
     def seq_to_list(s, max_length):
@@ -300,14 +311,9 @@ class VQADataProvider:
         if self.mode == 'test-dev' or self.mode == 'test':
             return -1
         answer_list = [answer_obj[i]['answer'] for i in range(10)]
-        dic = {}
-        for ans in answer_list:
-            if ans in dic:
-                dic[ans] +=1
-            else:
-                dic[ans] = 1
-        max_key = max((v,k) for (k,v) in dic.items())[1]
-        return max_key
+        counter = Counter(answer_list)
+
+        return counter.most_common(1)[0][0]
 
 #     # This is a useless function that has never been used
 #     def extract_answer_prob(self,answer_obj):
@@ -452,6 +458,8 @@ class VQADataProvider:
         ocr_length = np.zeros(self.batchsize)
         ocr_embedding = np.zeros((self.batchsize, self.max_token_size, self.opt.TOKEN_EMBEDDING_SIZE))
         ocr_tokens = list()
+        # placeholder for binary indicator
+        ocr_answer_flags = np.zeros(self.batchsize)
 
         if self.use_embed:
             ivec = np.zeros((self.batchsize, 2048, self.opt.IMG_FEAT_SIZE))
@@ -472,6 +480,8 @@ class VQADataProvider:
             # for ocr
             q_tokens = self.getQuesOcrTokens(qid)
             ocr_tokens += [q_tokens]
+            # for ocr binary
+            ocr_answer_flag = self.getQuesOcrFlag(qid)
 
             # convert question to vec
             q_list = VQADataProvider.seq_to_list(q_str, self.max_length)
@@ -487,6 +497,7 @@ class VQADataProvider:
                     if os.path.isfile(path):
                         t_ivec = np.load(path)
                     else:
+                        # fallback to alternative feature if feature file not found
                         t_ivec = np.load(config.DATA_PATHS[self.exp_type][data_split]['features_prefix_alternative'] + config.FEATURE_FILENAME[self.exp_type](q_iid))
 
                 # reshape t_ivec to D x FEAT_SIZE
@@ -496,11 +507,14 @@ class VQADataProvider:
                 t_ivec = ( t_ivec / np.sqrt((t_ivec**2).sum()) )
             except:
                 t_ivec = 0.
-                print(
-                    'data not found for qid : ', q_iid, self.mode, '[',
-                    config.DATA_PATHS[self.exp_type][data_split]['features_prefix'], ',',
-                    config.DATA_PATHS[self.exp_type][data_split]['features_prefix_alternative'], ']',
-                    config.FEATURE_FILENAME[self.exp_type](q_iid)
+                self.logger.error(
+                    'data not found for qid : {} {} [{}, {}] {}'.format(
+                        q_iid,
+                        self.mode,
+                        config.DATA_PATHS[self.exp_type][data_split]['features_prefix'],
+                        config.DATA_PATHS[self.exp_type][data_split]['features_prefix_alternative'],
+                        config.FEATURE_FILENAME[self.exp_type](q_iid)
+                    )
                 )
 
             # convert answer to vec
@@ -524,7 +538,11 @@ class VQADataProvider:
                 ocr_length[i] = len(q_tokens)
                 ocr_embedding[i, ...] = t_ocr_embedding
 
-        return qvec, q_length, ivec, avec, embed_matrix, ocr_length, ocr_embedding, ocr_tokens
+            if self.use_binary:
+                ocr_answer_flags[i] = ocr_answer_flag
+
+
+        return qvec, q_length, ivec, avec, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_answer_flags
 
 
     def get_batch_vec(self):
@@ -574,7 +592,7 @@ class VQADataProvider:
                 random.shuffle(qid_list)
                 self.qid_list = qid_list
                 self.batch_index = 0
-                print("%d questions were skipped in a single epoch" % self.n_skipped, flush=True)
+                self.logger.info("%d questions were skipped in a single epoch" % self.n_skipped)
                 self.n_skipped = 0
         t_batch = self.create_batch(t_qid_list)
         return t_batch + (t_qid_list, t_iid_list, self.epoch_counter)
@@ -586,19 +604,19 @@ class VQADataset(data.Dataset):
     embed matrix is None if self.use_embed evals to False
     """
 
-    def __init__(self, opt, cache_dir):
+    def __init__(self, opt, cache_dir, logger):
         self.mode = opt.TRAIN_DATA_SPLITS
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            self.dp = VQADataProvider(opt, opt.BATCH_SIZE, self.mode, cache_dir)
+            self.dp = VQADataProvider(opt, opt.BATCH_SIZE, self.mode, logger, cache_dir)
 
     def __getitem__(self, index):
         if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
             pass
         else:
-            word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, _, _, epoch = self.dp.get_batch_vec()
-            return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, epoch
+            word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_answer_flags,  _, _, epoch = self.dp.get_batch_vec()
+            return word, word_length, feature, answer, embed_matrix, cvec_token, token_embedding, original_list_tokens, ocr_answer_flags, epoch
 
     def __len__(self):
         if self.mode == 'train':

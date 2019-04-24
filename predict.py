@@ -13,15 +13,15 @@ from models.mfh_coatt_glove import mfh_coatt_glove
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph, visualize_pred
-from utils.commons import cuda_wrapper, check_mkdir
+from utils.commons import cuda_wrapper, check_mkdir, get_logger
 import json
 from tensorboardX import SummaryWriter
 
 
 
-def pred(opt, folder):
+def pred(opt, folder, logger):
 
-    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode='val')
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode='val', logger=logger)
     opt.quest_vob_size, opt.ans_vob_size = dp.get_vocab_size()
 
     model = None
@@ -37,7 +37,7 @@ def pred(opt, folder):
             model = mfh_baseline(opt)
 
     if opt.RESUME_PATH:
-        print('==> Resuming from checkpoint..')
+        logger.info('==> Resuming from checkpoint..')
         checkpoint = torch.load(opt.RESUME_PATH)
         model.load_state_dict(checkpoint)
     else:
@@ -50,19 +50,22 @@ def pred(opt, folder):
                 # init.xavier_uniform(param)  # for mfb_coatt_glove
 
     model = cuda_wrapper(model)
-    exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp)
+    exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp, logger=logger)
 
 
 def main():
     opt = config.parse_opt()
 
     folder = os.path.join(config.OUTPUT_DIR, opt.ID + '_pred')
+    log_file = os.path.join(config.LOG_DIR, opt.ID)
+
+    logger = get_logger(log_file)
 
     check_mkdir(folder)
 
-    pred(opt, folder)
+    pred(opt, folder, logger)
 
-    visualize_pred(opt, folder, 'val')
+    visualize_pred(opt, folder, 'val', logger)
 
 
 if __name__ == '__main__':
