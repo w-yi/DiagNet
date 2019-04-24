@@ -171,8 +171,8 @@ class mfb_coatt_embed_ocr_bin(nn.Module):
         binary = self.Binary_predict(shared_vec)
         binary = F.sigmoid(binary)
         prediction1 = self.Linear_predict1(shared_vec)
-        prediction1 = F.log_softmax(prediction1)
+        prediction1 = F.log_softmax(prediction1, -1)
         prediction2 = self.Linear_predict2(shared_vec)
-        prediction2 = F.log_softmax(prediction2)
+        prediction2 = F.log_softmax(prediction2, -1)
 
-        return binary, prediction1, prediction2
+        return binary.squeeze(-1), prediction1, prediction2

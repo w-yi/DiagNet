@@ -4,9 +4,9 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 
-class mfh_coatt_embed_ocr(nn.Module):
+class mfh_coatt_embed_ocr_bin(nn.Module):
     def __init__(self, opt):
-        super(mfh_coatt_embed_ocr, self).__init__()
+        super(mfh_coatt_embed_ocr_bin, self).__init__()
         self.opt = opt
         self.JOINT_EMB_SIZE = opt.MFB_FACTOR_NUM * opt.MFB_OUT_DIM
         self.Embedding = nn.Embedding(opt.quest_vob_size, 300)
@@ -207,4 +207,4 @@ class mfh_coatt_embed_ocr(nn.Module):
         prediction2 = self.Linear_predict2(shared_vec)
         prediction2 = F.log_softmax(prediction2)
 
-        return binary, prediction1, prediction2
+        return binary.squeeze(-1), prediction1, prediction2

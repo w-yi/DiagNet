@@ -101,13 +101,13 @@ DATA_PATHS = {
     },
     'textvqa_butd': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_train_ocr_partial_sorted_flag.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_train_ocr_partial_sorted_flag_v1.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_partial.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/train/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_val_ocr_complete_sorted_flag.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_val_ocr_partial_sorted_flag_v1.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/val/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/val/'

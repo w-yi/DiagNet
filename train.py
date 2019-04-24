@@ -67,11 +67,11 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             pred = model(data, word_length, img_feature, 'train')
 
         if opt.BINARY:
-            loss = criterion2(binary, ocr_answer_flags) * opt.BIN_LOSS_RATE
-            loss += criterion(pred1[ocr_answer_flags == 0], label[ocr_answer_flags == 0][0:opt.MAX_ANSWER_VOCAB_SIZE])
-            loss += criterion(pred2[ocr_answer_flags == 1], label[ocr_answer_flags == 1][opt.MAX_ANSWER_VOCAB_SIZE:])
+            loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
+            loss += criterion(pred1[ocr_answer_flags == 0], label[ocr_answer_flags == 0][:, 0:opt.MAX_ANSWER_VOCAB_SIZE])
+            loss += criterion(pred2[ocr_answer_flags == 1], label[ocr_answer_flags == 1][:, opt.MAX_ANSWER_VOCAB_SIZE:])
         else:
-            loss = criterion(pred, loss)
+            loss = criterion(pred, label)
         loss.backward()
         optimizer.step()
         train_loss[iter_idx] = loss.data.float()
