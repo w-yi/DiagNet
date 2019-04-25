@@ -71,10 +71,10 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
 
         if opt.BINARY:
             b_loss = criterion2(binary, ocr_answer_flags.float())
-            voc_loss = criterion(pred1[ocr_answer_flags == 0], label[ocr_answer_flags == 0][:, 0:opt.MAX_ANSWER_VOCAB_SIZE])
+            voc_loss = criterion(pred1, label[:, 0:opt.MAX_ANSWER_VOCAB_SIZE])
             b_losses[iter_idx] = b_loss.data.float()
             voc_losses[iter_idx] = voc_loss.data.float()
-            ocr_loss = criterion(pred2[ocr_answer_flags == 1], label[ocr_answer_flags == 1][:, opt.MAX_ANSWER_VOCAB_SIZE:])
+            ocr_loss = criterion(pred2, label[:, opt.MAX_ANSWER_VOCAB_SIZE:])
             ocr_losses[iter_idx] = ocr_loss.data.float()
             loss = b_loss * opt.BIN_LOSS_RATE + voc_loss + ocr_loss * opt.BIN_TOKEN_RATE
         else:
