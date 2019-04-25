@@ -49,18 +49,18 @@ def get_model(opt):
 
 def pred(opt, folder, logger):
 
+    assert opt.RESUME_PATH, 'please specify the model file'
+
     dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode='val', logger=logger)
     opt.quest_vob_size, opt.ans_vob_size = dp.get_vocab_size()
 
-    model = get_model(opt)
-
-    assert opt.RESUME_PATH, 'please specify the model file'
 
     logger.info('==> Resuming from checkpoint..')
     checkpoint = torch.load(opt.RESUME_PATH, map_location='cpu')
-    model.load_state_dict(checkpoint)
+    model = get_model(opt)
+    model.load_state_dict(checkpoint['model'])
     model = cuda_wrapper(model)
-    
+
     exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp, logger=logger)
 
 

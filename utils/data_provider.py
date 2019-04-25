@@ -45,8 +45,8 @@ class VQADataProvider:
 
     def _get_vocab_files(self):
         """
-        get vocab files
-        load cached files if exists
+        make vocab files
+        load cached files if exist
         """
         question_vocab, answer_vocab = {}, {}
         qdict_path = os.path.join(self.cache_dir, self.exp_type + '_qdict.json')
