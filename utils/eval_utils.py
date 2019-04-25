@@ -144,6 +144,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
 
         for qid, iid, ans, pred, ocr in zip(qid_list, iid_list, answer.tolist(), pred_str, ocr_tokens):
             pred_list.append((pred, int(dp.getStrippedQuesId(qid))))
+            # prepare pred json file
             if visualize:
                 q_list = dp.seq_to_list(dp.getQuesStr(qid), opt.MAX_QUESTION_LENGTH)
                 if mode == 'test-dev' or mode == 'test':
@@ -155,13 +156,15 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
                     else:
                         ans_str = dp.vec_to_answer(ans)
                     ans_list = [ dp.getAnsObj(qid)[i]['answer'] for i in range(10)]
-                stat_list.append({\
-                                    'qid'   : qid,
-                                    'q_list' : q_list,
-                                    'iid'   : iid,
-                                    'answer': ans_str,
-                                    'ans_list': ans_list,
-                                    'pred'  : pred })
+                stat_list.append({
+                    'qid': qid,
+                    'q_list': q_list,
+                    'iid': iid,
+                    'answer': ans_str,
+                    'ans_list': ans_list,
+                    'pred': pred，
+                    'ocr_tokens': ocr
+                })
         percent = 100 * float(len(pred_list)) / total_questions
         if percent <= 100 and percent - percent_counter >= 5:
             percent_counter = percent
