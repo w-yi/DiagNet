@@ -93,8 +93,8 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
 
     check_mkdir(folder)
     model.eval()
-    #criterion = nn.NLLLoss()
-    criterion = nn.KLDivLoss(reduction='batchmean')
+    criterion = nn.NLLLoss()
+    # criterion = nn.KLDivLoss(reduction='batchmean')
     if opt.BINARY:
         criterion2 = nn.BCELoss()
     if not dp:
