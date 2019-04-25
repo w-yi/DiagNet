@@ -152,9 +152,9 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
                     ans_list = ['']*10
                 else:
                     if opt.OCR:
-                        ans_str = dp.vec_to_answer_ocr(ans, ocr)
+                        ans_str = dp.vec_to_answer_ocr(int(ans), ocr)
                     else:
-                        ans_str = dp.vec_to_answer(ans)
+                        ans_str = dp.vec_to_answer(int(ans))
                     ans_list = [ dp.getAnsObj(qid)[i]['answer'] for i in range(10)]
                 stat_list.append({
                     'qid': qid,

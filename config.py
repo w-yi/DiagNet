@@ -101,7 +101,7 @@ DATA_PATHS = {
     },
     'textvqa_butd': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_train_ocr_partial_sorted.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_train_ocr_partial.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_partial.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/train/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/train/'
