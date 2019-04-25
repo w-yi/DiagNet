@@ -196,7 +196,8 @@ def parse_opt():
     parser.add_argument('--NUM_OCR_GLIMPSE', type=int, default=2)
 
     # BINARY options
-    parser.add_argument('--BIN_LOSS_RATE', type=int, default=1)
+    parser.add_argument('--BIN_LOSS_RATE', type=float, default=1.0)
+    parser.add_argument('--BIN_TOKEN_RATE', type=float, default=1.0)
 
     args = parser.parse_args()
 
