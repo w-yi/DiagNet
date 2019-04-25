@@ -61,7 +61,10 @@ def pred(opt, folder, logger):
     model.load_state_dict(checkpoint['model'])
     model = cuda_wrapper(model)
 
-    exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp, logger=logger)
+    test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp, logger=logger)
+    logger.info('Test loss: {}'.format(test_loss))
+    logger.info('Accuracy: {}'.format(acc_overall))
+    logger.info('Test per ans: {}'.format(acc_per_ans))
 
 
 def main():
