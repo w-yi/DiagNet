@@ -339,7 +339,13 @@ class VQADataProvider:
                     if token_obj[idx] == ans:
                         prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE + idx] += 1
 
-        return prob_answer_vec / np.sum(prob_answer_vec)
+        if self.opt.BINARY:
+            prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE] = prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE]/np.sum(prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE])
+            prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:] = prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:]/np.sum(prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:])
+
+        else:
+            prob_answer_vec = prob_answer_vec / np.sum(prob_answer_vec)
+        return prob_answer_vec
 
 #         if len(prob_answer_list) == 0:
 #             if self.mode == 'val' or self.mode == 'test-dev' or self.mode == 'test':
