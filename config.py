@@ -107,7 +107,7 @@ DATA_PATHS = {
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_val_ocr_partial_sorted_flag_v1.json',
+            'ques_file': TEXTVQA_PREFIX + '/OCR_sorted_lower_case/textvqa_questions_val_ocr_complete_sorted_flag_v1.json',
             'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/val/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/val/'
