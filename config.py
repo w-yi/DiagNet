@@ -8,7 +8,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # vqa tools - get from https://github.com/VT-vision-lab/VQA
 
-VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
+VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'utils', 'vqa_tools')
 VQA_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonHelperTools')
 VQA_EVAL_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonEvaluationTools')
 
@@ -27,7 +27,7 @@ for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR, LOG_DIR]:
     check_mkdir(dir)
 
 # location of the data
-VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
+VQA_PREFIX = os.path.join(ROOT_DIR, 'utils', 'vqa_tools')
 
 TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa')
 

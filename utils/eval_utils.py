@@ -162,7 +162,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
                     'iid': iid,
                     'answer': ans_str,
                     'ans_list': ans_list,
-                    'pred': pred，
+                    'pred': pred,
                     'ocr_tokens': ocr
                 })
         percent = 100 * float(len(pred_list)) / total_questions

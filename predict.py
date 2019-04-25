@@ -57,7 +57,7 @@ def pred(opt, folder, logger):
     assert opt.RESUME_PATH, 'please specify the model file'
 
     logger.info('==> Resuming from checkpoint..')
-    checkpoint = torch.load(opt.RESUME_PATH)
+    checkpoint = torch.load(opt.RESUME_PATH, map_location='cpu')
     model.load_state_dict(checkpoint)
     model = cuda_wrapper(model)
     
@@ -76,7 +76,7 @@ def main():
 
     pred(opt, folder, logger)
 
-    visualize_pred(opt, folder, 'val', logger)
+    # visualize_pred(opt, folder, 'val', logger)
 
 
 if __name__ == '__main__':
