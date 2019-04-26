@@ -90,15 +90,24 @@ def visualize_pred(opt, folder, mode, logger):
 
 
 def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=None):
-
+    """
+    execute validation and save predictions as json file for visualization
+    avg_loss:       average loss on given validation dataset split
+    acc_overall:    overall accuracy
+    """
     check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
+    # criterion = nn.KLDivLoss(reduction='batchmean')
+    if opt.BINARY:
+        criterion2 = nn.BCELoss()
+        acc_counter = 0
+        all_counter = 0
     if not dp:
         dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, logger=logger)
     epoch = 0
     pred_list = []
-    testloss_list = []
+    loss_list = []
     stat_list = []
     total_questions = len(dp.getQuesIds())
 
@@ -106,17 +115,22 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
 
     logger.info('Validating...')
     while epoch == 0:
-        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, qid_list, iid_list, epoch = dp.get_batch_vec()
+        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_answer_flags, qid_list, iid_list, epoch = dp.get_batch_vec()
         data = cuda_wrapper(Variable(torch.from_numpy(data))).long()
         word_length = cuda_wrapper(torch.from_numpy(word_length))
         img_feature = cuda_wrapper(Variable(torch.from_numpy(img_feature))).float()
         label = cuda_wrapper(Variable(torch.from_numpy(answer)))
+        ocr_answer_flags = cuda_wrapper(torch.from_numpy(ocr_answer_flags))
 
         if opt.OCR:
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             ocr_length = cuda_wrapper(torch.from_numpy(ocr_length))
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
-            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+            if opt.BINARY:
+                ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
+                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+            else:
+                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             pred = model(data, img_feature, embed_matrix, mode)
@@ -126,16 +140,31 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         if mode == 'test-dev' or mode == 'test':
             pass
         else:
-            loss = criterion(pred, label.long())
+            if opt.BINARY:
+                loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
+                loss += criterion(pred1[label < opt.MAX_ANSWER_VOCAB_SIZE], label[label < opt.MAX_ANSWER_VOCAB_SIZE].long())
+                loss += criterion(pred2[label >= opt.MAX_ANSWER_VOCAB_SIZE], label[label >= opt.MAX_ANSWER_VOCAB_SIZE].long() - opt.MAX_ANSWER_VOCAB_SIZE)
+                all_counter += binary.size()[0]
+                acc_counter += torch.sum((binary <= 0.5) * (ocr_answer_flags == 0) + (binary > 0.5) * (ocr_answer_flags == 1))
+                #print(all_counter, acc_counter)
+            else:
+                loss = criterion(pred, label.long())
             loss = (loss.data).cpu().numpy()
-            testloss_list.append(loss)
-        pred = (pred.data).cpu().numpy()
+            loss_list.append(loss)
+
+        if opt.BINARY:
+            binary = (binary.data).cpu().numpy()
+            pred1 = (pred1.data).cpu().numpy()
+            pred2 = (pred2.data).cpu().numpy()
+            pred = np.hstack([pred1, pred2])
+        else:
+            pred = (pred.data).cpu().numpy()
         if opt.OCR:
             # select the largest index within the ocr length boundary
             ocr_mask = np.fromfunction(lambda i, j: j >= (ocr_length[i].cpu().numpy() + opt.MAX_ANSWER_VOCAB_SIZE), pred.shape, dtype=int)
+            if opt.BINARY:
+                ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(binary[i] <= 0.5, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(binary[i] > 0.5, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
             masked_pred = np.ma.array(pred, mask=ocr_mask)
-            #print(masked_pred[0][3000:], ocr_length[0])
-            #print(masked_pred[0])
             pred_max = np.ma.argmax(masked_pred, axis=1)
             pred_str = [dp.vec_to_answer_ocr(pred_symbol, ocr) for pred_symbol, ocr in zip(pred_max, ocr_tokens)]
         else:
@@ -144,6 +173,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
 
         for qid, iid, ans, pred, ocr in zip(qid_list, iid_list, answer.tolist(), pred_str, ocr_tokens):
             pred_list.append((pred, int(dp.getStrippedQuesId(qid))))
+            # prepare pred json file
             if visualize:
                 q_list = dp.seq_to_list(dp.getQuesStr(qid), opt.MAX_QUESTION_LENGTH)
                 if mode == 'test-dev' or mode == 'test':
@@ -151,17 +181,19 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
                     ans_list = ['']*10
                 else:
                     if opt.OCR:
-                        ans_str = dp.vec_to_answer_ocr(ans, ocr)
+                        ans_str = dp.vec_to_answer_ocr(int(ans), ocr)
                     else:
-                        ans_str = dp.vec_to_answer(ans)
+                        ans_str = dp.vec_to_answer(int(ans))
                     ans_list = [ dp.getAnsObj(qid)[i]['answer'] for i in range(10)]
-                stat_list.append({\
-                                    'qid'   : qid,
-                                    'q_list' : q_list,
-                                    'iid'   : iid,
-                                    'answer': ans_str,
-                                    'ans_list': ans_list,
-                                    'pred'  : pred })
+                stat_list.append({
+                    'qid': qid,
+                    'q_list': q_list,
+                    'iid': iid,
+                    'answer': ans_str,
+                    'ans_list': ans_list,
+                    'pred': pred,
+                    'ocr_tokens': ocr
+                })
         percent = 100 * float(len(pred_list)) / total_questions
         if percent <= 100 and percent - percent_counter >= 5:
             percent_counter = percent
@@ -171,6 +203,9 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
     if visualize:
         with open(os.path.join(folder, 'visualize.json'), 'w') as f:
             json.dump(stat_list, f, indent=4, sort_keys=True)
+
+    if opt.BINARY:
+        logger.info('Binary Acc: {},({}/{})'.format(acc_counter.item()/all_counter, acc_counter, all_counter))
 
     logger.info('Deduping arr of len {}'.format(len(pred_list)))
     deduped = []
@@ -185,7 +220,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         final_list.append({u'answer': ans, u'question_id': qid})
 
     if mode == 'val':
-        mean_testloss = np.array(testloss_list).mean()
+        avg_loss = np.array(loss_list).mean()
         valFile = os.path.join(folder, 'val2015_resfile')
         with open(valFile, 'w') as f:
             json.dump(final_list, f)
@@ -203,19 +238,19 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         acc_overall = vqaEval.accuracy['overall']
         acc_perQuestionType = vqaEval.accuracy['perQuestionType']
         acc_perAnswerType = vqaEval.accuracy['perAnswerType']
-        return mean_testloss, acc_overall, acc_perQuestionType, acc_perAnswerType
     elif mode == 'test-dev':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.ID  + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'test-dev_results_' + str(it).zfill(8))
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         # if visualize:
         #     visualize_pred(stat_list,mode)
     elif mode == 'test':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.ID + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'test_results_' + str(it).zfill(8))
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         # if visualize:
         #     visualize_pred(stat_list,mode)
+    return avg_loss, acc_overall, acc_perQuestionType, acc_perAnswerType
 
 
 def drawgraph(results, folder, k, d, prefix='std', save_question_type_graphs=False):

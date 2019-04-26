@@ -10,6 +10,8 @@ from models.mfb_baseline import mfb_baseline
 from models.mfh_baseline import mfh_baseline
 from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
+from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
+from models.mfh_coatt_embed_ocr import mfh_coatt_embed_ocr
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph, visualize_pred
@@ -18,39 +20,51 @@ import json
 from tensorboardX import SummaryWriter
 
 
-
-def pred(opt, folder, logger):
-
-    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode='val', logger=logger)
-    opt.quest_vob_size, opt.ans_vob_size = dp.get_vocab_size()
-
+def get_model(opt):
+    """
+    args priority:
+    OCR > EMBED > not specified (baseline)
+    """
     model = None
     if opt.MODEL == 'mfb':
-        if opt.EXP_TYPE == 'glove':
+        if opt.OCR:
+            assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
+            model = mfb_coatt_embed_ocr(opt)
+        elif opt.EMBED:
             model = mfb_coatt_glove(opt)
         else:
             model = mfb_baseline(opt)
+
     elif opt.MODEL == 'mfh':
-        if opt.EXP_TYPE == 'glove':
+        if opt.OCR:
+            assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
+            model = mfh_coatt_embed_ocr(opt)
+        elif opt.EMBED:
             model = mfh_coatt_glove(opt)
         else:
             model = mfh_baseline(opt)
 
-    if opt.RESUME_PATH:
-        logger.info('==> Resuming from checkpoint..')
-        checkpoint = torch.load(opt.RESUME_PATH)
-        model.load_state_dict(checkpoint)
-    else:
-        '''init model parameter'''
-        for name, param in model.named_parameters():
-            if 'bias' in name:  # bias can't init by xavier
-                init.constant_(param, 0.0)
-            elif 'weight' in name:
-                init.kaiming_uniform_(param)
-                # init.xavier_uniform(param)  # for mfb_coatt_glove
+    return model
 
+
+def pred(opt, folder, logger):
+
+    assert opt.RESUME_PATH, 'please specify the model file'
+
+    dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode='val', logger=logger)
+    opt.quest_vob_size, opt.ans_vob_size = dp.get_vocab_size()
+
+
+    logger.info('==> Resuming from checkpoint..')
+    checkpoint = torch.load(opt.RESUME_PATH, map_location='cpu')
+    model = get_model(opt)
+    model.load_state_dict(checkpoint['model'])
     model = cuda_wrapper(model)
-    exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp, logger=logger)
+
+    test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=0, visualize=True, dp=dp, logger=logger)
+    logger.info('Test loss: {}'.format(test_loss))
+    logger.info('Accuracy: {}'.format(acc_overall))
+    logger.info('Test per ans: {}'.format(acc_per_ans))
 
 
 def main():
@@ -65,7 +79,7 @@ def main():
 
     pred(opt, folder, logger)
 
-    visualize_pred(opt, folder, 'val', logger)
+    # visualize_pred(opt, folder, 'val', logger)
 
 
 if __name__ == '__main__':
