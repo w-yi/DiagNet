@@ -27,7 +27,7 @@ for dir in [OUTPUT_DIR, VOCABCACHE_DIR, CACHE_DIR, LOG_DIR]:
     check_mkdir(dir)
 
 # location of the data
-VQA_PREFIX = os.path.join(ROOT_DIR, 'utils', 'vqa_tools')
+VQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'VQA')
 
 TEXTVQA_PREFIX = os.path.join(ROOT_DIR, 'data', 'textvqa')
 

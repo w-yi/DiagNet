@@ -43,7 +43,6 @@ class VQADataProvider:
             # self.nlp = spacy.load('en_core_web_sm')
             self.embed_dict = {} # word -> embed vector
 
-
     def _get_vocab_files(self):
         """
         make vocab files
@@ -103,44 +102,6 @@ class VQADataProvider:
                     vid +=1
 
         return qdict
-
-    # @staticmethod
-    # def make_answer_vocab(adic, vocab_size):
-    #     """
-    #     Returns a dictionary that maps words to indices.
-    #     """
-    #     adict = {'':0}
-    #     nadict = {'':1000000}
-    #     vid = 1
-    #     for qid in adic.keys():
-    #         answer_obj = adic[qid]
-    #         answer_list = [ans['answer'] for ans in answer_obj]
-    #
-    #         for q_ans in answer_list:
-    #             # create dict
-    #             if q_ans in adict:
-    #                 nadict[q_ans] += 1
-    #             else:
-    #                 nadict[q_ans] = 1
-    #                 adict[q_ans] = vid
-    #                 vid +=1
-    #     # debug
-    #     nalist = []
-    #     for k,v in sorted(nadict.items(), key=lambda x:x[1]):
-    #         nalist.append((k,v))
-    #
-    #     # remove words that appear less than once
-    #     n_del_ans = 0
-    #     n_valid_ans = 0
-    #     adict_nid = {}
-    #     for i, w in enumerate(nalist[:-vocab_size]):
-    #         del adict[w[0]]
-    #         n_del_ans += w[1]
-    #     for i, w in enumerate(nalist[-vocab_size:]):
-    #         n_valid_ans += w[1]
-    #         adict_nid[w[0]] = i
-    #
-    #     return adict_nid
 
     @staticmethod
     def make_answer_vocab(adic, qdic, vocab_size, use_ocr):
@@ -247,15 +208,6 @@ class VQADataProvider:
                 all_adic.update(adic)
         return all_qdic, all_adic
 
-    # def use_embed(self):
-    #     """
-    #     check usage of pretrained word embedding
-    #     """
-    #     if self.exp_type == 'glove' or self.exp_type == 'textvqa':
-    #         return True
-    #     else:
-    #         return False
-
     def getQuesIds(self):
         return list(self.qdic.keys())
 
@@ -287,8 +239,6 @@ class VQADataProvider:
 
     def get_vocab_size(self):
         return len(self.qdict), len(self.adict)
-
-
 
     @staticmethod
     def seq_to_list(s, max_length):

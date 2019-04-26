@@ -90,7 +90,11 @@ def visualize_pred(opt, folder, mode, logger):
 
 
 def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=None):
-
+    """
+    execute validation and save predictions as json file for visualization
+    avg_loss:       average loss on given validation dataset split
+    acc_overall:    overall accuracy
+    """
     check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
@@ -103,7 +107,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, logger=logger)
     epoch = 0
     pred_list = []
-    testloss_list = []
+    loss_list = []
     stat_list = []
     total_questions = len(dp.getQuesIds())
 
@@ -146,7 +150,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             else:
                 loss = criterion(pred, label.long())
             loss = (loss.data).cpu().numpy()
-            testloss_list.append(loss)
+            loss_list.append(loss)
 
         if opt.BINARY:
             binary = (binary.data).cpu().numpy()
@@ -216,7 +220,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         final_list.append({u'answer': ans, u'question_id': qid})
 
     if mode == 'val':
-        mean_testloss = np.array(testloss_list).mean()
+        avg_loss = np.array(loss_list).mean()
         valFile = os.path.join(folder, 'val2015_resfile')
         with open(valFile, 'w') as f:
             json.dump(final_list, f)
@@ -234,19 +238,19 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         acc_overall = vqaEval.accuracy['overall']
         acc_perQuestionType = vqaEval.accuracy['perQuestionType']
         acc_perAnswerType = vqaEval.accuracy['perAnswerType']
-        return mean_testloss, acc_overall, acc_perQuestionType, acc_perAnswerType
     elif mode == 'test-dev':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test-dev2015_' + opt.ID  + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'test-dev_results_' + str(it).zfill(8))
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         # if visualize:
         #     visualize_pred(stat_list,mode)
     elif mode == 'test':
-        filename = os.path.join(folder, 'vqa_OpenEnded_mscoco_test2015_' + opt.ID + '-' + str(it).zfill(8)+'_results')
+        filename = os.path.join(folder, 'test_results_' + str(it).zfill(8))
         with open(filename+'.json', 'w') as f:
             json.dump(final_list, f)
         # if visualize:
         #     visualize_pred(stat_list,mode)
+    return avg_loss, acc_overall, acc_perQuestionType, acc_perAnswerType
 
 
 def drawgraph(results, folder, k, d, prefix='std', save_question_type_graphs=False):
