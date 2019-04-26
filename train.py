@@ -15,6 +15,8 @@ from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
 from models.mfh_coatt_embed_ocr import mfh_coatt_embed_ocr
 from models.mfb_coatt_embed_ocr_bin import mfb_coatt_embed_ocr_bin
 from models.mfh_coatt_embed_ocr_bin import mfh_coatt_embed_ocr_bin
+from models.mfb_coatt_embed_ocr_binonly import mfb_coatt_embed_ocr_binonly
+from models.mfh_coatt_embed_ocr_binonly import mfh_coatt_embed_ocr_binonly
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
@@ -64,7 +66,10 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
             if opt.BINARY:
                 ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
-                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+                if not opt.LATE_FUSION:
+                    binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+                else:
+                    pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
             else:
                 pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
         elif opt.EMBED:
@@ -75,7 +80,7 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             pred = model(data, word_length, img_feature, 'train')
 
         if opt.LATE_FUSION:
-            loss = criterion(pred, ocr_answer_flags)
+            loss = criterion(pred, ocr_answer_flags.float())
         elif opt.BINARY:
             b_loss = criterion2(binary, ocr_answer_flags.float())
             voc_loss = criterion(pred1, label[:, 0:opt.MAX_ANSWER_VOCAB_SIZE])
@@ -216,7 +221,7 @@ def main():
 
         if opt.LATE_FUSION:
             logger.info('==> Load from checkpoint..')
-            checkpoint = torch.load(opt.RESUME_PATH)
+            checkpoint = torch.load(opt.PROB_PATH, map_location='cpu')
             if opt.MODEL == 'mfb':
                 model0 = mfb_coatt_embed_ocr(opt)
             else:

@@ -94,9 +94,10 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         criterion = nn.BCELoss()
         model_prob = model[1]
         model = model[0]
+    else:
+        criterion = nn.NLLLoss()
     check_mkdir(folder)
     model.eval()
-    criterion = nn.NLLLoss()
     # criterion = nn.KLDivLoss(reduction='batchmean')
     if opt.BINARY:
         criterion2 = nn.BCELoss()
@@ -147,7 +148,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         else:
             if opt.BINARY:
                 if opt.LATE_FUSION:
-                    loss = criterion(pred, ocr_answer_flags)
+                    loss = criterion(binary, ocr_answer_flags.float())
                 else:
                     loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
                     loss += criterion(pred1[label < opt.MAX_ANSWER_VOCAB_SIZE], label[label < opt.MAX_ANSWER_VOCAB_SIZE].long())
