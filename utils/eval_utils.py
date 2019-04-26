@@ -174,7 +174,8 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             if opt.BINARY:
                 #ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(binary[i] <= 0.5, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(binary[i] > 0.5, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
                 #ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(ocr_answer_flags[i] == 0, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(ocr_answer_flags[i] == 1, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
-                ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(ocr_answer_flags[i].cpu() == 0, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(ocr_answer_flags[i].cpu() == 1, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
+                ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(ocr_answer_flags[i].cpu().numpy() == 0, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(ocr_answer_flags[i].cpu().numpy() == 1, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
+
             masked_pred = np.ma.array(pred, mask=ocr_mask)
             pred_max = np.ma.argmax(masked_pred, axis=1)
             pred_str = [dp.vec_to_answer_ocr(pred_symbol, ocr) for pred_symbol, ocr in zip(pred_max, ocr_tokens)]

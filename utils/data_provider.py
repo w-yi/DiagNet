@@ -340,9 +340,12 @@ class VQADataProvider:
                         prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE + idx] += 1
 
         if self.opt.BINARY:
-            prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE] = prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE]/np.sum(prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE])
-            prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:] = prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:]/np.sum(prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:])
-
+            sum0 = np.sum(prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE])
+            if sum0 > 0:
+                prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE] = prob_answer_vec[0:self.opt.MAX_ANSWER_VOCAB_SIZE]/sum0
+            sum1 = np.sum(prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:])
+            if sum1 > 0:
+                prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:] = prob_answer_vec[self.opt.MAX_ANSWER_VOCAB_SIZE:]/sum1
         else:
             prob_answer_vec = prob_answer_vec / np.sum(prob_answer_vec)
         return prob_answer_vec
