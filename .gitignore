@@ -12,4 +12,6 @@ backup/
 *.zip
 runs/
 training/
+.gd/
+*.tar.gz
 logs/

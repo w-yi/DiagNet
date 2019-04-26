@@ -94,6 +94,11 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
     check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
+    # criterion = nn.KLDivLoss(reduction='batchmean')
+    if opt.BINARY:
+        criterion2 = nn.BCELoss()
+        acc_counter = 0
+        all_counter = 0
     if not dp:
         dp = VQADataProvider(opt, batchsize=opt.VAL_BATCH_SIZE, mode=mode, logger=logger)
     epoch = 0
@@ -106,17 +111,22 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
 
     logger.info('Validating...')
     while epoch == 0:
-        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, qid_list, iid_list, epoch = dp.get_batch_vec()
+        data, word_length, img_feature, answer, embed_matrix, ocr_length, ocr_embedding, ocr_tokens, ocr_answer_flags, qid_list, iid_list, epoch = dp.get_batch_vec()
         data = cuda_wrapper(Variable(torch.from_numpy(data))).long()
         word_length = cuda_wrapper(torch.from_numpy(word_length))
         img_feature = cuda_wrapper(Variable(torch.from_numpy(img_feature))).float()
         label = cuda_wrapper(Variable(torch.from_numpy(answer)))
+        ocr_answer_flags = cuda_wrapper(torch.from_numpy(ocr_answer_flags))
 
         if opt.OCR:
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             ocr_length = cuda_wrapper(torch.from_numpy(ocr_length))
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
-            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+            if opt.BINARY:
+                ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
+                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+            else:
+                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:
             embed_matrix = cuda_wrapper(Variable(torch.from_numpy(embed_matrix))).float()
             pred = model(data, img_feature, embed_matrix, mode)
@@ -126,16 +136,31 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
         if mode == 'test-dev' or mode == 'test':
             pass
         else:
-            loss = criterion(pred, label.long())
+            if opt.BINARY:
+                loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
+                loss += criterion(pred1[label < opt.MAX_ANSWER_VOCAB_SIZE], label[label < opt.MAX_ANSWER_VOCAB_SIZE].long())
+                loss += criterion(pred2[label >= opt.MAX_ANSWER_VOCAB_SIZE], label[label >= opt.MAX_ANSWER_VOCAB_SIZE].long() - opt.MAX_ANSWER_VOCAB_SIZE)
+                all_counter += binary.size()[0]
+                acc_counter += torch.sum((binary <= 0.5) * (ocr_answer_flags == 0) + (binary > 0.5) * (ocr_answer_flags == 1))
+                #print(all_counter, acc_counter)
+            else:
+                loss = criterion(pred, label.long())
             loss = (loss.data).cpu().numpy()
             testloss_list.append(loss)
-        pred = (pred.data).cpu().numpy()
+
+        if opt.BINARY:
+            binary = (binary.data).cpu().numpy()
+            pred1 = (pred1.data).cpu().numpy()
+            pred2 = (pred2.data).cpu().numpy()
+            pred = np.hstack([pred1, pred2])
+        else:
+            pred = (pred.data).cpu().numpy()
         if opt.OCR:
             # select the largest index within the ocr length boundary
             ocr_mask = np.fromfunction(lambda i, j: j >= (ocr_length[i].cpu().numpy() + opt.MAX_ANSWER_VOCAB_SIZE), pred.shape, dtype=int)
+            if opt.BINARY:
+                ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(binary[i] <= 0.5, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(binary[i] > 0.5, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
             masked_pred = np.ma.array(pred, mask=ocr_mask)
-            #print(masked_pred[0][3000:], ocr_length[0])
-            #print(masked_pred[0])
             pred_max = np.ma.argmax(masked_pred, axis=1)
             pred_str = [dp.vec_to_answer_ocr(pred_symbol, ocr) for pred_symbol, ocr in zip(pred_max, ocr_tokens)]
         else:
@@ -174,6 +199,9 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
     if visualize:
         with open(os.path.join(folder, 'visualize.json'), 'w') as f:
             json.dump(stat_list, f, indent=4, sort_keys=True)
+
+    if opt.BINARY:
+        logger.info('Binary Acc: {},({}/{})'.format(acc_counter.item()/all_counter, acc_counter, all_counter))
 
     logger.info('Deduping arr of len {}'.format(len(pred_list)))
     deduped = []

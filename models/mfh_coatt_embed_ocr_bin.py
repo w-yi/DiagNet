@@ -4,9 +4,9 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 
-class mfh_coatt_embed_ocr(nn.Module):
+class mfh_coatt_embed_ocr_bin(nn.Module):
     def __init__(self, opt):
-        super(mfh_coatt_embed_ocr, self).__init__()
+        super(mfh_coatt_embed_ocr_bin, self).__init__()
         self.opt = opt
         self.JOINT_EMB_SIZE = opt.MFB_FACTOR_NUM * opt.MFB_OUT_DIM
         self.Embedding = nn.Embedding(opt.quest_vob_size, 300)
@@ -42,7 +42,9 @@ class mfh_coatt_embed_ocr(nn.Module):
         self.Conv1_Oatt = nn.Conv2d(1000, 512, 1)
         self.Conv2_Oatt = nn.Conv2d(512, opt.NUM_OCR_GLIMPSE, 1)
 
-        self.Linear_predict = nn.Linear(opt.MFB_OUT_DIM*2*2, opt.NUM_OUTPUT_UNITS)
+        self.Binary_predict = nn.Linear(opt.MFB_OUT_DIM*2*2, 1)
+        self.Linear_predict1 = nn.Linear(opt.MFB_OUT_DIM*2*2, opt.MAX_ANSWER_VOCAB_SIZE)
+        self.Linear_predict2 = nn.Linear(opt.MFB_OUT_DIM*2*2, opt.MAX_TOKEN_SIZE)
 
     def forward(self, data, img_feature, glove, cvec_token, token_embedding, mode):
         if mode == 'val' or mode == 'test' or mode == 'test-dev':
@@ -197,7 +199,12 @@ class mfh_coatt_embed_ocr(nn.Module):
 
         mfb_o23_l2_ = torch.cat((mfb_o2_l2_, mfb_o3_l2_), 1)  # N x 2000
 
-        prediction = self.Linear_predict(torch.cat((mfb_o23_l2, mfb_o23_l2_), 1))
-        prediction = F.log_softmax(prediction)
+        shared_vec = torch.cat((mfb_o23_l2, mfb_o23_l2_), 1)
+        binary = self.Binary_predict(shared_vec)
+        binary = F.sigmoid(binary)
+        prediction1 = self.Linear_predict1(shared_vec)
+        prediction1 = F.log_softmax(prediction1)
+        prediction2 = self.Linear_predict2(shared_vec)
+        prediction2 = F.log_softmax(prediction2)
 
-        return prediction
+        return binary.squeeze(-1), prediction1, prediction2

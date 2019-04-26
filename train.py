@@ -13,6 +13,8 @@ from models.mfb_coatt_glove import mfb_coatt_glove
 from models.mfh_coatt_glove import mfh_coatt_glove
 from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
 from models.mfh_coatt_embed_ocr import mfh_coatt_embed_ocr
+from models.mfb_coatt_embed_ocr_bin import mfb_coatt_embed_ocr_bin
+from models.mfh_coatt_embed_ocr_bin import mfh_coatt_embed_ocr_bin
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
@@ -23,17 +25,27 @@ from tensorboardX import SummaryWriter
 
 def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, logger):
     criterion = nn.KLDivLoss(reduction='batchmean')
+    if opt.BINARY:
+        criterion2 = nn.BCELoss()
     train_loss = np.zeros(opt.MAX_ITERATIONS)
+    b_losses = np.zeros(opt.MAX_ITERATIONS)
+    voc_losses = np.zeros(opt.MAX_ITERATIONS)
+    ocr_losses = np.zeros(opt.MAX_ITERATIONS)
     results = []
-    for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, epoch) in enumerate(train_Loader):
+    for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, ocr_answer_flags, epoch) in enumerate(train_Loader):
         if iter_idx >= opt.MAX_ITERATIONS:
             break
         model.train()
+        epoch = epoch.numpy()
+        # TODO: get rid of these weird redundant first dims
         data = torch.squeeze(data, 0)
         word_length = torch.squeeze(word_length, 0)
         img_feature = torch.squeeze(img_feature, 0)
         label = torch.squeeze(label, 0)
-        epoch = epoch.numpy()
+        embed_matrix = torch.squeeze(embed_matrix, 0)
+        ocr_length = torch.squeeze(ocr_length, 0)
+        ocr_embedding = torch.squeeze(ocr_embedding, 0)
+        ocr_answer_flags = torch.squeeze(ocr_answer_flags, 0)
 
         data = cuda_wrapper(Variable(data)).long()
         word_length = cuda_wrapper(word_length)
@@ -42,35 +54,46 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
         optimizer.zero_grad()
 
         if opt.OCR:
-            embed_matrix = torch.squeeze(embed_matrix, 0)
-            ocr_length = torch.squeeze(ocr_length, 0)
-            ocr_embedding = torch.squeeze(ocr_embedding, 0)
-
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
             ocr_length = cuda_wrapper(ocr_length)
             ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
-
-            pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+            if opt.BINARY:
+                ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
+                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+            else:
+                pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
         elif opt.EMBED:
-            embed_matrix = torch.squeeze(embed_matrix, 0)
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
 
             pred = model(data, img_feature, embed_matrix, 'train')
         else:
             pred = model(data, word_length, img_feature, 'train')
 
-        loss = criterion(pred, label)
+        if opt.BINARY:
+            b_loss = criterion2(binary, ocr_answer_flags.float())
+            voc_loss = criterion(pred1, label[:, 0:opt.MAX_ANSWER_VOCAB_SIZE])
+            b_losses[iter_idx] = b_loss.data.float()
+            voc_losses[iter_idx] = voc_loss.data.float()
+            ocr_loss = criterion(pred2, label[:, opt.MAX_ANSWER_VOCAB_SIZE:])
+            ocr_losses[iter_idx] = ocr_loss.data.float()
+            loss = b_loss * opt.BIN_LOSS_RATE + voc_loss + ocr_loss * opt.BIN_TOKEN_RATE
+        else:
+            loss = criterion(pred, label)
         loss.backward()
         optimizer.step()
         train_loss[iter_idx] = loss.data.float()
         lr_scheduler.step()
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
-            now = get_time('%Y-%m-%d %H:%M:%S')
+            # now = get_time('%Y-%m-%d %H:%M:%S')
             c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
+            mean_b_loss = b_losses[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
+            mean_voc_loss = voc_losses[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
+            mean_ocr_loss = ocr_losses[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
             writer.add_scalar(opt.ID + '/train_loss', c_mean_loss, iter_idx)
             writer.add_scalar(opt.ID + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
-            logger.info('{}\tTrain Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
-                        now, epoch, iter_idx, c_mean_loss))
+            #logger.info('Train Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
+            #            epoch, iter_idx, c_mean_loss))
+            logger.info('Train Epoch: {}\t Iter: {}\t b_loss: {:.4f} voc_loss: {:.4f} ocr_loss: {:.4f}'.format(epoch, iter_idx, mean_b_loss, mean_voc_loss, mean_ocr_loss))
         if iter_idx % opt.CHECKPOINT_INTERVAL == 0 and iter_idx != 0:
             save_path = os.path.join(config.CACHE_DIR, opt.ID + '_iter_' + str(iter_idx) + '.pth')
             torch.save({
@@ -105,7 +128,10 @@ def get_model(opt):
     if opt.MODEL == 'mfb':
         if opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
-            model = mfb_coatt_embed_ocr(opt)
+            if opt.BINARY:
+                model = mfb_coatt_embed_ocr_bin(opt)
+            else:
+                model = mfb_coatt_embed_ocr(opt)
         elif opt.EMBED:
             model = mfb_coatt_glove(opt)
         else:
@@ -114,7 +140,10 @@ def get_model(opt):
     elif opt.MODEL == 'mfh':
         if opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
-            model = mfh_coatt_embed_ocr(opt)
+            if opt.BINARY:
+                model = mfh_coatt_embed_ocr_bin(opt)
+            else:
+                model = mfh_coatt_embed_ocr(opt)
         elif opt.EMBED:
             model = mfh_coatt_glove(opt)
         else:
