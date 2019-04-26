@@ -158,6 +158,9 @@ def parse_opt():
     # use a binary predictor to determine whether answer falls in the ocr text set
     parser.add_argument('--BINARY', action='store_true')
 
+    parser.add_argument('--LATE_FUSION', action='store_true')
+    parser.add_argument('--PROB_PATH', type=str, default='')
+
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
     parser.add_argument('--SEED', type=int, default=-1)

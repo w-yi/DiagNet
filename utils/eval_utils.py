@@ -90,7 +90,10 @@ def visualize_pred(opt, folder, mode, logger):
 
 
 def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=None):
-
+    if opt.LATE_FUSION:
+        criterion = nn.BCELoss()
+        model_prob = model[1]
+        model = model[0]
     check_mkdir(folder)
     model.eval()
     criterion = nn.NLLLoss()
@@ -124,7 +127,13 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
             if opt.BINARY:
                 ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
-                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+                if opt.LATE_FUSION:
+                    binary = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+                    pred = model_prob(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+                    pred1 = pred[:, 0:opt.MAX_ANSWER_VOCAB_SIZE]
+                    pred2 = pred[:, opt.MAX_ANSWER_VOCAB_SIZE:]
+                else:
+                    binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
             else:
                 pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:
@@ -137,9 +146,12 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             pass
         else:
             if opt.BINARY:
-                loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
-                loss += criterion(pred1[label < opt.MAX_ANSWER_VOCAB_SIZE], label[label < opt.MAX_ANSWER_VOCAB_SIZE].long())
-                loss += criterion(pred2[label >= opt.MAX_ANSWER_VOCAB_SIZE], label[label >= opt.MAX_ANSWER_VOCAB_SIZE].long() - opt.MAX_ANSWER_VOCAB_SIZE)
+                if opt.LATE_FUSION:
+                    loss = criterion(pred, ocr_answer_flags)
+                else:
+                    loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
+                    loss += criterion(pred1[label < opt.MAX_ANSWER_VOCAB_SIZE], label[label < opt.MAX_ANSWER_VOCAB_SIZE].long())
+                    loss += criterion(pred2[label >= opt.MAX_ANSWER_VOCAB_SIZE], label[label >= opt.MAX_ANSWER_VOCAB_SIZE].long() - opt.MAX_ANSWER_VOCAB_SIZE)
                 all_counter += binary.size()[0]
                 acc_counter += torch.sum((binary <= 0.5) * (ocr_answer_flags == 0) + (binary > 0.5) * (ocr_answer_flags == 1))
             else:
