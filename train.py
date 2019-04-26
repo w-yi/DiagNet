@@ -221,7 +221,7 @@ def main():
 
         if opt.LATE_FUSION:
             logger.info('==> Load from checkpoint..')
-            checkpoint = torch.load(opt.PROB_PATH, map_location='cpu')
+            checkpoint = torch.load(opt.PROB_PATH)
             if opt.MODEL == 'mfb':
                 model0 = mfb_coatt_embed_ocr(opt)
             else:
