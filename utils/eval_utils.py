@@ -142,6 +142,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
                 loss += criterion(pred2[label >= opt.MAX_ANSWER_VOCAB_SIZE], label[label >= opt.MAX_ANSWER_VOCAB_SIZE].long() - opt.MAX_ANSWER_VOCAB_SIZE)
                 all_counter += binary.size()[0]
                 acc_counter += torch.sum((binary <= 0.5) * (ocr_answer_flags == 0) + (binary > 0.5) * (ocr_answer_flags == 1))
+                #print(all_counter, acc_counter)
             else:
                 loss = criterion(pred, label.long())
             loss = (loss.data).cpu().numpy()
@@ -197,7 +198,7 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             json.dump(stat_list, f, indent=4, sort_keys=True)
 
     if opt.BINARY:
-        logger.info('Binary Acc: {}'.format(acc_counter/all_counter))
+        logger.info('Binary Acc: {},({}/{})'.format(acc_counter.item()/all_counter, acc_counter, all_counter))
 
     logger.info('Deduping arr of len {}'.format(len(pred_list)))
     deduped = []
