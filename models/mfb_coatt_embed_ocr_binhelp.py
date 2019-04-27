@@ -4,9 +4,9 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 #JOINT_EMB_SIZE
-class mfb_coatt_embed_ocr(nn.Module):
+class mfb_coatt_embed_ocr_binhelp(nn.Module):
     def __init__(self, opt):
-        super(mfb_coatt_embed_ocr, self).__init__()
+        super(mfb_coatt_embed_ocr_binhelp, self).__init__()
         self.opt = opt
         self.JOINT_EMB_SIZE = opt.MFB_FACTOR_NUM * opt.MFB_OUT_DIM
         self.Embedding = nn.Embedding(opt.quest_vob_size, 300)
@@ -173,4 +173,4 @@ class mfb_coatt_embed_ocr(nn.Module):
             return prediction
         binary = self.Binary_predict(shared_vec)
         binary = F.sigmoid(binary)
-        return binary, prediction
+        return binary.squeeze(-1), prediction
