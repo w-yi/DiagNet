@@ -17,6 +17,8 @@ from models.mfb_coatt_embed_ocr_bin import mfb_coatt_embed_ocr_bin
 from models.mfh_coatt_embed_ocr_bin import mfh_coatt_embed_ocr_bin
 from models.mfb_coatt_embed_ocr_binonly import mfb_coatt_embed_ocr_binonly
 from models.mfh_coatt_embed_ocr_binonly import mfh_coatt_embed_ocr_binonly
+from models.mfb_coatt_embed_ocr_binhelp import mfb_coatt_embed_ocr_binhelp
+from models.mfh_coatt_embed_ocr_binhelp import mfh_coatt_embed_ocr_binhelp
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
@@ -32,7 +34,7 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
         model = model[0]
     else:
         criterion = nn.KLDivLoss(reduction='batchmean')
-        if opt.BINARY:
+        if opt.BINARY or opt.BIN_HELP:
             criterion2 = nn.BCELoss()
     train_loss = np.zeros(opt.MAX_ITERATIONS)
     b_losses = np.zeros(opt.MAX_ITERATIONS)
@@ -64,7 +66,10 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
             ocr_length = cuda_wrapper(ocr_length)
             ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
-            if opt.BINARY:
+            if opt.BIN_HELP:
+                ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
+                binary, pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+            elif opt.BINARY:
                 ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
                 if not opt.LATE_FUSION:
                     binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
@@ -89,6 +94,11 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             ocr_loss = criterion(pred2, label[:, opt.MAX_ANSWER_VOCAB_SIZE:])
             ocr_losses[iter_idx] = ocr_loss.data.float()
             loss = b_loss * opt.BIN_LOSS_RATE + voc_loss + ocr_loss * opt.BIN_TOKEN_RATE
+        elif opt.BIN_HELP:
+            b_loss = criterion2(binary, ocr_answer_flags.float())
+            b_losses[iter_idx] = b_loss.data.float()
+            loss = criterion(pred, label)
+            loss += b_loss * opt.BIN_LOSS_RATE
         else:
             loss = criterion(pred, label)
         loss.backward()

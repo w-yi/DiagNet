@@ -157,6 +157,8 @@ def parse_opt():
     parser.add_argument('--OCR', action='store_true')
     # use a binary predictor to determine whether answer falls in the ocr text set
     parser.add_argument('--BINARY', action='store_true')
+    parser.add_argument('--BIN_HELP', action='store_true')
+
 
     parser.add_argument('--LATE_FUSION', action='store_true')
     parser.add_argument('--PROB_PATH', type=str, default='')
