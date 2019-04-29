@@ -155,6 +155,8 @@ def get_model(opt):
     if opt.MODEL == 'mfb':
         if opt.LATE_FUSION:
             model = mfb_coatt_embed_ocr_binonly(opt)
+        elif opt.BIN_HELP:
+            model = mfb+coatt_embed_ocr_binhelp(opt)
         elif opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
             if opt.BINARY:
@@ -169,6 +171,8 @@ def get_model(opt):
     elif opt.MODEL == 'mfh':
         if opt.LATE_FUSION:
             model = mfh_coatt_embed_ocr_binonly(opt)
+        elif opt.BIN_HELP:
+            model = mfh_coatt_embed_ocr_binhelp(opt)
         elif opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
             if opt.BINARY:

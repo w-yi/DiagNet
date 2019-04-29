@@ -43,7 +43,7 @@ class mfh_coatt_embed_ocr_binhelp(nn.Module):
         self.Conv2_Oatt = nn.Conv2d(512, opt.NUM_OCR_GLIMPSE, 1)
 
         self.Linear_predict = nn.Linear(opt.MFB_OUT_DIM*2*2, opt.NUM_OUTPUT_UNITS)
-        self.Binary = nn.Linear(opt.MFB_OUT_DIM*2*2, 1)
+        self.Binary_predict = nn.Linear(opt.MFB_OUT_DIM*2*2, 1)
 
     def forward(self, data, img_feature, glove, cvec_token, token_embedding, mode):
         if mode == 'val' or mode == 'test' or mode == 'test-dev':
@@ -206,4 +206,4 @@ class mfh_coatt_embed_ocr_binhelp(nn.Module):
         binary = self.Binary_predict(shared_vec)
         binary = F.sigmoid(binary)
 
-        return binary, prediction
+        return binary.squeeze(-1), prediction
