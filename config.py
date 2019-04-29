@@ -85,17 +85,17 @@ DATA_PATHS = {
     },
     'textvqa': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train_ocr.json',
-            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_train.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_train_ocr_complete.json',
+            'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val_ocr.json',
-            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_val.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_val_ocr_complete.json',
+            'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test_ocr.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_test_ocr_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/test/'
         }
     },
