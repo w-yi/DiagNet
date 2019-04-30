@@ -15,6 +15,10 @@ from models.mfb_coatt_embed_ocr import mfb_coatt_embed_ocr
 from models.mfh_coatt_embed_ocr import mfh_coatt_embed_ocr
 from models.mfb_coatt_embed_ocr_bin import mfb_coatt_embed_ocr_bin
 from models.mfh_coatt_embed_ocr_bin import mfh_coatt_embed_ocr_bin
+from models.mfb_coatt_embed_ocr_binonly import mfb_coatt_embed_ocr_binonly
+from models.mfh_coatt_embed_ocr_binonly import mfh_coatt_embed_ocr_binonly
+from models.mfb_coatt_embed_ocr_binhelp import mfb_coatt_embed_ocr_binhelp
+from models.mfh_coatt_embed_ocr_binhelp import mfh_coatt_embed_ocr_binhelp
 from utils import data_provider
 from utils.data_provider import VQADataProvider
 from utils.eval_utils import exec_validation, drawgraph
@@ -24,9 +28,14 @@ from tensorboardX import SummaryWriter
 
 
 def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, logger):
-    criterion = nn.KLDivLoss(reduction='batchmean')
-    if opt.BINARY:
-        criterion2 = nn.BCELoss()
+    if opt.LATE_FUSION:
+        criterion = nn.BCELoss()
+        model_prob = model[1]
+        model = model[0]
+    else:
+        criterion = nn.KLDivLoss(reduction='batchmean')
+        if opt.BINARY or opt.BIN_HELP:
+            criterion2 = nn.BCELoss()
     train_loss = np.zeros(opt.MAX_ITERATIONS)
     # loss for binary predictor
     b_losses = np.zeros(opt.MAX_ITERATIONS)
@@ -60,9 +69,15 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             embed_matrix = cuda_wrapper(Variable(embed_matrix)).float()
             ocr_length = cuda_wrapper(ocr_length)
             ocr_embedding = cuda_wrapper(Variable(ocr_embedding)).float()
-            if opt.BINARY:
+            if opt.BIN_HELP:
                 ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
-                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+                binary, pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+            elif opt.BINARY:
+                ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
+                if not opt.LATE_FUSION:
+                    binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
+                else:
+                    pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
             else:
                 pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, 'train')
         elif opt.EMBED:
@@ -72,7 +87,9 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
         else:
             pred = model(data, word_length, img_feature, 'train')
 
-        if opt.BINARY:
+        if opt.LATE_FUSION:
+            loss = criterion(pred, ocr_answer_flags.float())
+        elif opt.BINARY:
             b_loss = criterion2(binary, ocr_answer_flags.float())
             voc_loss = criterion(pred1, label[:, 0:opt.MAX_ANSWER_VOCAB_SIZE])
             b_losses[iter_idx] = b_loss.data.float()
@@ -80,6 +97,11 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
             ocr_loss = criterion(pred2, label[:, opt.MAX_ANSWER_VOCAB_SIZE:])
             ocr_losses[iter_idx] = ocr_loss.data.float()
             loss = b_loss * opt.BIN_LOSS_RATE + voc_loss + ocr_loss * opt.BIN_TOKEN_RATE
+        elif opt.BIN_HELP:
+            b_loss = criterion2(binary, ocr_answer_flags.float())
+            b_losses[iter_idx] = b_loss.data.float()
+            loss = criterion(pred, label)
+            loss += b_loss * opt.BIN_LOSS_RATE
         else:
             loss = criterion(pred, label)
         loss.backward()
@@ -110,7 +132,12 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
                 'lr_scheduler': lr_scheduler.state_dict()
             }, save_path)
         if iter_idx % opt.VAL_INTERVAL == 0 and iter_idx != 0:
-            test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx, logger=logger)
+            if opt.LATE_FUSION:
+                test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation([model, model_prob], opt, mode='val',
+                                                                                    folder=folder, it=iter_idx,
+                                                                                    logger=logger)
+            else:
+                test_loss, acc_overall, acc_per_ques, acc_per_ans = exec_validation(model, opt, mode='val', folder=folder, it=iter_idx, logger=logger)
             writer.add_scalar(opt.ID + '/val_loss', test_loss, iter_idx)
             writer.add_scalar(opt.ID + 'accuracy', acc_overall, iter_idx)
             logger.info('Test loss: {}'.format(test_loss))
@@ -134,7 +161,11 @@ def get_model(opt):
     """
     model = None
     if opt.MODEL == 'mfb':
-        if opt.OCR:
+        if opt.LATE_FUSION:
+            model = mfb_coatt_embed_ocr_binonly(opt)
+        elif opt.BIN_HELP:
+            model = mfb+coatt_embed_ocr_binhelp(opt)
+        elif opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
             if opt.BINARY:
                 model = mfb_coatt_embed_ocr_bin(opt)
@@ -146,7 +177,11 @@ def get_model(opt):
             model = mfb_baseline(opt)
 
     elif opt.MODEL == 'mfh':
-        if opt.OCR:
+        if opt.LATE_FUSION:
+            model = mfh_coatt_embed_ocr_binonly(opt)
+        elif opt.BIN_HELP:
+            model = mfh_coatt_embed_ocr_binhelp(opt)
+        elif opt.OCR:
             assert opt.EXP_TYPE in ['textvqa','textvqa_butd'], 'dataset not supported'
             if opt.BINARY:
                 model = mfh_coatt_embed_ocr_bin(opt)
@@ -205,6 +240,17 @@ def main():
             model = cuda_wrapper(model)
             optimizer = optim.Adam(model.parameters(), lr=opt.INIT_LERARNING_RATE)
             lr_scheduler = optim.lr_scheduler.StepLR(optimizer, opt.DECAY_STEPS, opt.DECAY_RATE)
+
+        if opt.LATE_FUSION:
+            logger.info('==> Load from checkpoint..')
+            checkpoint = torch.load(opt.PROB_PATH)
+            if opt.MODEL == 'mfb':
+                model0 = mfb_coatt_embed_ocr(opt)
+            else:
+                model0 = mfh_coatt_embed_ocr(opt)
+            model0.load_state_dict(checkpoint['model'])
+            model0 = cuda_wrapper(model0)
+            model = [model, model0]
 
         train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, logger)
 

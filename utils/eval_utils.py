@@ -95,9 +95,15 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
     avg_loss:       average loss on given validation dataset split
     acc_overall:    overall accuracy
     """
+    if opt.LATE_FUSION:
+        criterion = nn.BCELoss()
+        model_prob = model[1]
+        model = model[0]
+    else:
+        criterion = nn.NLLLoss()
+
     check_mkdir(folder)
     model.eval()
-    criterion = nn.NLLLoss()
     # criterion = nn.KLDivLoss(reduction='batchmean')
     if opt.BINARY:
         criterion2 = nn.BCELoss()
@@ -128,7 +134,13 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             ocr_embedding= cuda_wrapper(Variable(torch.from_numpy(ocr_embedding))).float()
             if opt.BINARY:
                 ocr_answer_flags = cuda_wrapper(ocr_answer_flags)
-                binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+                if opt.LATE_FUSION:
+                    binary = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+                    pred = model_prob(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
+                    pred1 = pred[:, 0:opt.MAX_ANSWER_VOCAB_SIZE]
+                    pred2 = pred[:, opt.MAX_ANSWER_VOCAB_SIZE:]
+                else:
+                    binary, pred1, pred2 = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
             else:
                 pred = model(data, img_feature, embed_matrix, ocr_length, ocr_embedding, mode)
         elif opt.EMBED:
@@ -141,9 +153,12 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             pass
         else:
             if opt.BINARY:
-                loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
-                loss += criterion(pred1[label < opt.MAX_ANSWER_VOCAB_SIZE], label[label < opt.MAX_ANSWER_VOCAB_SIZE].long())
-                loss += criterion(pred2[label >= opt.MAX_ANSWER_VOCAB_SIZE], label[label >= opt.MAX_ANSWER_VOCAB_SIZE].long() - opt.MAX_ANSWER_VOCAB_SIZE)
+                if opt.LATE_FUSION:
+                    loss = criterion(binary, ocr_answer_flags.float())
+                else:
+                    loss = criterion2(binary, ocr_answer_flags.float()) * opt.BIN_LOSS_RATE
+                    loss += criterion(pred1[label < opt.MAX_ANSWER_VOCAB_SIZE], label[label < opt.MAX_ANSWER_VOCAB_SIZE].long())
+                    loss += criterion(pred2[label >= opt.MAX_ANSWER_VOCAB_SIZE], label[label >= opt.MAX_ANSWER_VOCAB_SIZE].long() - opt.MAX_ANSWER_VOCAB_SIZE)
                 all_counter += binary.size()[0]
                 acc_counter += torch.sum((binary <= 0.5) * (ocr_answer_flags == 0) + (binary > 0.5) * (ocr_answer_flags == 1))
                 #print(all_counter, acc_counter)
@@ -163,7 +178,10 @@ def exec_validation(model, opt, mode, folder, it, logger, visualize=False, dp=No
             # select the largest index within the ocr length boundary
             ocr_mask = np.fromfunction(lambda i, j: j >= (ocr_length[i].cpu().numpy() + opt.MAX_ANSWER_VOCAB_SIZE), pred.shape, dtype=int)
             if opt.BINARY:
-                ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(binary[i] <= 0.5, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(binary[i] > 0.5, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
+                #ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(binary[i] <= 0.5, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(binary[i] > 0.5, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
+                #ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(ocr_answer_flags[i] == 0, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(ocr_answer_flags[i] == 1, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
+                ocr_mask += np.fromfunction(lambda i, j: np.logical_or(np.logical_and(ocr_answer_flags[i].cpu().numpy() == 0, j >= opt.MAX_ANSWER_VOCAB_SIZE), np.logical_and(ocr_answer_flags[i].cpu().numpy() == 1, j < opt.MAX_ANSWER_VOCAB_SIZE)), pred.shape, dtype=int)
+
             masked_pred = np.ma.array(pred, mask=ocr_mask)
             pred_max = np.ma.argmax(masked_pred, axis=1)
             pred_str = [dp.vec_to_answer_ocr(pred_symbol, ocr) for pred_symbol, ocr in zip(pred_max, ocr_tokens)]

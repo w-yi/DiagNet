@@ -85,17 +85,17 @@ DATA_PATHS = {
     },
     'textvqa': {
         'train': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_train_ocr.json',
-            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_train.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_train_ocr_complete.json',
+            'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_train_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/train/'
         },
         'val': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_val_ocr.json',
-            'ans_file': TEXTVQA_PREFIX + '/textvqa_annotations_val.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_val_ocr_complete.json',
+            'ans_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_annotations_val_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/val/'
         },
         'test': {
-            'ques_file': TEXTVQA_PREFIX + '/textvqa_questions_test_ocr.json',
+            'ques_file': TEXTVQA_PREFIX + '/json_OCR/textvqa_questions_test_ocr_complete.json',
             'features_prefix': TEXTVQA_PREFIX + '/baseline/test/'
         }
     },
@@ -157,6 +157,11 @@ def parse_opt():
     parser.add_argument('--OCR', action='store_true')
     # use a binary predictor to determine whether answer falls in the ocr text set
     parser.add_argument('--BINARY', action='store_true')
+    parser.add_argument('--BIN_HELP', action='store_true')
+
+
+    parser.add_argument('--LATE_FUSION', action='store_true')
+    parser.add_argument('--PROB_PATH', type=str, default='')
 
     parser.add_argument('--TRAIN_GPU_ID', type=int, default=0)
     parser.add_argument('--TEST_GPU_ID', type=int, default=0)
