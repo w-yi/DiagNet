@@ -45,22 +45,22 @@ Following examples are for TextVQA only.
     cd ../../..
     ```
 
-1. Generate ResNet image features:
+2. Generate ResNet image features:
     ```bash
     python scripts/resnet_feature.py [--split] [--image_dir] [--feature_dir]
     ```
 
-1. Generate BUTD image features:
+3. Generate BUTD image features:
     ```bash
     python scripts/butd_feature.py [--split] [--image_dir] [--feature_dir]
     ```
 
-1. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
+4. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
     ```bash
     python scripts/textvqa_transform.py [--split] [--input_dir] [--output_dir]
     ```
 
-1. Modify `DATA_PATHS` in `config.py` to match the dataset and image feature paths accordingly.
+5. Modify `DATA_PATHS` in `config.py` to match the dataset and image feature paths accordingly.
 
 ## Training
 
@@ -75,12 +75,12 @@ Some examples:
     python train.py mfh baseline
     ```
 
-1. DiagNet without OCR on VQA v1.0:
+2. DiagNet without OCR on VQA v1.0:
     ```bash
     python train.py mfh glove --EMBED
     ```
 
-1. DiagNet on TextVQA v0.5:
+3. DiagNet on TextVQA v0.5:
     ```bash
     python train.py mfh textvqa_butd --EMBED --OCR --BIN_HELP
     ```
@@ -88,14 +88,14 @@ Some examples:
 ## Prediction Visualization
 1. Download image files and modify `image_prefix` of `DATA_PATHS` in `config.py` accordingly.
 
-1. Run training and get the `.pth` model file in `training/checkpoint`. For example:
+2. Run training and get the `.pth` model file in `training/checkpoint`. For example:
     ```bash
     python train.py mfh glove --EMBED
     ```
 
-1. Specify the questions of interest by modifying `QTYPES` in `config.py`
+3. Specify the questions of interest by modifying `QTYPES` in `config.py`
 
-1. Run visualization:
+4. Run visualization:
     ```bash
     python predict.py mfh glove --EMBED [--RESUME_PATH]
     ```
