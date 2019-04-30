@@ -48,28 +48,36 @@ has three splits: `train|val|test`; each of them has three components:
 * `ans_file`: json file with answers to questions.
 * `features_prefix`: path to image feature `.npy` files
 
+Following examples are for TextVQA only.
 
-1. Download datasets and corresponding images:
+1. Download dataset and corresponding image files
     ```bash
-    pass
+    mkdir -p data/textvqa/origin
+    cd data/textvqa/origin
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_train.json .
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_val.json .
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_test.json .
+    wget https://dl.fbaipublicfiles.com/textvqa/images/train_val_images.zip .
+    unzip train_val_images.zip
+    cd ../../..
     ```
 
 1. Generate ResNet image features:
     ```bash
-    python scripts/feature.py [--split]
+    python scripts/resnet_feature.py [--split] [--image_dir] [--feature_dir]
     ```
 
 1. Generate BUTD image features:
     ```bash
-    pass
+    python scripts/butd_feature.py [--split] [--image_dir] [--feature_dir]
     ```
 
 1. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
     ```bash
-    pass
+    python scripts/textvqa_transform.py [--split] [--input_dir] [--output_dir]
     ```
 
-1. Modify `DATA_PATHS` in `config.py` accordingly.
+1. Modify `DATA_PATHS` in `config.py` to match the dataset and image feature paths accordingly.
 
 ## Training
 
@@ -106,6 +114,6 @@ Some examples:
 
 1. Run visualization:
     ```bash
-    python predict.py mfh glove --EMBED --RESUME_PATH path_to_model_file
+    python predict.py mfh glove --EMBED [--RESUME_PATH]
     ```
 ![Figure 2: Visualization Example.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/correct224477.png)

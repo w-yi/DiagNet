@@ -10,14 +10,10 @@ import numpy as np
 import argparse
 
 
-SAVE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/textvqa_features/baseline/"
-IMAGE_PATH = "/data/home/wennyi/vqa-mfb.pytorch/data/textvqa/"
-
-
 class CocoDataset(Dataset):
-    def __init__(self, split):
+    def __init__(self, split, image_dir, feature_dir):
         # assert split in ['train', 'val', 'test']
-        self.path = IMAGE_PATH + split
+        self.path = image_dir + split
         self.files = os.listdir(self.path)
         self.transform = transforms.Compose([transforms.ToPILImage(), transforms.Resize((448, 448)), transforms.ToTensor()])
 
@@ -36,7 +32,7 @@ class CocoDataset(Dataset):
         return [image, f]
 
 
-def get_features(split, batch, gpu=True):
+def get_features(split, image_dir, feature_dir, batch, gpu=True):
     model = models.resnet152(pretrained=True)
     model.avgpool = nn.AdaptiveAvgPool2d(1)
     modules = list(model.children())[:-1]
@@ -44,7 +40,7 @@ def get_features(split, batch, gpu=True):
     if gpu:
         model = model.cuda()
     for split in ['test', 'train', 'val']:
-        dataset = CocoDataset(split)
+        dataset = CocoDataset(split, image_dir, feature_dir)
         data_loader = DataLoader(dataset, batch, shuffle=False, num_workers=4, pin_memory=gpu, drop_last=False)
         for inputs, targets in data_loader:
             #pass
@@ -52,7 +48,7 @@ def get_features(split, batch, gpu=True):
                 inputs = inputs.cuda()
             outputs = model(inputs).squeeze(-1).squeeze(-1)
             for x, f in zip(outputs, targets):
-                np.save(SAVE_PATH + split + '/' + f, x.cpu().data.numpy())
+                np.save(feature_dir + split + '/' + f, x.cpu().data.numpy())
                 del x
                 del f
             del inputs
@@ -62,6 +58,8 @@ def get_features(split, batch, gpu=True):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--split', '-s', default='default', help='split')
+    parser.add_argument('--split', '-s', choices=['train', 'val', 'test'], help='split')
+    parser.add_argument('--image_dir', '-i', type=str, default='/data/home/wennyi/vqa-mfb.pytorch/data/textvqa/', help='input images dir')
+    parser.add_argument('--feature_dir', '-f', type=str, default='/data/home/wennyi/vqa-mfb.pytorch/data/textvqa_features/baseline/', help='output features dir')
     args = parser.parse_args()
-    get_features(args.split, 8)
+    get_features(args.split, args.image_dir, args.feature_dir, 8)
