@@ -53,22 +53,18 @@ has three splits: `train|val|test`; each of them has three components:
 ```bash
 pass
 ```
-
 1. Generate ResNet image features:
 ```bash
 python scripts/feature.py [--split]
 ```
-
 1. Generate BUTD image features:
 ```bash
 pass
 ```
-
 1. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
 ```bash
 pass
 ```
-
 1. Modify `DATA_PATHS` in `config.py` accordingly.
 
 ## Training
