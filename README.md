@@ -3,7 +3,7 @@ This is the code for a class project of [EECS 598/498: Deep Learning](https://do
 
 We borrowed code from this [pyTorch implementation](https://github.com/asdf0982/vqa-mfb.pytorch) of Multi-modal Factorized Bilinear Pooling (MFB) for VQA.
 
-![Figure 1: The DiagNet with OCR Network architecture for TextVQA.](https://github.com/asdf0982/vqa-mfb.pytorch/raw/master/imgs/DiagNet.png)
+![Figure 1: The DiagNet with OCR Network architecture for TextVQA.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/DiagNet.png)
 
 ## Related Works
 ### Papers related to our implementation
@@ -23,6 +23,7 @@ We borrowed code from this [pyTorch implementation](https://github.com/asdf0982/
 - BUTD: <https://github.com/peteanderson80/bottom-up-attention>
 - Fork of BUTD: <https://github.com/yuzcccc/bottom-up-attention>
 
+
 ## Requirements
 
 python 3.6, pytorch 1.0
@@ -40,14 +41,69 @@ python -m spacy download en
 python -m spacy download en_vectors_web_lg
 ```
 
-## Preparing Dataset
+## Preparing Datasets
+We use two datasets for our experiments: [VQA v1.0](https://visualqa.org/vqa_v1_download.html) and [TextVQA v0.5](https://textvqa.org/dataset). Each dataset
+has three splits: `train|val|test`; each of them has three components:
+* `ques_file`: json file with vqa questions.
+* `ans_file`: json file with answers to questions.
+* `features_prefix`: path to image feature `.npy` files
 
+
+1. Download datasets and corresponding images:
 ```bash
-python feature.py [--split]
+pass
 ```
+
+1. Generate ResNet image features:
+```bash
+python scripts/feature.py [--split]
+```
+
+1. Generate BUTD image features:
+```bash
+pass
+```
+
+1. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
+```bash
+pass
+```
+
+1. Modify `DATA_PATHS` in `config.py` accordingly.
 
 ## Training
 
+Our implementation supports multiple models and datasets. Use the following command for training (looking into `config.py` for option details):
+
 ```bash
-python train.py [--options]
+python train.py [MODEL] [EXP_TYPE] [--options]
 ```
+Some examples:
+1. MFH baseline on VQA v1.0:
+```bash
+python train.py mfh baseline
+```
+1. DiagNet without OCR on VQA v1.0:
+```bash
+python train.py mfh glove --EMBED
+```
+1. DiagNet on TextVQA v0.5:
+```bash
+python train.py mfh textvqa_butd --EMBED --OCR --BIN_HELP
+```
+
+## Prediction Visualization
+1. Download image files and modify `image_prefix` of `DATA_PATHS` in `config.py` accordingly.
+
+1. Run training and get the `.pth` model file in `training/checkpoint`. For example:
+```bash
+python train.py mfh glove --EMBED
+```
+
+1. Specify the questions of interest by modifying `QTYPES` in `config.py`
+
+1. Run visualization:
+```bash
+python predict.py mfh glove --EMBED --RESUME_PATH path_to_model_file
+```
+![Figure 2: Visualization Example.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/correct224477.png)
