@@ -1,9 +1,9 @@
 # DiagNet: Bridging Text and Image
-This is the code for a class project of [EECS 598/498: Deep Learning](https://docs.google.com/document/u/1/d/e/2PACX-1vSZw2CS74V1BEeruYxASJeeFO51tS7vj9NBjWnCvPkK1m-45xpHaAWr6LMG_0EH6HEqSttWEXRFaHua/pub) at University of Michigan, Winter 2019.
+Code for a class project of [EECS 598/498: Deep Learning](https://docs.google.com/document/u/1/d/e/2PACX-1vSZw2CS74V1BEeruYxASJeeFO51tS7vj9NBjWnCvPkK1m-45xpHaAWr6LMG_0EH6HEqSttWEXRFaHua/pub) at University of Michigan, Winter 2019.
 
 We borrowed code from this [pyTorch implementation](https://github.com/asdf0982/vqa-mfb.pytorch) of Multi-modal Factorized Bilinear Pooling (MFB) for VQA.
 
-![Figure 1: The DiagNet with OCR Network architecture for TextVQA.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/DiagNet.png)
+![Figure 1: The DiagNet Network architecture for TextVQA.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/master/imgs/DiagNet_architecture.png)
 
 ## Related Works
 ### Papers related to our implementation
@@ -116,4 +116,4 @@ Some examples:
     ```bash
     python predict.py mfh glove --EMBED [--RESUME_PATH]
     ```
-![Figure 2: Visualization Example.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/correct224477.png)
+![Figure 2: Visualization Example.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/master/imgs/correct224477.png)

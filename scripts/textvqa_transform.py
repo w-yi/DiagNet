@@ -35,16 +35,21 @@ def transform(split, input_dir, output_dir)
         tmp_test_sorted_token = [str.lower(i['word']) for i in tmp_test_sorted]
         dict_tmp_q_['ocr_tokens'] = tmp_test_sorted_token
         dict_tmp_q_['ocr_info'] = tmp_test_sorted
-        list_answers = cur_data['answers']
-        most_freq_answer = Counter(list_answers).most_common(1)[0][0]
-        flag_found = False
-        if most_freq_answer in tmp_test_sorted_token:
-            flag_found = True
-        if flag_found:
-            dict_tmp_q_['ocr_answer_flag'] = 1
+
+        if split == 'test':
+            list_questions += [dict_tmp_q_]
         else:
-            dict_tmp_q_['ocr_answer_flag'] = 0
-        list_questions += [dict_tmp_q_]
+            list_answers = cur_data['answers']
+            most_freq_answer = Counter(list_answers).most_common(1)[0][0]
+            flag_found = False
+            if most_freq_answer in tmp_test_sorted_token:
+                flag_found = True
+            if flag_found:
+                dict_tmp_q_['ocr_answer_flag'] = 1
+            else:
+                dict_tmp_q_['ocr_answer_flag'] = 0
+            list_questions += [dict_tmp_q_]
+
     dict_question['questions'] = list_questions
 
     with open(output_dir + 'textvqa_questions_{}_ocr_complete_sorted_flag_v1.json'.format(split), 'w') as f:
