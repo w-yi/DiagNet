@@ -8,7 +8,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # vqa tools - get from https://github.com/VT-vision-lab/VQA
 
-VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'data', 'VQA')
+VQA_TOOLS_DIR = os.path.join(ROOT_DIR, 'utils', 'vqa_tools')
 VQA_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonHelperTools')
 VQA_EVAL_TOOLS_PATH = os.path.join(VQA_TOOLS_DIR, 'PythonEvaluationTools')
 
@@ -117,7 +117,7 @@ DATA_PATHS = {
             'features_prefix': TEXTVQA_PREFIX + '/features_butd/test/',
             'features_prefix_alternative': TEXTVQA_PREFIX + '/baseline/test/'
         }
-    },
+    }
 }
 
 FEATURE_FILENAME = {

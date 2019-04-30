@@ -37,8 +37,11 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
         if opt.BINARY or opt.BIN_HELP:
             criterion2 = nn.BCELoss()
     train_loss = np.zeros(opt.MAX_ITERATIONS)
+    # loss for binary predictor
     b_losses = np.zeros(opt.MAX_ITERATIONS)
+    # loss for vocab dict part
     voc_losses = np.zeros(opt.MAX_ITERATIONS)
+    # loss for ocr tokens part
     ocr_losses = np.zeros(opt.MAX_ITERATIONS)
     results = []
     for iter_idx, (data, word_length, img_feature, label, embed_matrix, ocr_length, ocr_embedding, _, ocr_answer_flags, epoch) in enumerate(train_Loader):
@@ -106,16 +109,21 @@ def train(opt, model, train_Loader, optimizer, lr_scheduler, writer, folder, log
         train_loss[iter_idx] = loss.data.float()
         lr_scheduler.step()
         if iter_idx % opt.PRINT_INTERVAL == 0 and iter_idx != 0:
-            # now = get_time('%Y-%m-%d %H:%M:%S')
             c_mean_loss = train_loss[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
             mean_b_loss = b_losses[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
             mean_voc_loss = voc_losses[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
             mean_ocr_loss = ocr_losses[iter_idx - opt.PRINT_INTERVAL+1:iter_idx+1].mean()
             writer.add_scalar(opt.ID + '/train_loss', c_mean_loss, iter_idx)
             writer.add_scalar(opt.ID + '/lr', optimizer.param_groups[0]['lr'], iter_idx)
-            #logger.info('Train Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
-            #            epoch, iter_idx, c_mean_loss))
-            logger.info('Train Epoch: {}\t Iter: {}\t b_loss: {:.4f} voc_loss: {:.4f} ocr_loss: {:.4f}'.format(epoch, iter_idx, mean_b_loss, mean_voc_loss, mean_ocr_loss))
+            if opt.BINARY:
+                logger.info('Train Epoch: {}\t Iter: {}\t b_loss: {:.4f} voc_loss: {:.4f} ocr_loss: {:.4f}'.format(
+                    epoch, iter_idx, mean_b_loss, mean_voc_loss, mean_ocr_loss
+                ))
+            else:
+                logger.info('Train Epoch: {}\tIter: {}\tLoss: {:.4f}'.format(
+                    epoch, iter_idx, c_mean_loss
+                ))
+
         if iter_idx % opt.CHECKPOINT_INTERVAL == 0 and iter_idx != 0:
             save_path = os.path.join(config.CACHE_DIR, opt.ID + '_iter_' + str(iter_idx) + '.pth')
             torch.save({
