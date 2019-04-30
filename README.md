@@ -8,7 +8,7 @@ Some code is borrowed from this [pyTorch implementation](https://github.com/asdf
 
 ## Requirements
 
-python 3.6, pytorch 1.0
+The training and inference code of our model require python 3.6 and pytorch 1.0.
 
 ```bash
 # tensorboardX
@@ -22,6 +22,8 @@ conda install -c conda-forge spacy
 python -m spacy download en
 python -m spacy download en_vectors_web_lg
 ```
+
+In addition, Preparing BUTD features on TextVQA requires Caffe. Please go to [bottom-up-attention](bottom-up-attention) and check out the README. The environment is exactly the same as the original implementation although we modify some code. AWS GPU instance is recommended to set up the environment.
 
 ## Preparing Datasets
 
@@ -52,6 +54,11 @@ Following examples are for TextVQA only.
 
 3. Generate BUTD image features:
     ```bash
+    # generate tsv file (Caffe is required)
+    cd bottom-up-attention
+    ./gen_faster_rcnn_textvqa.sh
+    
+    # convert tsv file to npy
     python scripts/butd_feature.py [--split] [--image_dir] [--feature_dir]
     ```
 
