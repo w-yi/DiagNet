@@ -50,21 +50,25 @@ has three splits: `train|val|test`; each of them has three components:
 
 
 1. Download datasets and corresponding images:
-```bash
-pass
-```
+    ```bash
+    pass
+    ```
+
 1. Generate ResNet image features:
-```bash
-python scripts/feature.py [--split]
-```
+    ```bash
+    python scripts/feature.py [--split]
+    ```
+
 1. Generate BUTD image features:
-```bash
-pass
-```
+    ```bash
+    pass
+    ```
+
 1. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
-```bash
-pass
-```
+    ```bash
+    pass
+    ```
+
 1. Modify `DATA_PATHS` in `config.py` accordingly.
 
 ## Training
@@ -76,30 +80,32 @@ python train.py [MODEL] [EXP_TYPE] [--options]
 ```
 Some examples:
 1. MFH baseline on VQA v1.0:
-```bash
-python train.py mfh baseline
-```
+    ```bash
+    python train.py mfh baseline
+    ```
+
 1. DiagNet without OCR on VQA v1.0:
-```bash
-python train.py mfh glove --EMBED
-```
+    ```bash
+    python train.py mfh glove --EMBED
+    ```
+
 1. DiagNet on TextVQA v0.5:
-```bash
-python train.py mfh textvqa_butd --EMBED --OCR --BIN_HELP
-```
+    ```bash
+    python train.py mfh textvqa_butd --EMBED --OCR --BIN_HELP
+    ```
 
 ## Prediction Visualization
 1. Download image files and modify `image_prefix` of `DATA_PATHS` in `config.py` accordingly.
 
 1. Run training and get the `.pth` model file in `training/checkpoint`. For example:
-```bash
-python train.py mfh glove --EMBED
-```
+    ```bash
+    python train.py mfh glove --EMBED
+    ```
 
 1. Specify the questions of interest by modifying `QTYPES` in `config.py`
 
 1. Run visualization:
-```bash
-python predict.py mfh glove --EMBED --RESUME_PATH path_to_model_file
-```
+    ```bash
+    python predict.py mfh glove --EMBED --RESUME_PATH path_to_model_file
+    ```
 ![Figure 2: Visualization Example.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/correct224477.png)
