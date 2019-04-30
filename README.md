@@ -1,26 +1,14 @@
-# Multi-modal Factorized Bilinear Pooling (MFB) for VQA
+# DiagNet: Bridging Text and Image
 
+This is the code for a class project of [EECS 598/498: Deep Learning](https://docs.google.com/document/u/1/d/e/2PACX-1vSZw2CS74V1BEeruYxASJeeFO51tS7vj9NBjWnCvPkK1m-45xpHaAWr6LMG_0EH6HEqSttWEXRFaHua/pub) at University of Michigan, Winter 2019.
 
-Papers related to our implementation
+Some code is borrowed from this [pyTorch implementation](https://github.com/asdf0982/vqa-mfb.pytorch) of Multi-modal Factorized Bilinear Pooling (MFB) for VQA. The code of extracting BUTD features is adopted from [the official implementation](https://github.com/peteanderson80/bottom-up-attention).
 
-- CoAtt: [Hierarchical Question-Image Co-Attention for Visual Question Answering](https://arxiv.org/abs/1606.00061)
-- MFB: [Multi-modal Factorized Bilinear Pooling with Co-Attention Learning for Visual Question Answering](http://openaccess.thecvf.com/content_iccv_2017/html/Yu_Multi-Modal_Factorized_Bilinear_ICCV_2017_paper.html)
-- MFH: [Beyond Bilinear: Generalized Multi-modal Factorized High-order Pooling for Visual Question Answering](https://arxiv.org/abs/1708.03619)
-- BUTD: [Bottom-Up and Top-Down Attention for Image Captioning and Visual Question Answering](https://arxiv.org/abs/1707.07998)
-- [Pythia v0.1: the Winning Entry to the VQA Challenge 2018](https://arxiv.org/pdf/1807.09956.pdf)
-- TextVQA: [Towards VQA Models That Can Read](https://textvqa.org/assets/paper/TextVQA.pdf)
-
-Baseline implementations
-
-- PyTorch implementation: <https://github.com/asdf0982/vqa-mfb.pytorch>
-- Caffe implementation: <https://github.com/yuzcccc/vqa-mfb>
-- pythia: <https://github.com/facebookresearch/pythia>
-- BUTD: <https://github.com/peteanderson80/bottom-up-attention>
-- Fork of BUTD: <https://github.com/yuzcccc/bottom-up-attention>
+![Figure 1: The DiagNet with OCR Network architecture for TextVQA.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/DiagNet.png)
 
 ## Requirements
 
-python 3.7, pytorch 1.0
+The training and inference code of our model require python 3.6 and pytorch 1.0.
 
 ```bash
 # tensorboardX
@@ -35,14 +23,87 @@ python -m spacy download en
 python -m spacy download en_vectors_web_lg
 ```
 
-## Extract features
+In addition, Preparing BUTD features on TextVQA requires Caffe. Please go to [bottom-up-attention](bottom-up-attention) and check out the README. The environment is exactly the same as the original implementation although we modify some code. AWS GPU instance is recommended to set up the environment.
 
-```bash
-python feature.py [--split]
-```
+## Preparing Datasets
+
+We use two datasets for our experiments: [VQA v1.0](https://visualqa.org/vqa_v1_download.html) and [TextVQA v0.5](https://textvqa.org/dataset). Each dataset
+has three splits: `train|val|test`; each of them has three components:
+* `ques_file`: json file with vqa questions.
+* `ans_file`: json file with answers to questions.
+* `features_prefix`: path to image feature `.npy` files
+
+Following examples are for TextVQA only.
+
+1. Download dataset and corresponding image files
+    ```bash
+    mkdir -p data/textvqa/origin
+    cd data/textvqa/origin
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_train.json .
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_val.json .
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_test.json .
+    wget https://dl.fbaipublicfiles.com/textvqa/images/train_val_images.zip .
+    unzip train_val_images.zip
+    cd ../../..
+    ```
+
+2. Generate ResNet image features:
+    ```bash
+    python scripts/resnet_feature.py [--split] [--image_dir] [--feature_dir]
+    ```
+
+3. Generate BUTD image features:
+    ```bash
+    # generate tsv file (Caffe is required)
+    cd bottom-up-attention
+    ./gen_faster_rcnn_textvqa.sh
+    
+    # convert tsv file to npy
+    python scripts/butd_feature.py [--split] [--image_dir] [--feature_dir]
+    ```
+
+4. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
+    ```bash
+    python scripts/textvqa_transform.py [--split] [--input_dir] [--output_dir]
+    ```
+
+5. Modify `DATA_PATHS` in `config.py` to match the dataset and image feature paths accordingly.
 
 ## Training
 
+Our implementation supports multiple models and datasets. Use the following command for training (looking into `config.py` for option details):
+
 ```bash
-python train.py [--options]
+python train.py [MODEL] [EXP_TYPE] [--options]
 ```
+Some examples:
+1. MFH baseline on VQA v1.0:
+    ```bash
+    python train.py mfh baseline
+    ```
+
+2. DiagNet without OCR on VQA v1.0:
+    ```bash
+    python train.py mfh glove --EMBED
+    ```
+
+3. DiagNet on TextVQA v0.5:
+    ```bash
+    python train.py mfh textvqa_butd --EMBED --OCR --BIN_HELP
+    ```
+
+## Prediction Visualization
+1. Download image files and modify `image_prefix` of `DATA_PATHS` in `config.py` accordingly.
+
+2. Run training and get the `.pth` model file in `training/checkpoint`. For example:
+    ```bash
+    python train.py mfh glove --EMBED
+    ```
+
+3. Specify the questions of interest by modifying `QTYPES` in `config.py`
+
+4. Run visualization:
+    ```bash
+    python predict.py mfh glove --EMBED [--RESUME_PATH]
+    ```
+![Figure 2: Visualization Example.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/docs/imgs/correct224477.png)

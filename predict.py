@@ -79,7 +79,7 @@ def main():
 
     pred(opt, folder, logger)
 
-    # visualize_pred(opt, folder, 'val', logger)
+    visualize_pred(opt, folder, 'val', logger)
 
 
 if __name__ == '__main__':
