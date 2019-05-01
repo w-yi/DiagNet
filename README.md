@@ -3,7 +3,7 @@ Code for a class project of [EECS 598/498: Deep Learning](https://docs.google.co
 
 Some code is borrowed from this [pyTorch implementation](https://github.com/asdf0982/vqa-mfb.pytorch) of Multi-modal Factorized Bilinear Pooling (MFB) for VQA. The code of extracting BUTD features is adopted from [the official implementation](https://github.com/peteanderson80/bottom-up-attention).
 
-![Figure 1: The DiagNet Network architecture for TextVQA.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/master/imgs/DiagNet_architecture.png)
+![Figure 1: The DiagNet Network architecture for TextVQA.](https://github.com/WYchelsy/DiagNet/blob/master/imgs/DiagNet_architecture.png)
 
 ## Requirements
 
@@ -105,4 +105,4 @@ Some examples:
     ```bash
     python predict.py mfh glove --EMBED [--RESUME_PATH]
     ```
-![Figure 2: Visualization Example.](https://github.com/WYchelsy/vqa-mfb.pytorch/blob/master/imgs/correct224477.png)
+![Figure 2: Visualization Example.](https://github.com/WYchelsy/DiagNet/blob/master/imgs/correct224477.png)
