@@ -7,7 +7,7 @@ Some code is borrowed from this [pyTorch implementation](https://github.com/asdf
 
 ## Requirements
 
-The training and inference code of our model require python 3.6 and pytorch 1.0.
+Python 3.6 and PyTorch 1.0 are required.
 
 ```bash
 # tensorboardX
@@ -22,7 +22,7 @@ python -m spacy download en
 python -m spacy download en_vectors_web_lg
 ```
 
-In addition, Preparing BUTD features on TextVQA requires Caffe. Please go to [bottom-up-attention](bottom-up-attention) and check out the README. The environment is exactly the same as the original implementation although we modify some code. AWS GPU instance is recommended to set up the environment.
+In addition, preparing BUTD features on TextVQA requires Caffe. Please go to [bottom-up-attention](bottom-up-attention) and check out the README. The environment is exactly the same as the original implementation although we modify some code. AWS GPU instance is recommended to set up the environment.
 
 ## Preparing Datasets
 
@@ -32,7 +32,7 @@ has three splits: `train|val|test`; each of them has three components:
 * `ans_file`: json file with answers to questions.
 * `features_prefix`: path to image feature `.npy` files
 
-Following examples are for TextVQA only.
+Following examples are for TextVQA v0.5 only.
 
 1. Download dataset and corresponding image files
     ```bash
@@ -61,7 +61,7 @@ Following examples are for TextVQA only.
     python scripts/butd_feature.py [--split] [--image_dir] [--feature_dir]
     ```
 
-4. VQA dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA:
+4. VQA v1.0 dataset is already in the desired `ques_file|ans_file` format. Generate json files for TextVQA v0.5:
     ```bash
     python scripts/textvqa_transform.py [--split] [--input_dir] [--output_dir]
     ```
@@ -70,7 +70,7 @@ Following examples are for TextVQA only.
 
 ## Training
 
-Our implementation supports multiple models and datasets. Use the following command for training (looking into `config.py` for option details):
+Our implementation supports multiple models and datasets. Use the following command for training (refer to `config.py` for details on `--options`):
 
 ```bash
 python train.py [MODEL] [EXP_TYPE] [--options]
