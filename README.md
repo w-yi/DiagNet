@@ -38,10 +38,10 @@ Following examples are for TextVQA only.
     ```bash
     mkdir -p data/textvqa/origin
     cd data/textvqa/origin
-    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_train.json .
-    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_val.json .
-    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_test.json .
-    wget https://dl.fbaipublicfiles.com/textvqa/images/train_val_images.zip .
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_train.json
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_val.json
+    wget https://dl.fbaipublicfiles.com/textvqa/data/TextVQA_0.5_test.json
+    wget https://dl.fbaipublicfiles.com/textvqa/images/train_val_images.zip
     unzip train_val_images.zip
     cd ../../..
     ```
